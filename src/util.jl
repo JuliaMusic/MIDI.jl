@@ -26,14 +26,14 @@ end
 
 function writevariablelength(f::IOStream, number::Int64)
     if number < 128
-        write(f, convert(Uint8, number))
+        write(f, uint8(number))
     else
         bytes = Uint8[]
 
-        push!(bytes, convert(Uint8, number & 0x7F)) # Get the bottom 7 bits
+        push!(bytes, uint8(number & 0x7F)) # Get the bottom 7 bits
         number >>>= 7 # Is there a bug with Julia here? Testing in the REPL on negative numbers give >> and >>> the same result
         while number > 0
-            push!(bytes, convert(Uint8, ((number & 0x7F) | 0x80)))
+            push!(bytes, uint8(((number & 0x7F) | 0x80)))
             number >>>= 7
             continuation = 0x80
         end
@@ -107,7 +107,7 @@ function writeevent(f::IOStream, event::MIDIEvent, status::Uint8)
 end
 
 function writeevent(f::IOStream, event::MIDIEvent)
-    writeevent(f, event, convert(Uint8, 0))
+    writeevent(f, event, uint8(0))
 end
 
 function readmetaevent(dT::Int64, f::IOStream)
@@ -208,7 +208,7 @@ function writetrack(f::IOStream, track::MIDITrack)
     write(f, hton(track.length))
 
     writingmidi = false
-    previous_status = convert(Uint8, 0)
+    previous_status = uint8(0)
 
     for event in track.events
         if ismidievent(event) && previous_status != 0 && previous_status == event.status
@@ -218,7 +218,7 @@ function writetrack(f::IOStream, track::MIDITrack)
             previous_status = event.status
         else
             writeevent(f, event)
-            previous_status = convert(Uint8, convert(Uint8, 0) )
+            previous_status = uint8(uint8(0) )
         end
     end
 end
