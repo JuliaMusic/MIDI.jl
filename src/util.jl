@@ -261,8 +261,4 @@ function test()
 
     comparefiles("test3.mid", "test_out.mid")
 
-    f = readmidifile("pokemon.mid")
-    writemidifile("test_out.mid", f)
-
-    comparefiles("pokemon.mid", "test_out.mid")
 end
