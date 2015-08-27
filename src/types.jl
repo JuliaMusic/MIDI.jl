@@ -53,12 +53,8 @@ of events.
 
 type MIDITrack
     events::Array{TrackEvent, 1}
-    length::Uint32
 
-    MIDITrack() = new(
-        TrackEvent[],
-        0
-    )
+    MIDITrack() = new(TrackEvent[])
 end
 
 type MIDIFile

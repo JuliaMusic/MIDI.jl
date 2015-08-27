@@ -1,4 +1,4 @@
-function readvariablelength(f::IOStream)
+function readvariablelength(f::IO)
     #=
     Variable length numbers in midi files are represented as a sequence of bytes.
     If the first bit is 0, we're looking at the last byte in the sequence. The remaining
@@ -24,7 +24,7 @@ function readvariablelength(f::IOStream)
     end
 end
 
-function writevariablelength(f::IOStream, number::Int64)
+function writevariablelength(f::IO, number::Int64)
     if number < 128
         write(f, uint8(number))
     else
@@ -65,7 +65,7 @@ function ismidievent(b::Uint8)
 end
 
 laststatus = 0
-function readmidievent(dT::Int64, f::IOStream)
+function readmidievent(dT::Int64, f::IO)
     data = Uint8[]
 
     statusbyte = read(f, Uint8)
@@ -94,7 +94,7 @@ function readmidievent(dT::Int64, f::IOStream)
     MIDIEvent(dT, statusbyte, data)
 end
 
-function writeevent(f::IOStream, event::MIDIEvent, status::Uint8)
+function writeevent(f::IO, event::MIDIEvent, status::Uint8)
     writevariablelength(f, event.dT)
 
     if status == 0
@@ -106,11 +106,11 @@ function writeevent(f::IOStream, event::MIDIEvent, status::Uint8)
     end
 end
 
-function writeevent(f::IOStream, event::MIDIEvent)
+function writeevent(f::IO, event::MIDIEvent)
     writeevent(f, event, uint8(0))
 end
 
-function readmetaevent(dT::Int64, f::IOStream)
+function readmetaevent(dT::Int64, f::IO)
     # Meta events are 0xFF - type (1 byte) - variable length data length - data bytes
     skip(f, 1) # Skip the 0xff that starts the event
     data = Uint8[]
@@ -126,7 +126,7 @@ function readmetaevent(dT::Int64, f::IOStream)
     MetaEvent(dT, metatype, data)
 end
 
-function writeevent(f::IOStream, event::MetaEvent)
+function writeevent(f::IO, event::MetaEvent)
     writevariablelength(f, event.dT)
     write(f, META)
     write(f, event.metatype)
@@ -136,7 +136,7 @@ function writeevent(f::IOStream, event::MetaEvent)
     end
 end
 
-function readsysexevent(dT::Uint8, f::IOStream)
+function readsysexevent(dT::Uint8, f::IO)
     data = Uint8[]
     statusbyte = read(f, Uint8)
     b = read(f, Uint8)
@@ -152,7 +152,7 @@ function readsysexevent(dT::Uint8, f::IOStream)
     SysexEvent(dT, statusbyte, data)
 end
 
-function writeevent(f::IOStream, event::SysexEvent)
+function writeevent(f::IO, event::SysexEvent)
     write(f, SYSEX)
     writevariablelength(f, event.dT)
     write(f, event.status)
@@ -161,7 +161,7 @@ function writeevent(f::IOStream, event::SysexEvent)
     end
 end
 
-function readtrack(f::IOStream)
+function readtrack(f::IO)
     mtrk = join(map(char, read(f, Uint8, 4)))
     if mtrk != MTRK
         error("Not a valid midi file. Expected MTrk, got $(mtrk) starting at byte $(hex(position(f)-4, 2))")
@@ -169,11 +169,11 @@ function readtrack(f::IOStream)
     track = MIDITrack()
 
     # Get the length in bytes of the track
-    track.length = ntoh(read(f, Uint32))
+    length = ntoh(read(f, Uint32))
 
     trackstart = position(f)
     bytesread = 0
-    while bytesread < track.length
+    while bytesread < length
         # A track is made up of events. All events start with a variable length
         # value indicating the number of ticks (time) since the last event.
 
@@ -203,23 +203,30 @@ function readtrack(f::IOStream)
     track
 end
 
-function writetrack(f::IOStream, track::MIDITrack)
+function writetrack(f::IO, track::MIDITrack)
     write(f, convert(Array{Uint8, 1}, MTRK)) # Track identifier
-    write(f, hton(track.length))
 
-    writingmidi = false
+    event_buffer = IOBuffer()
+
     previous_status = uint8(0)
-
     for event in track.events
         if ismidievent(event) && previous_status != 0 && previous_status == event.status
-            writeevent(f, event, previous_status)
+            writeevent(event_buffer, event, previous_status)
         elseif ismidievent(event)
-            writeevent(f, event)
+            writeevent(event_buffer, event)
             previous_status = event.status
         else
-            writeevent(f, event)
+            writeevent(event_buffer, event)
             previous_status = uint8(uint8(0) )
         end
+    end
+
+    bytes = takebuf_array(event_buffer)
+
+    write(f, hton(uint32(length(bytes))))
+
+    for b in bytes
+        write(f, b)
     end
 end
 
@@ -260,5 +267,4 @@ function test()
     writemidifile("test_out.mid", f)
 
     comparefiles("test3.mid", "test_out.mid")
-
 end
