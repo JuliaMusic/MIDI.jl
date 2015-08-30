@@ -32,3 +32,5 @@ function writeevent(f::IOStream, event::SysexEvent)
         write(f, b)
     end
 end
+
+export SysexEvent

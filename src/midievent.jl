@@ -20,13 +20,11 @@ function channelnumber(m::MIDIEvent)
     0x0F & m.status
 end
 
-laststatus = 0
-function readmidievent(dT::Int64, f::IOStream)
+function readmidievent(dT::Int64, f::IOStream, laststatus::Uint8)
     data = Uint8[]
 
     statusbyte = read(f, Uint8)
     highnybble = statusbyte & 0b11110000
-    global laststatus
 
     toread = 0
     if haskey(EVENTTYPETOLENGTH, highnybble)

@@ -33,3 +33,5 @@ function writeevent(f::IOStream, event::MetaEvent)
         write(f, b)
     end
 end
+
+export MetaEvent

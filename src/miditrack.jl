@@ -14,7 +14,6 @@ type MIDITrack
     )
 end
 
-
 function readtrack(f::IOStream)
     mtrk = join(map(char, read(f, Uint8, 4)))
     if mtrk != MTRK
@@ -27,6 +26,7 @@ function readtrack(f::IOStream)
 
     trackstart = position(f)
     bytesread = 0
+    laststatus = uint8(0) # Keeps track of running status
     while bytesread < track.length
         # A track is made up of events. All events start with a variable length
         # value indicating the number of ticks (time) since the last event.
@@ -41,11 +41,14 @@ function readtrack(f::IOStream)
 
         local event
         if ismidievent(event_start)
-            event = readmidievent(dT, f)
+            event = readmidievent(dT, f, laststatus)
+            laststatus = event.status
         elseif issysexevent(event_start)
             event = readsysexevent(dT, f)
+            laststatus = uint8(0)
         elseif ismetaevent(event_start)
             event = readmetaevent(dT, f)
+            laststatus = uint8(0)
         else
             error("Unrecognized event $(hex(event_start,2))")
         end
