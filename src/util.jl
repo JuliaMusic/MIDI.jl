@@ -211,9 +211,9 @@ function writetrack(f::IOStream, track::MIDITrack)
     previous_status = uint8(0)
 
     for event in track.events
-        if ismidievent(event) && previous_status != 0 && previous_status == event.status
+        if typeof(event) == MIDIEvent && previous_status != 0 && previous_status == event.status
             writeevent(f, event, previous_status)
-        elseif ismidievent(event)
+        elseif typeof(event) == MIDIEvent
             writeevent(f, event)
             previous_status = event.status
         else

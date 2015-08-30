@@ -1,12 +1,6 @@
 module Midi
 
-include("trackevent.jl")
-include("midievent.jl")
-include("metaevent.jl")
-include("sysexevent.jl")
-include("constants.jl")
-include("types.jl")
-include("util.jl")
+include("includes.jl")
 
 export readmidifile, writemidifile
 
