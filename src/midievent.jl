@@ -20,7 +20,7 @@ function channelnumber(m::MIDIEvent)
     0x0F & m.status
 end
 
-function readmidievent(dT::Int64, f::IOStream, laststatus::Uint8)
+function readmidievent(dT::Int64, f::IO, laststatus::Uint8)
     data = Uint8[]
 
     statusbyte = read(f, Uint8)
@@ -48,7 +48,7 @@ function readmidievent(dT::Int64, f::IOStream, laststatus::Uint8)
     MIDIEvent(dT, statusbyte, data)
 end
 
-function writeevent(f::IOStream, event::MIDIEvent, status::Uint8)
+function writeevent(f::IO, event::MIDIEvent, status::Uint8)
     writevariablelength(f, event.dT)
 
     if status == 0
@@ -60,6 +60,6 @@ function writeevent(f::IOStream, event::MIDIEvent, status::Uint8)
     end
 end
 
-function writeevent(f::IOStream, event::MIDIEvent)
+function writeevent(f::IO, event::MIDIEvent)
     writeevent(f, event, uint8(0))
 end

@@ -5,15 +5,11 @@ of events.
 =#
 type MIDITrack
     events::Array{TrackEvent, 1}
-    length::Uint32
 
-    MIDITrack() = new(
-        TrackEvent[],
-        0
-    )
+    MIDITrack() = new(TrackEvent[])
 end
 
-function readtrack(f::IOStream)
+function readtrack(f::IO)
     mtrk = join(map(char, read(f, Uint8, 4)))
     if mtrk != MTRK
         error("Not a valid midi file. Expected MTrk, got $(mtrk) starting at byte $(hex(position(f)-4, 2))")
@@ -21,12 +17,12 @@ function readtrack(f::IOStream)
     track = MIDITrack()
 
     # Get the length in bytes of the track
-    track.length = ntoh(read(f, Uint32))
+    tracklength = ntoh(read(f, Uint32))
 
     trackstart = position(f)
     bytesread = 0
     laststatus = uint8(0) # Keeps track of running status
-    while bytesread < track.length
+    while bytesread < tracklength
         # A track is made up of events. All events start with a variable length
         # value indicating the number of ticks (time) since the last event.
 
@@ -68,25 +64,65 @@ function readtrack(f::IOStream)
     track
 end
 
-function writetrack(f::IOStream, track::MIDITrack)
+function writetrack(f::IO, track::MIDITrack)
     write(f, convert(Array{Uint8, 1}, MTRK)) # Track identifier
-    write(f, hton(track.length))
 
     writingmidi = false
     previous_status = uint8(0)
 
+    event_buffer = IOBuffer()
+
     for event in track.events
         if typeof(event) == MIDIEvent && previous_status != 0 && previous_status == event.status
-            writeevent(f, event, previous_status)
+            writeevent(event_buffer, event, previous_status)
         elseif typeof(event) == MIDIEvent
-            writeevent(f, event)
+            writeevent(event_buffer, event)
             previous_status = event.status
         else
-            writeevent(f, event)
-            previous_status = uint8(uint8(0) )
+            writeevent(event_buffer, event)
+            previous_status = uint8(uint8(0))
         end
+    end
+
+    bytes = takebuf_array(event_buffer)
+
+    write(f, hton(uint32(length(bytes) + 4))) # 4 is the length of the trackend event.
+
+    for b in bytes
+        write(f, b)
     end
 
     # Write the track end event
     writeevent(f, MetaEvent(0, METATRACKEND, Uint8[]))
+end
+
+function addnote(track::MIDITrack, note::Note)
+    for (status, position) in [(NOTEON, note.position), (NOTEOFF, note.position + note.duration)]
+        trackposition = 0
+        addedevent = false
+        for (i, event) in enumerate(track.events)
+            if previousdt + event.dT > position
+                # Add to track at position
+                newdt = note.position - trackposition
+                status = status & note.channel
+
+                insert!(track.events, i, MIDIEvent(newdt, status, uint8[note.value, note.velocity]))
+                addedevent = true
+
+                nextevent = track.events[i+1]
+                nextevent.dT -= newdt
+
+                break
+            else
+                trackposition += event.dT
+            end
+        end
+
+        if !addedevent
+            newdt = note.position - trackposition
+            status = NOTEON & note.channel
+            e = MIDIEvent(newdt, status, uint8[note.value, note.velocity])
+            push!(track.events, e)
+        end
+    end
 end

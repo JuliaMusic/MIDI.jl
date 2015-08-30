@@ -1,4 +1,4 @@
-function readvariablelength(f::IOStream)
+function readvariablelength(f::IO)
     #=
     Variable length numbers in midi files are represented as a sequence of bytes.
     If the first bit is 0, we're looking at the last byte in the sequence. The remaining
@@ -24,7 +24,7 @@ function readvariablelength(f::IOStream)
     end
 end
 
-function writevariablelength(f::IOStream, number::Int64)
+function writevariablelength(f::IO, number::Int64)
     if number < 128
         write(f, uint8(number))
     else
