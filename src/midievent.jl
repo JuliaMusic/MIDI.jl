@@ -12,6 +12,10 @@ function isdatabyte(b::Uint8)
     !isstatusbyte(b)
 end
 
+function ismidievent(b::Uint8)
+    !ismetaevent(b) && !issysexevent(b)
+end
+
 laststatus = 0
 function readmidievent(dT::Int64, f::IOStream)
     data = Uint8[]
@@ -52,4 +56,8 @@ function writeevent(f::IOStream, event::MIDIEvent, status::Uint8)
     for b in event.data
         write(f, b)
     end
+end
+
+function writeevent(f::IOStream, event::MIDIEvent)
+    writeevent(f, event, uint8(0))
 end
