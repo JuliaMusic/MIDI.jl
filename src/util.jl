@@ -32,5 +32,4 @@ function test()
     writemidifile("test_out.mid", f)
 
     comparefiles("test4.mid", "test_out.mid")
-
 end
