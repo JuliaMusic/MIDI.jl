@@ -1,7 +1,3 @@
-function channelnumber(m::MIDIEvent)
-    0x0F & m.status
-end
-
 function comparefiles(n1, n2)
     f1 = open(n1)
     f2 = open(n2)

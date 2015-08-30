@@ -16,6 +16,10 @@ function ismidievent(b::Uint8)
     !ismetaevent(b) && !issysexevent(b)
 end
 
+function channelnumber(m::MIDIEvent)
+    0x0F & m.status
+end
+
 laststatus = 0
 function readmidievent(dT::Int64, f::IOStream)
     data = Uint8[]
