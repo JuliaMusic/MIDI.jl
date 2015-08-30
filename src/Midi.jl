@@ -4,7 +4,7 @@ include("constants.jl")
 include("types.jl")
 include("util.jl")
 
-export readmidi, writemidi
+export readmidifile, writemidifile
 
 function readmidifile(filename::String)
     f = open(filename)

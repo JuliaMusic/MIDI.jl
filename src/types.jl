@@ -1,14 +1,3 @@
-# Number of data bytes following a given event type
-eventtypetolength = [
-    NOTEOFF => 2,
-    NOTEON => 2,
-    POLYPHONICKEYPRESSURE => 2,
-    CONTROLCHANGE => 2,
-    PROGRAMCHANGE => 1,
-    CHANNELPRESSURE => 1,
-    PITCHWHEELCHANGE => 2,
-]
-
 # Abstract type for Midi events
 abstract TrackEvent
 

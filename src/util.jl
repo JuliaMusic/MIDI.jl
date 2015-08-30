@@ -73,11 +73,11 @@ function readmidievent(dT::Int64, f::IOStream)
     global laststatus
 
     toread = 0
-    if haskey(eventtypetolength, highnybble)
+    if haskey(EVENTTYPETOLENGTH, highnybble)
         laststatus = statusbyte
-        toread = eventtypetolength[highnybble]
+        toread = EVENTTYPETOLENGTH[highnybble]
     else # Running status is in use
-        toread = eventtypetolength[laststatus & 0b11110000]
+        toread = EVENTTYPETOLENGTH[laststatus & 0b11110000]
         statusbyte = laststatus
         skip(f, -1)
     end
@@ -260,5 +260,10 @@ function test()
     writemidifile("test_out.mid", f)
 
     comparefiles("test3.mid", "test_out.mid")
+
+    f = readmidifile("test4.mid")
+    writemidifile("test_out.mid", f)
+
+    comparefiles("test4.mid", "test_out.mid")
 
 end
