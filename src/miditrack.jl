@@ -56,6 +56,12 @@ function readtrack(f::IOStream)
         bytesread = position(f) - trackstart
     end
 
+    # Validate that the track ends with a track end event
+    lastevent = track.events[length(track.events)]
+    if typeof(lastevent) != MetaEvent || lastevent.metatype != METATRACKEND
+        error("Invalid track - does not end with track metaevent")
+    end
+
     track
 end
 

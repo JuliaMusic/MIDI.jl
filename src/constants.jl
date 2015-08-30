@@ -14,6 +14,9 @@ const PITCHWHEELCHANGE = 0b11100000
 const META = 0xFF
 const SYSEX = 0xF0
 
+# Meta event types
+const METATRACKEND = 0x2F
+
 # Chunk identifiers. The different parts of the file will start with one of these
 const MTHD = "MThd"
 const MTRK = "MTrk"
