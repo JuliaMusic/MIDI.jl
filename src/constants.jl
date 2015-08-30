@@ -17,3 +17,14 @@ const SYSEX = 0xF0
 # Chunk identifiers. The different parts of the file will start with one of these
 const MTHD = "MThd"
 const MTRK = "MTrk"
+
+# Number of data bytes following a given midi event type
+const EVENTTYPETOLENGTH = [
+    NOTEOFF => 2,
+    NOTEON => 2,
+    POLYPHONICKEYPRESSURE => 2,
+    CONTROLCHANGE => 2,
+    PROGRAMCHANGE => 1,
+    CHANNELPRESSURE => 1,
+    PITCHWHEELCHANGE => 2,
+]
