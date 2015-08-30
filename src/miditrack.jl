@@ -60,6 +60,9 @@ function readtrack(f::IOStream)
     lastevent = track.events[length(track.events)]
     if typeof(lastevent) != MetaEvent || lastevent.metatype != METATRACKEND
         error("Invalid track - does not end with track metaevent")
+    else
+        # strip the track end event - we don't need to worry about manipulating it
+        track.events = track.events[1:length(track.events)-1]
     end
 
     track
@@ -83,4 +86,7 @@ function writetrack(f::IOStream, track::MIDITrack)
             previous_status = uint8(uint8(0) )
         end
     end
+
+    # Write the track end event
+    writeevent(f, MetaEvent(0, METATRACKEND, Uint8[]))
 end
