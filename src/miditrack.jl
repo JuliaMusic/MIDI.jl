@@ -84,16 +84,18 @@ function writetrack(f::IO, track::MIDITrack)
         end
     end
 
+    # Write the track end event
+    writeevent(event_buffer, MetaEvent(0, METATRACKEND, Uint8[]))
+
     bytes = takebuf_array(event_buffer)
 
-    write(f, hton(uint32(length(bytes) + 4))) # 4 is the length of the trackend event.
+    write(f, hton(uint32(length(bytes))))
 
     for b in bytes
         write(f, b)
     end
 
-    # Write the track end event
-    writeevent(f, MetaEvent(0, METATRACKEND, Uint8[]))
+
 end
 
 function addnote(track::MIDITrack, note::Note)
@@ -101,7 +103,7 @@ function addnote(track::MIDITrack, note::Note)
         trackposition = 0
         addedevent = false
         for (i, event) in enumerate(track.events)
-            if previousdt + event.dT > position
+            if trackposition + event.dT > position
                 # Add to track at position
                 newdt = note.position - trackposition
                 status = status & note.channel
@@ -120,8 +122,12 @@ function addnote(track::MIDITrack, note::Note)
 
         if !addedevent
             newdt = note.position - trackposition
-            status = NOTEON & note.channel
-            e = MIDIEvent(newdt, status, uint8[note.value, note.velocity])
+            if status == NOTEOFF
+                newdt += note.duration
+            end
+            status = status | note.channel
+            x = Uint8[note.value, note.velocity]
+            e = MIDIEvent(newdt, status, x)
             push!(track.events, e)
         end
     end

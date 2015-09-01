@@ -32,4 +32,18 @@ function test()
     writemidifile("test_out.mid", f)
 
     comparefiles("test4.mid", "test_out.mid")
+
+    C = Midi.Note(60, 1000, 0, 0)
+    D = Midi.Note(62, 1000, 1000, 0)
+
+    file = Midi.MIDIFile()
+    track = Midi.MIDITrack()
+
+    Midi.addnote(track, C)
+    Midi.addnote(track, D)
+
+    push!(file.tracks, track)
+
+    Midi.writemidifile("test_out.mid", file)
+
 end
