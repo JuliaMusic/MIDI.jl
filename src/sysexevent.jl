@@ -8,7 +8,7 @@ function issysexevent(b::Uint8)
     b == 0xF0
 end
 
-function readsysexevent(dT::Uint8, f::IOStream)
+function readsysexevent(dT::Uint8, f::IO)
     data = Uint8[]
     statusbyte = read(f, Uint8)
     b = read(f, Uint8)
@@ -24,7 +24,7 @@ function readsysexevent(dT::Uint8, f::IOStream)
     SysexEvent(dT, statusbyte, data)
 end
 
-function writeevent(f::IOStream, event::SysexEvent)
+function writeevent(f::IO, event::SysexEvent)
     write(f, SYSEX)
     writevariablelength(f, event.dT)
     write(f, event.status)

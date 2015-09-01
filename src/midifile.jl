@@ -3,7 +3,7 @@ type MIDIFile
     timedivision::Uint16
     tracks::Array{MIDITrack, 1}
 
-    MIDIFile() = new(0,0,MIDITrack[])
+    MIDIFile() = new(0,96,MIDITrack[])
 end
 
 function readmidifile(filename::String)
