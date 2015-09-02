@@ -130,6 +130,35 @@ function addnote(track::MIDITrack, note::Note)
     end
 end
 
+function addnotes(track::MIDITrack, notes::Array{TrackEvent, 1})
+    for note in notes
+        addnote(track, note)
+    end
+end
+
+function getnotes(track::MIDITrack)
+    # Read through events until a noteon is found
+    notes = Note[]
+    tracktime = uint64(0)
+    for (i, event) in enumerate(track.events)
+        tracktime += event.dT
+        if isa(event, MIDIEvent)
+            if event.status & 0xF0 == NOTEON
+                duration = uint64(0)
+                for event2 in track.events[i:length(track.events)]
+                    duration += event2.dT
+                    # If we have a midi event & it's a noteoff, and it's for the same note as the event we found, make a note
+                    if isa(event2, MIDIEvent) && event2.status & 0xF0 == NOTEOFF && event.data[1] == event2.data[1]
+                        push!(notes, Note(event.data[1] + 1, duration, tracktime+duration, event.status & 0x0F, event.data[2]))
+                        break
+                    end
+                end
+            end
+        end
+    end
+    notes
+end
+
 function programchange(track::MIDITrack, time::Integer, channel::Uint8, program::Uint8)
     program = program - 1 # Program changes are typically given in range 1-128, but represented internally as 1-127.
     addevent(track, time, MIDIEvent(0, PROGRAMCHANGE | channel, Uint8[program]))

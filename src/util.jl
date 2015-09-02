@@ -49,6 +49,5 @@ function test()
     end
 
     push!(file.tracks, track)
-
     Midi.writemidifile("test_out.mid", file)
 end
