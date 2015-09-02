@@ -57,7 +57,7 @@ function test()
     Midi.addnotes(track, notes)
 
     for (n1, n2) in zip(notes, Midi.getnotes(track))
-        println("$(n1 == n2)")
+        println("$(n1) == $(n2)")
     end
 
     push!(file.tracks, track)

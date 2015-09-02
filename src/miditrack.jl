@@ -142,20 +142,19 @@ function getnotes(track::MIDITrack)
     tracktime = uint64(0)
     for (i, event) in enumerate(track.events)
         tracktime += event.dT
-        if isa(event, MIDIEvent)
-            if event.status & 0xF0 == NOTEON
-                duration = uint64(0)
-                for event2 in track.events[i:length(track.events)]
-                    duration += event2.dT
-                    # If we have a midi event & it's a noteoff, and it's for the same note as the event we found, make a note
-                    if isa(event2, MIDIEvent) && event2.status & 0xF0 == NOTEOFF && event.data[1] == event2.data[1]
-                        push!(notes, Note(event.data[1], duration, tracktime+duration, event.status & 0x0F, event.data[2]))
-                        break
-                    end
+        if isa(event, MIDIEvent) && event.status & 0xF0 == NOTEON
+            duration = uint64(0)
+            for event2 in track.events[i+1:length(track.events)]
+                duration += event2.dT
+                # If we have a midi event & it's a noteoff, and it's for the same note as the first event we found, make a note
+                if isa(event2, MIDIEvent) && event2.status & 0xF0 == NOTEOFF && event.data[1] == event2.data[1]
+                    push!(notes, Note(event.data[1], duration, tracktime, event.status & 0x0F, event.data[2]))
+                    break
                 end
             end
         end
     end
+    # TODO Sort by position
     notes
 end
 
