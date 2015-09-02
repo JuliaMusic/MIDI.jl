@@ -94,56 +94,18 @@ function writetrack(f::IO, track::MIDITrack)
     for b in bytes
         write(f, b)
     end
-
-
 end
 
-function addnote(track::MIDITrack, note::Note)
-    for (status, position) in [(NOTEON, note.position), (NOTEOFF, note.position + note.duration)]
-        trackposition = 0
-        addedevent = false
-        for (i, event) in enumerate(track.events)
-            if trackposition + event.dT > position
-                # Add to track at position
-                newdt = note.position - trackposition
-                status = status | note.channel
-
-                insert!(track.events, i, MIDIEvent(newdt, status, Uint8[note.value, note.velocity]))
-                addedevent = true
-
-                nextevent = track.events[i+1]
-                nextevent.dT -= newdt
-
-                break
-            else
-                trackposition += event.dT
-            end
-        end
-
-        if !addedevent
-            newdt = note.position - trackposition
-            if status == NOTEOFF
-                newdt += note.duration
-            end
-            status = status | note.channel
-            x = Uint8[note.value, note.velocity]
-            e = MIDIEvent(newdt, status, x)
-            push!(track.events, e)
-        end
-    end
-end
-
-function programchange(track::MIDITrack, time::Integer, channel::Uint8, program::Uint8)
-    program = program - 1 # Program changes are typically given in range 1-128, but represented internally as 1-127.
-    trackposition = 0
+function addevent(track::MIDITrack, time::Integer, newevent::TrackEvent)
+    tracktime = 0
     addedevent = false
     for (i, event) in enumerate(track.events)
-        if trackposition + event.dT > time
+        if tracktime + event.dT > time
             # Add to track at position
-            newdt = time - trackposition
-            status = PROGRAMCHANGE | channel
+            newdt = time - tracktime
+            newevent.dT = newdt
 
-            insert!(track.events, i, MIDIEvent(newdt, status, Uint8[program]))
+            insert!(track.events, i, newevent)
             addedevent = true
 
             nextevent = track.events[i+1]
@@ -151,14 +113,24 @@ function programchange(track::MIDITrack, time::Integer, channel::Uint8, program:
 
             break
         else
-            trackposition += event.dT
+            tracktime += event.dT
         end
     end
 
     if !addedevent
-        newdt = time - trackposition
-        status = PROGRAMCHANGE | channel
-        e = MIDIEvent(newdt, status, Uint8[program])
-        push!(track.events, e)
+        newdt = time - tracktime
+        newevent.dT = newdt
+        push!(track.events, newevent)
     end
+end
+
+function addnote(track::MIDITrack, note::Note)
+    for (status, position) in [(NOTEON, note.position), (NOTEOFF, note.position + note.duration)]
+        addevent(track, position, MIDIEvent(0, status | note.channel, Uint8[note.value, note.velocity]))
+    end
+end
+
+function programchange(track::MIDITrack, time::Integer, channel::Uint8, program::Uint8)
+    program = program - 1 # Program changes are typically given in range 1-128, but represented internally as 1-127.
+    addevent(track, time, MIDIEvent(0, PROGRAMCHANGE | channel, Uint8[program]))
 end
