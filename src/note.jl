@@ -37,11 +37,6 @@ const Bb = 10
 const B = 11
 const Cb = 11
 
-function *(n::Note, i::Integer)
-    n.value += (i * 12)
-    n
-end
+*(n::Note, i::Integer) = Note(n.value + (i*12), n.duration, n.position, n.channel, n.velocity)
 
-function *(i::Integer, n::Note)
-    n * i
-end
+*(i::Integer, n::Note) = n * i
