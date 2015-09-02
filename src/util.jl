@@ -40,19 +40,15 @@ function test()
     file = Midi.MIDIFile()
     track = Midi.MIDITrack()
 
-    time = 0
-
     for v in values(GM)
         Midi.addnote(track, C)
         Midi.addnote(track, D)
-        Midi.programchange(track, time, uint8(0), v)
+        Midi.programchange(track, D.position + inc, uint8(0), v)
         C.position += inc
         D.position += inc
-        time += inc
     end
 
     push!(file.tracks, track)
 
     Midi.writemidifile("test_out.mid", file)
-
 end
