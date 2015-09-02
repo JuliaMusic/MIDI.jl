@@ -14,3 +14,34 @@ type Note
             new(value, duration, position, channel, velocity)
         end
 end
+
+const Bs = 0
+const C = 0
+const Cs = 1
+const Db = 1
+const D = 2
+const Ds = 3
+const Eb = 3
+const E = 4
+const Fb = 4
+const Es = 5
+const F = 5
+const Fs = 6
+const Gb = 6
+const G = 7
+const Gs = 8
+const Ab = 8
+const A = 9
+const As = 10
+const Bb = 10
+const B = 11
+const Cb = 11
+
+function *(n::Note, i::Integer)
+    n.value += (i * 12)
+    n
+end
+
+function *(i::Integer, n::Note)
+    n * i
+end
