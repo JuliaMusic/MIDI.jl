@@ -1,6 +1,6 @@
 # Midi message types
 
-# Channel voice message identifiers Only the first four bits matter, the remaining bits indicate the channel
+# Channel voice message identifiers. Only the first four bits matter, the remaining bits indicate the channel
 # These should be used as masks with the actual midi event header
 const NOTEOFF = 0b10000000
 const NOTEON = 0b10010000
@@ -17,7 +17,7 @@ const SYSEX = 0xF0
 # Meta event types
 const METATRACKEND = 0x2F
 
-# Chunk identifiers The different parts of the file will start with one of these
+# Chunk identifiers. The different parts of the file will start with one of these
 const MTHD = "MThd"
 const MTRK = "MTrk"
 
