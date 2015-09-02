@@ -33,14 +33,23 @@ function test()
 
     comparefiles("test4.mid", "test_out.mid")
 
-    C = Midi.Note(60, 1000, 0, 0)
-    D = Midi.Note(62, 1000, 1000, 0)
+    C = Midi.Note(60, 96, 0, 0)
+    D = Midi.Note(62, 96, 96, 0)
+    inc = 96
 
     file = Midi.MIDIFile()
     track = Midi.MIDITrack()
 
-    Midi.addnote(track, C)
-    Midi.addnote(track, D)
+    time = 0
+
+    for v in values(GM)
+        Midi.addnote(track, C)
+        Midi.addnote(track, D)
+        Midi.programchange(track, time, uint8(0), v)
+        C.position += inc
+        D.position += inc
+        time += inc
+    end
 
     push!(file.tracks, track)
 
