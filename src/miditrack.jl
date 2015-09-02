@@ -130,7 +130,7 @@ function addnote(track::MIDITrack, note::Note)
     end
 end
 
-function addnotes(track::MIDITrack, notes::Array{TrackEvent, 1})
+function addnotes(track::MIDITrack, notes::Array{Note, 1})
     for note in notes
         addnote(track, note)
     end
@@ -149,7 +149,7 @@ function getnotes(track::MIDITrack)
                     duration += event2.dT
                     # If we have a midi event & it's a noteoff, and it's for the same note as the event we found, make a note
                     if isa(event2, MIDIEvent) && event2.status & 0xF0 == NOTEOFF && event.data[1] == event2.data[1]
-                        push!(notes, Note(event.data[1] + 1, duration, tracktime+duration, event.status & 0x0F, event.data[2]))
+                        push!(notes, Note(event.data[1], duration, tracktime+duration, event.status & 0x0F, event.data[2]))
                         break
                     end
                 end

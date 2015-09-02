@@ -40,12 +40,24 @@ function test()
     file = Midi.MIDIFile()
     track = Midi.MIDITrack()
 
+    notes = Midi.Note[]
     for v in values(GM)
-        Midi.addnote(track, C)
-        Midi.addnote(track, D)
+        #Midi.addnote(track, C)
+        #Midi.addnote(track, D)
+        push!(notes, C)
+        push!(notes, D)
         Midi.programchange(track, D.position + inc, uint8(0), v)
         C.position += inc
         D.position += inc
+        C = Midi.Note(60, 96, C.position+inc, 0)
+        D = Midi.Note(62, 96, D.position+inc, 0)
+        break
+    end
+
+    Midi.addnotes(track, notes)
+
+    for (n1, n2) in zip(notes, Midi.getnotes(track))
+        println("$(n1 == n2)")
     end
 
     push!(file.tracks, track)
