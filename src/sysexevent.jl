@@ -9,8 +9,8 @@ end
 
 function readsysexevent(dT::Uint8, f::IO)
     data = Uint8[]
-    # Read the length, but don't bother recording it since we can calculate it from the rest of the stream.
-    readvariablelength(f)
+    read(f, Uint8) # Eat the SYSEX that's on top of f
+    datalength = readvariablelength(f)
     b = read(f, Uint8)
     while isdatabyte(b)
         push!(data, b)
@@ -19,8 +19,15 @@ function readsysexevent(dT::Uint8, f::IO)
         end
         b = read(f, Uint8)
     end
+
+    if b != 0xF7
+        error("Invalid sysex event, did not end with 0xF7")
+    end
     # The last byte of sysex event is F7. We leave that out of the data, and write it back when we write the event.
 
+    if length(data) + 1 != datalength
+        error("Invalid sysex event. Expected $(datalength) bytes, received $(length(data) + 1)")
+    end
     SysexEvent(dT, data)
 end
 
