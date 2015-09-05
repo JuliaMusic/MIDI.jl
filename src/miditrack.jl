@@ -155,11 +155,10 @@ function getnotes(track::MIDITrack)
             end
         end
     end
-    # TODO Sort by position
-    notes
+    sort!(notes, lt=((x, y)->x.position<y.position))
 end
 
 function programchange(track::MIDITrack, time::Integer, channel::Uint8, program::Uint8)
-    program = program - 1 # Program changes are typically given in range 1-128, but represented internally as 1-127.
+    program = program - 1 # Program changes are typically given in range 1-128, but represented internally as 0-127.
     addevent(track, time, MIDIEvent(0, PROGRAMCHANGE | channel, Uint8[program]))
 end

@@ -64,7 +64,6 @@ function test()
 
     buf = IOBuffer()
     writetrack(buf, track)
-    println(track)
 
     for (n1, n2) in zip(notes, Midi.getnotes(track))
         println("$(n1) == $(n2)")
