@@ -74,7 +74,7 @@ function writetrack(f::IO, track::MIDITrack)
 
     for event in track.events
         if typeof(event) == MIDIEvent && previous_status != 0 && previous_status == event.status
-            writeevent(event_buffer, event, previous_status)
+            writeevent(event_buffer, event, false)
         elseif typeof(event) == MIDIEvent
             writeevent(event_buffer, event)
             previous_status = event.status
