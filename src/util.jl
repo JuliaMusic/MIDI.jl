@@ -42,8 +42,6 @@ function test()
 
     notes = Midi.Note[]
     for v in values(GM)
-        #Midi.addnote(track, C)
-        #Midi.addnote(track, D)
         push!(notes, C)
         push!(notes, D)
         Midi.programchange(track, D.position + inc, uint8(0), v)
