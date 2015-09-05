@@ -1,6 +1,6 @@
 type MIDIFile
     format::Uint16
-    timedivision::Uint16
+    timedivision::Int16
     tracks::Array{MIDITrack, 1}
 
     MIDIFile() = new(0,96,MIDITrack[])
@@ -26,8 +26,7 @@ function readmidifile(filename::String)
     # Get the number of tracks and time division
     numberoftracks = ntoh(read(f, Uint16))
 
-    # TODO: Handle negative values. Relates to SMPTE
-    midifile.timedivision = ntoh(read(f, Uint16))
+    midifile.timedivision = ntoh(read(f, Int16))
 
     for tracknum = [1:numberoftracks]
         track = readtrack(f)
