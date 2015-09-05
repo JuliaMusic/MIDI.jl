@@ -48,10 +48,10 @@ function readmidievent(dT::Int64, f::IO, laststatus::Uint8)
     MIDIEvent(dT, statusbyte, data)
 end
 
-function writeevent(f::IO, event::MIDIEvent, status::Uint8)
+function writeevent(f::IO, event::MIDIEvent, writestatus::Bool)
     writevariablelength(f, event.dT)
 
-    if status == 0
+    if writestatus
         write(f, event.status)
     end
 
@@ -61,5 +61,5 @@ function writeevent(f::IO, event::MIDIEvent, status::Uint8)
 end
 
 function writeevent(f::IO, event::MIDIEvent)
-    writeevent(f, event, uint8(0))
+    writeevent(f, event, true)
 end

@@ -37,6 +37,15 @@ const Bb = 10
 const B = 11
 const Cb = 11
 
-*(n::Note, i::Integer) = Note(n.value + (i*12), n.duration, n.position, n.channel, n.velocity)
++(n::Note, i::Integer) = Note(n.value + i, n.duration, n.position, n.channel, n.velocity)
++(i::Integer, n::Note) = n + i
 
-*(i::Integer, n::Note) = n * i
+-(n::Note, i::Integer) = Note(n.value - i, n.duration, n.position, n.channel, n.velocity)
+-(i::Integer, n::Note) = n - i
+
+==(n1::Note, n2::Note) =
+    n1.value == n2.value &&
+    n1.duration == n2.duration &&
+    n1.position == n2.position &&
+    n1.channel == n2.channel &&
+    n1.velocity == n2.velocity

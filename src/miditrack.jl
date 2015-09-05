@@ -7,6 +7,7 @@ type MIDITrack
     events::Array{TrackEvent, 1}
 
     MIDITrack() = new(TrackEvent[])
+    MIDITrack(events) = new(events)
 end
 
 function readtrack(f::IO)
@@ -74,7 +75,7 @@ function writetrack(f::IO, track::MIDITrack)
 
     for event in track.events
         if typeof(event) == MIDIEvent && previous_status != 0 && previous_status == event.status
-            writeevent(event_buffer, event, previous_status)
+            writeevent(event_buffer, event, false)
         elseif typeof(event) == MIDIEvent
             writeevent(event_buffer, event)
             previous_status = event.status
@@ -154,11 +155,10 @@ function getnotes(track::MIDITrack)
             end
         end
     end
-    # TODO Sort by position
-    notes
+    sort!(notes, lt=((x, y)->x.position<y.position))
 end
 
 function programchange(track::MIDITrack, time::Integer, channel::Uint8, program::Uint8)
-    program = program - 1 # Program changes are typically given in range 1-128, but represented internally as 1-127.
+    program = program - 1 # Program changes are typically given in range 1-128, but represented internally as 0-127.
     addevent(track, time, MIDIEvent(0, PROGRAMCHANGE | channel, Uint8[program]))
 end

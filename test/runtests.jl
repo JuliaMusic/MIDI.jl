@@ -1,5 +1,9 @@
 using Midi
 using Base.Test
 
-# write your own tests here
-@test 1 == 1
+include("variablelength.jl")
+include("sysexevent.jl")
+include("note.jl")
+include("midievent.jl")
+include("metaevent.jl")
+include("miditrack.jl")
