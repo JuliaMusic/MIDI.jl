@@ -7,6 +7,7 @@ type MIDITrack
     events::Array{TrackEvent, 1}
 
     MIDITrack() = new(TrackEvent[])
+    MIDITrack(events) = new(events)
 end
 
 function readtrack(f::IO)

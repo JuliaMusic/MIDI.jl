@@ -34,25 +34,37 @@ function test()
     comparefiles("test4.mid", "test_out.mid")
 
     C = Midi.Note(60, 96, 0, 0)
-    D = Midi.Note(62, 96, 96, 0)
+    G = Midi.Note(67, 96, 48, 0)
+    E = Midi.Note(64, 96, 96, 0)
     inc = 96
 
     file = Midi.MIDIFile()
     track = Midi.MIDITrack()
 
     notes = Midi.Note[]
+    i = 0
     for v in values(GM)
         push!(notes, C)
-        push!(notes, D)
-        Midi.programchange(track, D.position + inc, uint8(0), v)
+        push!(notes, E)
+        push!(notes, G)
+        Midi.programchange(track, E.position + inc + inc, uint8(0), v)
         C.position += inc
-        D.position += inc
+        E.position += inc
+        G.position += inc
         C = Midi.Note(60, 96, C.position+inc, 0)
-        D = Midi.Note(62, 96, D.position+inc, 0)
-        break
+        E = Midi.Note(64, 96, E.position+inc, 0)
+        G = Midi.Note(67, 96, G.position+inc, 0)
+        i += 1
+        if i == 3
+            break
+        end
     end
 
     Midi.addnotes(track, notes)
+
+    buf = IOBuffer()
+    writetrack(buf, track)
+    println(track)
 
     for (n1, n2) in zip(notes, Midi.getnotes(track))
         println("$(n1) == $(n2)")
