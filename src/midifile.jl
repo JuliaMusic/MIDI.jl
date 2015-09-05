@@ -25,13 +25,8 @@ function readmidifile(filename::String)
 
     # Get the number of tracks and time division
     numberoftracks = ntoh(read(f, Uint16))
-
     midifile.timedivision = ntoh(read(f, Int16))
-
-    for tracknum = [1:numberoftracks]
-        track = readtrack(f)
-        push!(midifile.tracks, track)
-    end
+    midifile.tracks = [readtrack(f) for x in 1:numberoftracks]
     close(f)
 
     midifile
@@ -46,9 +41,7 @@ function writemidifile(filename::String, data::MIDIFile)
     write(f, hton(convert(Uint16, length(data.tracks))))
     write(f, hton(data.timedivision))
 
-    for track in data.tracks
-        writetrack(f, track)
-    end
+    map(track->writetrack(f, track), data.tracks)
 
     close(f)
 end

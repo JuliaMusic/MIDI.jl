@@ -11,15 +11,9 @@ end
 function readmetaevent(dT::Int64, f::IO)
     # Meta events are 0xFF - type (1 byte) - variable length data length - data bytes
     skip(f, 1) # Skip the 0xff that starts the event
-    data = Uint8[]
     metatype = read(f, Uint8)
     datalength = readvariablelength(f)
-    bytecount = 0
-    while bytecount < datalength
-        b = read(f, Uint8)
-        push!(data, b)
-        bytecount += 1
-    end
+    data = read(f, Uint8, datalength)
 
     MetaEvent(dT, metatype, data)
 end
@@ -29,9 +23,7 @@ function writeevent(f::IO, event::MetaEvent)
     write(f, META)
     write(f, event.metatype)
     writevariablelength(f, convert(Int64, length(event.data)))
-    for b in event.data
-        write(f, b)
-    end
+    write(f, event.data)
 end
 
 export MetaEvent

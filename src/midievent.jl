@@ -21,8 +21,6 @@ function channelnumber(m::MIDIEvent)
 end
 
 function readmidievent(dT::Int64, f::IO, laststatus::Uint8)
-    data = Uint8[]
-
     statusbyte = read(f, Uint8)
     highnybble = statusbyte & 0b11110000
 
@@ -36,14 +34,7 @@ function readmidievent(dT::Int64, f::IO, laststatus::Uint8)
         skip(f, -1)
     end
 
-    bytecount = 0
-
-    while bytecount < toread
-        b = read(f, Uint8)
-        push!(data, b)
-
-        bytecount += 1
-    end
+    data = read(f, Uint8, toread)
 
     MIDIEvent(dT, statusbyte, data)
 end
@@ -55,9 +46,7 @@ function writeevent(f::IO, event::MIDIEvent, writestatus::Bool)
         write(f, event.status)
     end
 
-    for b in event.data
-        write(f, b)
-    end
+    write(f, event.data)
 end
 
 function writeevent(f::IO, event::MIDIEvent)
