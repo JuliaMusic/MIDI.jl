@@ -14,9 +14,6 @@ function readsysexevent(dT::Uint8, f::IO)
     b = read(f, Uint8)
     while isdatabyte(b)
         push!(data, b)
-        if eof(f)
-            return SysexEvent(dT, statusbyte, data)
-        end
         b = read(f, Uint8)
     end
 
@@ -35,9 +32,7 @@ function writeevent(f::IO, event::SysexEvent)
     writevariablelength(f, event.dT)
     write(f, SYSEX)
     writevariablelength(f, length(event.data) + 1) # +1 for the ending F7
-    for b in event.data
-        write(f, b)
-    end
+    write(f, event.data)
     write(f, 0xF7)
 end
 

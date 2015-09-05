@@ -55,7 +55,7 @@ function readtrack(f::IO)
 
     # Validate that the track ends with a track end event
     lastevent = track.events[length(track.events)]
-    if typeof(lastevent) != MetaEvent || lastevent.metatype != METATRACKEND
+    if !isa(lastevent, MetaEvent) || lastevent.metatype != METATRACKEND
         error("Invalid track - does not end with track metaevent")
     else
         # strip the track end event - we don't need to worry about manipulating it
@@ -74,9 +74,9 @@ function writetrack(f::IO, track::MIDITrack)
     event_buffer = IOBuffer()
 
     for event in track.events
-        if typeof(event) == MIDIEvent && previous_status != 0 && previous_status == event.status
+        if isa(event, MIDIEvent) && previous_status != 0 && previous_status == event.status
             writeevent(event_buffer, event, false)
-        elseif typeof(event) == MIDIEvent
+        elseif isa(event, MIDIEvent)
             writeevent(event_buffer, event)
             previous_status = event.status
         else
@@ -91,10 +91,7 @@ function writetrack(f::IO, track::MIDITrack)
     bytes = takebuf_array(event_buffer)
 
     write(f, hton(uint32(length(bytes))))
-
-    for b in bytes
-        write(f, b)
-    end
+    write(f, bytes)
 end
 
 function addevent(track::MIDITrack, time::Integer, newevent::TrackEvent)
