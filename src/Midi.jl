@@ -8,7 +8,6 @@ include("note.jl")
 include("miditrack.jl")
 include("midifile.jl")
 include("constants.jl")
-include("util.jl")
 include("variablelength.jl")
 
 end
