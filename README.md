@@ -1,14 +1,14 @@
 Midi
 ====
 
-A basic library for reading and writing midi files. Not currently in a complete or especially useful state. I'm working on it...
+A basic library for reading and writing MIDI files. Not currently in a complete or especially useful state. I'm working on it...
 
 This is my first major Julia project, and is likely not idiomatic. It's also probably quite buggy. Pull requests and suggestions are more than welcome. If you feel the API is clumsy or incomplete, please create a feature request.
 
 Midi: The least you need to know
 ================================
 
-A midi file typically comes in pieces called tracks that play simultaneously. Each track can have 16 different channels, numbered 0-15. Each channel can be thought of as a single instrument, though that instrument can be changed throughout that track. A track contains events. The three types of events are MIDI events, meta events, and system exclusive (SYSEX) events.
+A MIDI file typically comes in pieces called tracks that play simultaneously. Each track can have 16 different channels, numbered 0-15. Each channel can be thought of as a single instrument, though that instrument can be changed throughout that track. A track contains events. The three types of events are MIDI events, meta events, and system exclusive (SYSEX) events.
 
 All events begin with the time since the last event (dT) in ticks. The number of ticks per beat is given by the timedivision of the file. To make manipulating events easier, there's an `addevent(track::MIDITrack, time::Integer, newevent::TrackEvent)` function specified that lets you specify absolute time (in ticks).
 
@@ -132,4 +132,4 @@ end
 
 If you want to do more than just add notes to a track and change the program, you'll need to create the events yourself.\\ Generally, you won't want to set dT yourself. Just use `function addevent(track::MIDITrack, time::Integer, newevent::TrackEvent)` instead, and give it an absolute time within the track.
 
-Some constants for events have been provided in constants.jl. Please take a look.
+Some constants for midi events and program changes have been provided in constants.jl.
