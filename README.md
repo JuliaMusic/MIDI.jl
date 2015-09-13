@@ -1,7 +1,7 @@
 Midi
 ====
 
-A basic library for reading and writing MIDI files. Not currently in a complete or especially useful state. I'm working on it...
+A basic library for reading and writing MIDI data. 
 
 This is my first major Julia project, and is likely not idiomatic. It's also probably quite buggy. Pull requests and suggestions are more than welcome. If you feel the API is clumsy or incomplete, please create a feature request.
 
