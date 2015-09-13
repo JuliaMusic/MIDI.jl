@@ -1,3 +1,5 @@
+# Fields should be self-explanatory. Position is an absolute time (in ticks) within the track. 
+# Please note that velocity cannot be higher than 127 (0x7F).
 type Note
     value::Uint8
     duration::Uint64
@@ -49,3 +51,5 @@ const Cb = 11
     n1.position == n2.position &&
     n1.channel == n2.channel &&
     n1.velocity == n2.velocity
+
+export Bs, C, Cs, Db, D, Ds, Eb, E, Fb, Es, F, Fs, Gb, G, Gs, Ab, A, As, Bb, B, Cb

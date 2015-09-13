@@ -1,11 +1,12 @@
 type MIDIFile
-    format::Uint16
-    timedivision::Int16
-    tracks::Array{MIDITrack, 1}
+    format::Uint16 # The format of the file. Can be 0, 1 or 2
+    timedivision::Int16 # The time division of the track. Ticks per beat.
+    tracks::Array{MIDITrack, 1} # An array of tracks
 
     MIDIFile() = new(0,96,MIDITrack[])
 end
 
+# Reads a file into a MIDIFile data type
 function readmidifile(filename::String)
     f = open(filename)
 
@@ -32,6 +33,7 @@ function readmidifile(filename::String)
     midifile
 end
 
+# Writes a midi file to the given filename
 function writemidifile(filename::String, data::MIDIFile)
     f = open(filename, "w")
 

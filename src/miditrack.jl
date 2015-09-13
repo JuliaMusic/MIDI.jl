@@ -94,6 +94,7 @@ function writetrack(f::IO, track::MIDITrack)
     write(f, bytes)
 end
 
+# Adds an event to a track, with an absolute time
 function addevent(track::MIDITrack, time::Integer, newevent::TrackEvent)
     tracktime = 0
     addedevent = false
@@ -122,18 +123,21 @@ function addevent(track::MIDITrack, time::Integer, newevent::TrackEvent)
     end
 end
 
+# Adds a note to a track
 function addnote(track::MIDITrack, note::Note)
     for (status, position) in [(NOTEON, note.position), (NOTEOFF, note.position + note.duration)]
         addevent(track, position, MIDIEvent(0, status | note.channel, Uint8[note.value, note.velocity]))
     end
 end
 
+# Adds a series of notes to a track
 function addnotes(track::MIDITrack, notes::Array{Note, 1})
     for note in notes
         addnote(track, note)
     end
 end
 
+# Gets all of the notes on a track
 function getnotes(track::MIDITrack)
     # Read through events until a noteon is found
     notes = Note[]
@@ -155,6 +159,7 @@ function getnotes(track::MIDITrack)
     sort!(notes, lt=((x, y)->x.position<y.position))
 end
 
+# Change the program (instrument) on the given channel. Time is absolute, not relative to the last event.
 function programchange(track::MIDITrack, time::Integer, channel::Uint8, program::Uint8)
     program = program - 1 # Program changes are typically given in range 1-128, but represented internally as 0-127.
     addevent(track, time, MIDIEvent(0, PROGRAMCHANGE | channel, Uint8[program]))
