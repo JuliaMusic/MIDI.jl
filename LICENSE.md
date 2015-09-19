@@ -1,4 +1,4 @@
-The Midi.jl package is licensed under the MIT "Expat" License:
+The MIDI.jl package is licensed under the MIT "Expat" License:
 
 > Copyright (c) 2015: Joel Hobson.
 >

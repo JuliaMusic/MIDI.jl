@@ -12,7 +12,7 @@ function isdatabyte(b::Uint8)
     !isstatusbyte(b)
 end
 
-function ismidievent(b::Uint8)
+function isMIDIevent(b::Uint8)
     !ismetaevent(b) && !issysexevent(b)
 end
 
@@ -20,7 +20,7 @@ function channelnumber(m::MIDIEvent)
     0x0F & m.status
 end
 
-function readmidievent(dT::Int64, f::IO, laststatus::Uint8)
+function readMIDIevent(dT::Int64, f::IO, laststatus::Uint8)
     statusbyte = read(f, Uint8)
     highnybble = statusbyte & 0b11110000
 

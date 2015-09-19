@@ -1,7 +1,7 @@
-# Midi message types
+# MIDI message types
 
 # Channel voice message identifiers. Only the first four bits matter, the remaining bits indicate the channel
-# These should be used as masks with the actual midi event header
+# These should be used as masks with the actual MIDI event header
 const NOTEOFF = 0b10000000
 const NOTEON = 0b10010000
 const POLYPHONICKEYPRESSURE = 0b10100000
@@ -21,7 +21,7 @@ const METATRACKEND = 0x2F
 const MTHD = "MThd"
 const MTRK = "MTrk"
 
-# Number of data bytes following a given midi event type
+# Number of data bytes following a given MIDI event type
 const EVENTTYPETOLENGTH = [
     NOTEOFF => 2,
     NOTEON => 2,

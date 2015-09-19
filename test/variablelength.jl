@@ -6,11 +6,11 @@ testvalues = [
 ]
 
 for (input, output) in testvalues
-    @test Midi.readvariablelength(IOBuffer(input)) == output
+    @test MIDI.readvariablelength(IOBuffer(input)) == output
 end
 
 for (output, input) in testvalues
     buf = IOBuffer()
-    Midi.writevariablelength(buf, int64(input))
+    MIDI.writevariablelength(buf, int64(input))
     @test takebuf_array(buf) == output
 end
