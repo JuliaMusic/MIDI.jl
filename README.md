@@ -1,7 +1,7 @@
 MIDI
 ====
 
-A basic library for reading and writing MIDI files. Not currently in a complete or especially useful state. I'm working on it...
+A basic library for reading and writing MIDI data.
 
 This is my first major Julia project, and is likely not idiomatic. It's also probably quite buggy. Pull requests and suggestions are more than welcome. If you feel the API is clumsy or incomplete, please create a feature request.
 
@@ -132,4 +132,4 @@ end
 
 If you want to do more than just add notes to a track and change the program, you'll need to create the events yourself.\\ Generally, you won't want to set dT yourself. Just use `function addevent(track::MIDITrack, time::Integer, newevent::TrackEvent)` instead, and give it an absolute time within the track.
 
-Some constants for events have been provided in constants.jl. Please take a look.
+Some constants for MIDI events and program changes have been provided in constants.jl.
