@@ -13,7 +13,7 @@ end
 function readtrack(f::IO)
     mtrk = join(map(char, read(f, Uint8, 4)))
     if mtrk != MTRK
-        error("Not a valid midi file. Expected MTrk, got $(mtrk) starting at byte $(hex(position(f)-4, 2))")
+        error("Not a valid MIDI file. Expected MTrk, got $(mtrk) starting at byte $(hex(position(f)-4, 2))")
     end
     track = MIDITrack()
 
@@ -36,8 +36,8 @@ function readtrack(f::IO)
         skip(f, -1)
 
         local event
-        if ismidievent(event_start)
-            event = readmidievent(dT, f, laststatus)
+        if isMIDIevent(event_start)
+            event = readMIDIevent(dT, f, laststatus)
             laststatus = event.status
         elseif issysexevent(event_start)
             event = readsysexevent(dT, f)
@@ -68,7 +68,7 @@ end
 function writetrack(f::IO, track::MIDITrack)
     write(f, convert(Array{Uint8, 1}, MTRK)) # Track identifier
 
-    writingmidi = false
+    writingMIDI = false
     previous_status = uint8(0)
 
     event_buffer = IOBuffer()
@@ -148,7 +148,7 @@ function getnotes(track::MIDITrack)
             duration = uint64(0)
             for event2 in track.events[i+1:length(track.events)]
                 duration += event2.dT
-                # If we have a midi event & it's a noteoff, and it's for the same note as the first event we found, make a note
+                # If we have a MIDI event & it's a noteoff, and it's for the same note as the first event we found, make a note
                 if isa(event2, MIDIEvent) && event2.status & 0xF0 == NOTEOFF && event.data[1] == event2.data[1]
                     push!(notes, Note(event.data[1], duration, tracktime, event.status & 0x0F, event.data[2]))
                     break

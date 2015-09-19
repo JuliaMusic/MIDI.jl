@@ -1,14 +1,14 @@
-Midi
+MIDI
 ====
 
-A basic library for reading and writing midi files. Not currently in a complete or especially useful state. I'm working on it...
+A basic library for reading and writing MIDI files. Not currently in a complete or especially useful state. I'm working on it...
 
 This is my first major Julia project, and is likely not idiomatic. It's also probably quite buggy. Pull requests and suggestions are more than welcome. If you feel the API is clumsy or incomplete, please create a feature request.
 
-Midi: The least you need to know
+MIDI: The least you need to know
 ================================
 
-A midi file typically comes in pieces called tracks that play simultaneously. Each track can have 16 different channels, numbered 0-15. Each channel can be thought of as a single instrument, though that instrument can be changed throughout that track. A track contains events. The three types of events are MIDI events, meta events, and system exclusive (SYSEX) events.
+A MIDI file typically comes in pieces called tracks that play simultaneously. Each track can have 16 different channels, numbered 0-15. Each channel can be thought of as a single instrument, though that instrument can be changed throughout that track. A track contains events. The three types of events are MIDI events, meta events, and system exclusive (SYSEX) events.
 
 All events begin with the time since the last event (dT) in ticks. The number of ticks per beat is given by the timedivision of the file. To make manipulating events easier, there's an `addevent(track::MIDITrack, time::Integer, newevent::TrackEvent)` function specified that lets you specify absolute time (in ticks).
 
@@ -21,12 +21,12 @@ Sysex events are used to transmit arbitrary data. Their contents depend on the i
 Usage
 =====
 
-Opening and writing a midi file:
+Opening and writing a MIDI file:
 --------------------------------
 
 ```
-midifile = readmidifile("test.mid")
-writemidifile("filename.mid", midifile)
+MIDIfile = readMIDIfile("test.mid")
+writeMIDIfile("filename.mid", MIDIfile)
 ```
 
 Creating a new file with arbitrary notes
@@ -34,33 +34,33 @@ Creating a new file with arbitrary notes
 
 ```
 # Arguments are pitch, duration (in ticks), position in track (in ticks), and velocity (0-127)
-C = Midi.Note(60, 96, 0, 0)
-E = Midi.Note(64, 96, 48, 0)
-G = Midi.Note(67, 96, 96, 0)
+C = MIDI.Note(60, 96, 0, 0)
+E = MIDI.Note(64, 96, 48, 0)
+G = MIDI.Note(67, 96, 96, 0)
 
 inc = 96
-file = Midi.MIDIFile()
-track = Midi.MIDITrack()
-notes = Midi.Note[]
+file = MIDI.MIDIFile()
+track = MIDI.MIDITrack()
+notes = MIDI.Note[]
 i = 0
-for v in values(Midi.GM) # GM is a map of all the general midi instrument names and their codes
+for v in values(MIDI.GM) # GM is a map of all the general MIDI instrument names and their codes
     push!(notes, C)
     push!(notes, E)
     push!(notes, G)
     # This changes the instrument currently used
-    Midi.programchange(track, G.position + inc + inc, uint8(0), v)
+    MIDI.programchange(track, G.position + inc + inc, uint8(0), v)
     C.position += inc
     E.position += inc
     G.position += inc
-    C = Midi.Note(60, 96, C.position+inc, 0)
-    E = Midi.Note(64, 96, E.position+inc, 0)
-    G = Midi.Note(67, 96, G.position+inc, 0)
+    C = MIDI.Note(60, 96, C.position+inc, 0)
+    E = MIDI.Note(64, 96, E.position+inc, 0)
+    G = MIDI.Note(67, 96, G.position+inc, 0)
     i += 1
 end
 
-Midi.addnotes(track, notes)
+MIDI.addnotes(track, notes)
 push!(file.tracks, track)
-Midi.writemidifile("test_out.mid", file)
+MIDI.writeMIDIfile("test_out.mid", file)
 ```
 
 Data structures and functions you should know
@@ -76,9 +76,9 @@ type MIDIFile
 end
 ```
 
-`function readmidifile(filename::String)` Reads a file into a MIDIFile data type
+`function readMIDIfile(filename::String)` Reads a file into a MIDIFile data type
 
-`function writemidifile(filename::String, data::MIDIFile)` Writes a midi file to the given filename
+`function writeMIDIfile(filename::String, data::MIDIFile)` Writes a MIDI file to the given filename
 
 ```
 type MIDITrack
@@ -109,7 +109,7 @@ type Note
 end
 ```
 
-Value is a number indicating pitch class & octave (middle-C is 60). Position is an absolute time (in ticks) within the track. Please note that velocity cannot be higher than 127 (0x7F). Integers can be added to, or subtracted from notes to change the pitch, and notes can be directly compared with ==. Constants exist for the different pitch values at octave 0. Midi.C, Midi.Cs, Midi.Db, etc. Enharmonic note constants exist as well (Midi.Fb). Just add 12*n to the note to transpose to octave n.
+Value is a number indicating pitch class & octave (middle-C is 60). Position is an absolute time (in ticks) within the track. Please note that velocity cannot be higher than 127 (0x7F). Integers can be added to, or subtracted from notes to change the pitch, and notes can be directly compared with ==. Constants exist for the different pitch values at octave 0. MIDI.C, MIDI.Cs, MIDI.Db, etc. Enharmonic note constants exist as well (MIDI.Fb). Just add 12*n to the note to transpose to octave n.
 
 ```
 type MIDIEvent <: TrackEvent

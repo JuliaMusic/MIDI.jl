@@ -1,6 +1,6 @@
 function readvariablelength(f::IO)
     #=
-    Variable length numbers in midi files are represented as a sequence of bytes.
+    Variable length numbers in MIDI files are represented as a sequence of bytes.
     If the first bit is 0, we're looking at the last byte in the sequence. The remaining
     7 bits indicate the number.
     =#

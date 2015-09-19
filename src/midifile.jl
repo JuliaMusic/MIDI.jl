@@ -7,34 +7,34 @@ type MIDIFile
 end
 
 # Reads a file into a MIDIFile data type
-function readmidifile(filename::String)
+function readMIDIfile(filename::String)
     f = open(filename)
 
-    midifile = MIDIFile()
-    # Check that it's a valid midi file - first four bytes should spell MThd
+    MIDIfile = MIDIFile()
+    # Check that it's a valid MIDI file - first four bytes should spell MThd
     mthd = join(map(char, read(f, Uint8, 4)))
     if mthd != MTHD
-        error("Not a valid midi file. Expected first 4 bytes to spell 'MThd', got $(mthd)")
+        error("Not a valid MIDI file. Expected first 4 bytes to spell 'MThd', got $(mthd)")
     end
 
     # Skip the next four bytes - this is the header size, and it's always equal to 6.
     skip(f, 4)
 
     # Read the format code. 0 = single track, 1 = multiple tracks, 2 = multiple songs
-    # Remember - midi files store data in big-endian format, which is why ntoh is used
-    midifile.format = ntoh(read(f, Uint16))
+    # Remember - MIDI files store data in big-endian format, which is why ntoh is used
+    MIDIfile.format = ntoh(read(f, Uint16))
 
     # Get the number of tracks and time division
     numberoftracks = ntoh(read(f, Uint16))
-    midifile.timedivision = ntoh(read(f, Int16))
-    midifile.tracks = [readtrack(f) for x in 1:numberoftracks]
+    MIDIfile.timedivision = ntoh(read(f, Int16))
+    MIDIfile.tracks = [readtrack(f) for x in 1:numberoftracks]
     close(f)
 
-    midifile
+    MIDIfile
 end
 
-# Writes a midi file to the given filename
-function writemidifile(filename::String, data::MIDIFile)
+# Writes a MIDI file to the given filename
+function writeMIDIfile(filename::String, data::MIDIFile)
     f = open(filename, "w")
 
     write(f, convert(Array{Uint8, 1}, MTHD)) # File identifier
@@ -48,4 +48,4 @@ function writemidifile(filename::String, data::MIDIFile)
     close(f)
 end
 
-export MIDIFile, readmidifile, writemidifile
+export MIDIFile, readMIDIfile, writeMIDIfile
