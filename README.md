@@ -132,4 +132,4 @@ end
 
 If you want to do more than just add notes to a track and change the program, you'll need to create the events yourself.\\ Generally, you won't want to set dT yourself. Just use `function addevent(track::MIDITrack, time::Integer, newevent::TrackEvent)` instead, and give it an absolute time within the track.
 
-Some constants for MIDI events and program changes have been provided in constants.jl.
+Some constants for MIDI events and program changes have been provided in constants.jl. Have fun!
