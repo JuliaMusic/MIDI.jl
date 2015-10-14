@@ -11,7 +11,7 @@ type MIDITrack
 end
 
 function readtrack(f::IO)
-    mtrk = join(map(char, read(f, Uint8, 4)))
+    mtrk = join(map(char, read(f, UInt8, 4)))
     if mtrk != MTRK
         error("Not a valid MIDI file. Expected MTrk, got $(mtrk) starting at byte $(hex(position(f)-4, 2))")
     end
@@ -32,7 +32,7 @@ function readtrack(f::IO)
 
         # Figure out the event type
         # Remember, endianness is byte order, not bit order. No need to ntoh here.
-        event_start = read(f, Uint8)
+        event_start = read(f, UInt8)
         skip(f, -1)
 
         local event
@@ -66,7 +66,7 @@ function readtrack(f::IO)
 end
 
 function writetrack(f::IO, track::MIDITrack)
-    write(f, convert(Array{Uint8, 1}, MTRK)) # Track identifier
+    write(f, convert(Array{UInt8, 1}, MTRK)) # Track identifier
 
     writingMIDI = false
     previous_status = uint8(0)
@@ -86,7 +86,7 @@ function writetrack(f::IO, track::MIDITrack)
     end
 
     # Write the track end event
-    writeevent(event_buffer, MetaEvent(0, METATRACKEND, Uint8[]))
+    writeevent(event_buffer, MetaEvent(0, METATRACKEND, UInt8[]))
 
     bytes = takebuf_array(event_buffer)
 
@@ -126,7 +126,7 @@ end
 # Adds a note to a track
 function addnote(track::MIDITrack, note::Note)
     for (status, position) in [(NOTEON, note.position), (NOTEOFF, note.position + note.duration)]
-        addevent(track, position, MIDIEvent(0, status | note.channel, Uint8[note.value, note.velocity]))
+        addevent(track, position, MIDIEvent(0, status | note.channel, UInt8[note.value, note.velocity]))
     end
 end
 
@@ -160,7 +160,7 @@ function getnotes(track::MIDITrack)
 end
 
 # Change the program (instrument) on the given channel. Time is absolute, not relative to the last event.
-function programchange(track::MIDITrack, time::Integer, channel::Uint8, program::Uint8)
+function programchange(track::MIDITrack, time::Integer, channel::UInt8, program::UInt8)
     program = program - 1 # Program changes are typically given in range 1-128, but represented internally as 0-127.
-    addevent(track, time, MIDIEvent(0, PROGRAMCHANGE | channel, Uint8[program]))
+    addevent(track, time, MIDIEvent(0, PROGRAMCHANGE | channel, UInt8[program]))
 end

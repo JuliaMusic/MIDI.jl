@@ -22,7 +22,7 @@ const MTHD = "MThd"
 const MTRK = "MTrk"
 
 # Number of data bytes following a given MIDI event type
-const EVENTTYPETOLENGTH = [
+const EVENTTYPETOLENGTH = Dict(
     NOTEOFF => 2,
     NOTEON => 2,
     POLYPHONICKEYPRESSURE => 2,
@@ -30,9 +30,9 @@ const EVENTTYPETOLENGTH = [
     PROGRAMCHANGE => 1,
     CHANNELPRESSURE => 1,
     PITCHWHEELCHANGE => 2,
-]
+)
 
-const GM = [
+const GM = Dict(
     "AcousticGrandPiano" => uint8(1),
     "BrightAcousticPiano" => uint8(2),
     "ElectricGrandPiano" => uint8(3),
@@ -161,6 +161,6 @@ const GM = [
     "Helicopter" => uint8(126),
     "Applause" => uint8(127),
     "Gunshot" => uint8(128)
-]
+)
 
 export GM, NOTEOFF, NOTEON, POLYPHONICKEYPRESSURE, CONTROLCHANGE, PROGRAMCHANGE, CHANNELPRESSURE, PITCHWHEELCHANGE

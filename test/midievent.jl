@@ -5,9 +5,9 @@ for status in statusbytes
     # data length depends on the high nybble of the status byte
     # dT is a variable length value which is handled by readvariablelength and not readMIDIevent. We don't need to test it here, which
     # is why it's set to 0 in each case.
-    input = vcat([0x00, status], zeros(Uint8, MIDI.EVENTTYPETOLENGTH[status]))
-    input_no_status = vcat([0x00], zeros(Uint8, MIDI.EVENTTYPETOLENGTH[status]))
-    output = MIDI.MIDIEvent(0, status, zeros(Uint8, MIDI.EVENTTYPETOLENGTH[status]))
+    input = vcat([0x00, status], zeros(UInt8, MIDI.EVENTTYPETOLENGTH[status]))
+    input_no_status = vcat([0x00], zeros(UInt8, MIDI.EVENTTYPETOLENGTH[status]))
+    output = MIDI.MIDIEvent(0, status, zeros(UInt8, MIDI.EVENTTYPETOLENGTH[status]))
 
     result = MIDI.readMIDIevent(int64(input[1]), IOBuffer(input[2:length(input)]), uint8(0))
     @test result.dT == output.dT && result.status == status && result.data == output.data
