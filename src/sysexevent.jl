@@ -1,20 +1,20 @@
 type SysexEvent <: TrackEvent
     dT::Int
-    data::Array{Uint8,1}
+    data::Array{UInt8,1}
 end
 
-function issysexevent(b::Uint8)
+function issysexevent(b::UInt8)
     b == 0xF0
 end
 
-function readsysexevent(dT::Uint8, f::IO)
-    data = Uint8[]
-    read(f, Uint8) # Eat the SYSEX that's on top of f
+function readsysexevent(dT::UInt8, f::IO)
+    data = UInt8[]
+    read(f, UInt8) # Eat the SYSEX that's on top of f
     datalength = readvariablelength(f)
-    b = read(f, Uint8)
+    b = read(f, UInt8)
     while isdatabyte(b)
         push!(data, b)
-        b = read(f, Uint8)
+        b = read(f, UInt8)
     end
 
     if b != 0xF7

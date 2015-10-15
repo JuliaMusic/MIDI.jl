@@ -7,8 +7,8 @@ function readvariablelength(f::IO)
     mask = 0b10000000
     notmask = ~mask
     # Read the first byte
-    b = read(f, Uint8)
-    bytes = Uint8[]
+    b = read(f, UInt8)
+    bytes = UInt8[]
     if (b & mask) == 0
         # We're done here. The first bit isn't set, so the number is contained in the 7 remaining bits.
         convert(Int64, b)
@@ -17,7 +17,7 @@ function readvariablelength(f::IO)
         while (b & mask) == mask
             result <<= 7
             result += (b & notmask)
-            b = read(f, Uint8)
+            b = read(f, UInt8)
         end
         result = (result << 7) + b # No need to "& notmask", since the most significant bit is 0
         result
@@ -28,7 +28,7 @@ function writevariablelength(f::IO, number::Int64)
     if number < 128
         write(f, uint8(number))
     else
-        bytes = Uint8[]
+        bytes = UInt8[]
 
         push!(bytes, uint8(number & 0x7F)) # Get the bottom 7 bits
         number >>>= 7 # Is there a bug with Julia here? Testing in the REPL on negative numbers give >> and >>> the same result

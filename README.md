@@ -68,7 +68,7 @@ Data structures and functions you should know
 
 ```
 type MIDIFile
-    format::Uint16 # The format of the file. Can be 0, 1 or 2
+    format::UInt16 # The format of the file. Can be 0, 1 or 2
     timedivision::Int16 # The time division of the track in ticks per beat.
     tracks::Array{MIDITrack, 1}
 
@@ -76,9 +76,9 @@ type MIDIFile
 end
 ```
 
-`function readMIDIfile(filename::String)` Reads a file into a MIDIFile data type
+`function readMIDIfile(filename::AbstractString)` Reads a file into a MIDIFile data type
 
-`function writeMIDIfile(filename::String, data::MIDIFile)` Writes a MIDI file to the given filename
+`function writeMIDIfile(filename::AbstractString, data::MIDIFile)` Writes a MIDI file to the given filename
 
 ```
 type MIDITrack
@@ -95,15 +95,15 @@ end
 
 `function getnotes(track::MIDITrack)` Gets all of the notes on a track
 
-`function programchange(track::MIDITrack, time::Integer, channel::Uint8, program::Uint8)` Change the program (instrument) on the given channel. Time is absolute, not relative to the last event.
+`function programchange(track::MIDITrack, time::Integer, channel::UInt8, program::UInt8)` Change the program (instrument) on the given channel. Time is absolute, not relative to the last event.
 
 ```
 type Note
-    value::Uint8
-    duration::Uint64
-    position::Uint64
-    channel::Uint8
-    velocity::Uint8
+    value::UInt8
+    duration::UInt64
+    position::UInt64
+    channel::UInt8
+    velocity::UInt8
 
     Note(value, duration, position, channel, velocity=0x7F)
 end
@@ -114,19 +114,19 @@ Value is a number indicating pitch class & octave (middle-C is 60). Position is 
 ```
 type MIDIEvent <: TrackEvent
     dT::Int
-    status::Uint8
-    data::Array{Uint8,1}
+    status::UInt8
+    data::Array{UInt8,1}
 end
 
 type MetaEvent <: TrackEvent
     dT::Int
-    metatype::Uint8
-    data::Array{Uint8,1}
+    metatype::UInt8
+    data::Array{UInt8,1}
 end
 
 type SysexEvent <: TrackEvent
     dT::Int
-    data::Array{Uint8,1}
+    data::Array{UInt8,1}
 end
 ```
 
