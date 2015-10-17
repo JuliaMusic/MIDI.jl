@@ -11,7 +11,7 @@ invalidtestvalues = [
 ]
 
 for (input, output) in validtestvalues
-    result = MIDI.readmetaevent(int64(input[1]), IOBuffer(input[2:length(input)]))
+    result = MIDI.readmetaevent(Int64(input[1]), IOBuffer(input[2:length(input)]))
     @test result.dT == output.dT && result.data == output.data
 end
 

@@ -44,7 +44,7 @@ for v in UInt8[1,2,3]
     push!(notes, C)
     push!(notes, E)
     push!(notes, G)
-    MIDI.programchange(track, E.position + inc + inc, uint8(0), v)
+    MIDI.programchange(track, E.position + inc + inc, UInt8(0), v)
     C.position += inc
     E.position += inc
     G.position += inc
