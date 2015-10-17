@@ -26,14 +26,14 @@ end
 
 function writevariablelength(f::IO, number::Int64)
     if number < 128
-        write(f, uint8(number))
+        write(f, UInt8(number))
     else
         bytes = UInt8[]
 
-        push!(bytes, uint8(number & 0x7F)) # Get the bottom 7 bits
+        push!(bytes, UInt8(number & 0x7F)) # Get the bottom 7 bits
         number >>>= 7 # Is there a bug with Julia here? Testing in the REPL on negative numbers give >> and >>> the same result
         while number > 0
-            push!(bytes, uint8(((number & 0x7F) | 0x80)))
+            push!(bytes, UInt8(((number & 0x7F) | 0x80)))
             number >>>= 7
             continuation = 0x80
         end
