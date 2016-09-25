@@ -12,7 +12,7 @@ function readMIDIfile(filename::AbstractString)
 
     MIDIfile = MIDIFile()
     # Check that it's a valid MIDI file - first four bytes should spell MThd
-    mthd = join(map(char, read(f, UInt8, 4)))
+    mthd = join(map(Char, read(f, UInt8, 4)))
     if mthd != MTHD
         error("Not a valid MIDI file. Expected first 4 bytes to spell 'MThd', got $(mthd)")
     end
@@ -38,7 +38,7 @@ function writeMIDIfile(filename::AbstractString, data::MIDIFile)
     f = open(filename, "w")
 
     write(f, convert(Array{UInt8, 1}, MTHD)) # File identifier
-    write(f, hton(convert(Uint32, 6))) # Header length
+    write(f, hton(convert(UInt32, 6))) # Header length
     write(f, hton(data.format))
     write(f, hton(convert(UInt16, length(data.tracks))))
     write(f, hton(data.timedivision))
