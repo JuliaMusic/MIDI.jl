@@ -22,5 +22,5 @@ for (output, input) in validtestvalues
 end
 
 for (input, errtype) in invalidtestvalues
-    @test_throws errtype MIDI.readsysexevent(input[1], IOBuffer(input[2:length(input)]))
+	@test_throws errtype MIDI.readsysexevent(Int64(input[1]), IOBuffer(input[2:length(input)]))
 end
