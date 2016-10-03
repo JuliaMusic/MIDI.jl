@@ -1,5 +1,5 @@
 type SysexEvent <: TrackEvent
-    dT::Int
+    dT::Int64
     data::Array{UInt8,1}
 end
 
@@ -7,7 +7,7 @@ function issysexevent(b::UInt8)
     b == 0xF0
 end
 
-function readsysexevent(dT::UInt8, f::IO)
+function readsysexevent(dT::Int64, f::IO)
     data = UInt8[]
     read(f, UInt8) # Eat the SYSEX that's on top of f
     datalength = readvariablelength(f)

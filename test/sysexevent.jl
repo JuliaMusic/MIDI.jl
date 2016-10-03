@@ -12,7 +12,7 @@ invalidtestvalues = [
 ]
 
 for (input, output) in validtestvalues
-    result = MIDI.readsysexevent(input[1], IOBuffer(input[2:length(input)]))
+	result = MIDI.readsysexevent(Int64(input[1]), IOBuffer(input[2:length(input)]))
     @test result.dT == output.dT && result.data == output.data
 end
 
@@ -23,5 +23,5 @@ for (output, input) in validtestvalues
 end
 
 for (input, errtype) in invalidtestvalues
-    @test_throws errtype MIDI.readsysexevent(input[1], IOBuffer(input[2:length(input)]))
+	@test_throws errtype MIDI.readsysexevent(Int64(input[1]), IOBuffer(input[2:length(input)]))
 end
