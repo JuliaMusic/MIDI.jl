@@ -1,4 +1,4 @@
-function type1totype0(data::MIDIFile)
+function type1totype0!(data::MIDIFile)
 	if data.format != UInt8(1)
 		error("Got type $(data.format); expecting type 1")
 	end
@@ -16,8 +16,55 @@ function type1totype0(data::MIDIFile)
 	data.tracks = data.tracks[1:1]
 	fromabsolutetime(data.tracks[1])
 	data.format = 0
+	data
 end
-export type1totype0
+
+function type1totype0(data::MIDIFile)
+	newdata = deepcopy(data)
+	type1totype0!(newdata)
+end
+
+export type1totype0, type1totype0!
+
+function type0totype1!(data::MIDIFile)
+	if data.format != UInt8(0)
+		error("Got type $(data.format); expecting type 0")
+	end
+	toabsolutetime(data.tracks[1])
+	push!(data.tracks, MIDITrack(Array{TrackEvent, 1}()))
+	nofchannels = 0
+	for event in data.tracks[1].events
+		if typeof(event) != MIDIEvent
+			push!(data.tracks[2].events, event)
+		else
+			channelnum = channelnumber(event)
+			while channelnum > nofchannels
+				push!(data.tracks, MIDITrack(Array{TrackEvent, 1}()))
+				nofchannels += 1
+			end
+			push!(data.tracks[channelnum + 2].events, event)
+		end
+	end
+	shift!(data.tracks)
+	trackstoremove = []
+	for i in 1:length(data.tracks)
+		if length(data.tracks[i].events) == 0
+			push!(trackstoremove, i)
+		else
+			fromabsolutetime(data.tracks[i])
+		end
+	end
+	deleteat!(data.tracks, trackstoremove)
+	data.format = 1
+	data
+end
+
+function type0totype1(data::MIDIFile)
+	newdata = deepcopy(data)
+	type0totype1!(newdata)
+end
+
+export type0totype1, type0totype1!
 
 function insertsorted!(events1::Array{TrackEvent, 1}, 
 					   events2::Array{TrackEvent, 1})
