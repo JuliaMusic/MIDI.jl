@@ -16,6 +16,7 @@ const SYSEX = 0xF0
 
 # Meta event types
 const METATRACKEND = 0x2F
+const METASETTEMPO = 0x51
 
 # Chunk identifiers. The different parts of the file will start with one of these
 const MTHD = "MThd"
