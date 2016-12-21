@@ -6,6 +6,14 @@ type MIDIFile
     MIDIFile() = new(0,96,MIDITrack[])
 end
 
+function readMIDIfileastype0(filename::AbstractString)
+	MIDIfile = readMIDIfile(filename)
+	if MIDIfile.format == 1
+		type1totype0!(MIDIfile)
+	end
+	MIDIfile
+end
+
 # Reads a file into a MIDIFile data type
 function readMIDIfile(filename::AbstractString)
     f = open(filename)
@@ -48,4 +56,4 @@ function writeMIDIfile(filename::AbstractString, data::MIDIFile)
     close(f)
 end
 
-export MIDIFile, readMIDIfile, writeMIDIfile
+export MIDIFile, readMIDIfile, writeMIDIfile, readMIDIfileastype0
