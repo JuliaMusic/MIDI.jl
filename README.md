@@ -33,7 +33,7 @@ Creating a new file with arbitrary notes
 ----------------------------------------
 
 ```
-# Arguments are pitch, duration (in ticks), position in track (in ticks), and velocity (0-127)
+# Arguments are pitch, duration (in ticks), position in track (in ticks), channel (0-15) and velocity (0-127)
 C = MIDI.Note(60, 96, 0, 0)
 E = MIDI.Note(64, 96, 48, 0)
 G = MIDI.Note(67, 96, 96, 0)
