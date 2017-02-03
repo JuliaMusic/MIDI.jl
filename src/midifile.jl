@@ -3,9 +3,9 @@
 Type representing a file of MIDI data.
 
 ## Fields
-format::UInt16 : The format of the file. Can be 0, 1 or 2.
-timedivision::Int16 : The time division of the track, ticks-per-beat.
-tracks::Array{MIDITrack, 1} : The array of contained tracks.
+* `format::UInt16` : The format of the file. Can be 0, 1 or 2.
+* `timedivision::Int16` : The time division of the track, ticks-per-beat.
+* `tracks::Array{MIDITrack, 1}` : The array of contained tracks.
 """
 type MIDIFile
     format::UInt16 # The format of the file. Can be 0, 1 or 2

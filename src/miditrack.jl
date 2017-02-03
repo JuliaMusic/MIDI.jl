@@ -1,3 +1,5 @@
+export getnotes, addnote, addnotes
+
 #=
 Track chunks begin with four bytes spelling out "MTrk", followed by the length
 in bytes of the track (see readvariablelength in util.jl), followed by a sequence
@@ -123,21 +125,36 @@ function addevent(track::MIDITrack, time::Integer, newevent::TrackEvent)
     end
 end
 
-# Adds a note to a track
+"""
+    addnote(track::MIDITrack, note::Note)
+Add given `note` to given `track`, internally doing all translations from
+absolute time to relative time.
+"""
 function addnote(track::MIDITrack, note::Note)
     for (status, position) in [(NOTEON, note.position), (NOTEOFF, note.position + note.duration)]
         addevent(track, position, MIDIEvent(0, status | note.channel, UInt8[note.value, note.velocity]))
     end
 end
 
-# Adds a series of notes to a track
+"""
+    addnotes(track::MIDITrack, notes::Vector{Note})
+Add given `notes` to given `track`, internally doing all translations from
+absolute time to relative time.
+"""
 function addnotes(track::MIDITrack, notes::Array{Note, 1})
     for note in notes
         addnote(track, note)
     end
 end
 
-# Gets all of the notes on a track
+"""
+    getnotes(track::MIDITrack)
+Find all NOTEON and NOTEOFF midi events in the `track` that correspond to
+the same note (pitch) and convert them into
+the `Note` datatype provided by this Package. Ordering is done based on position.
+
+Returns: `Vector{Note}`.
+"""
 function getnotes(track::MIDITrack)
     # Read through events until a noteon is found
     notes = Note[]

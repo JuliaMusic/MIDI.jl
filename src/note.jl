@@ -1,12 +1,14 @@
+export Note
+
 """
     Note <: Any
 Data structure describing a "music note".
 ## Fields:
-value::UInt8 : Pitch, starting from C0, adding one per semitone.
-duration::UInt64 : Duration in ticks.
-position::UInt64 : Position in absolute time (since beggining of track), in ticks.
-channel::UInt8 : MIDI channel of the track that the note is played on.
-velocity::UInt8 : Dynamic intensity. Cannot be higher than 127 (0x7F).
+* `value::UInt8` : Pitch, starting from C0, adding one per semitone.
+* `duration::UInt64` : Duration in ticks.
+* `position::UInt64` : Position in absolute time (since beggining of track), in ticks.
+* `channel::UInt8` : Channel of the track that the note is played on.
+* `velocity::UInt8` : Dynamic intensity. Cannot be higher than 127 (0x7F).
 """
 type Note
     value::UInt8
