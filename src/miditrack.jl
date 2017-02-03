@@ -139,17 +139,18 @@ end
 
 # Gets all of the notes on a track
 function getnotes(track::MIDITrack)
-    # Read through events until a noteon is found
     notes = Note[]
     tracktime = UInt64(0)
     for (i, event) in enumerate(track.events)
         tracktime += event.dT
-        if isa(event, MIDIEvent) && event.status & 0xF0 == NOTEON
+        # Read through events until a noteon with velocity higher tha 0 is found 
+        if isa(event, MIDIEvent) && event.status & 0xF0 == NOTEON && event.data[2] > 0
             duration = UInt64(0)
             for event2 in track.events[i+1:length(track.events)]
                 duration += event2.dT
-                # If we have a MIDI event & it's a noteoff, and it's for the same note as the first event we found, make a note
-                if isa(event2, MIDIEvent) && event2.status & 0xF0 == NOTEOFF && event.data[1] == event2.data[1]
+                # If we have a MIDI event & it's a noteoff (or a note on with 0 velocity), and it's for the same note as the first event we found, make a note
+                # Many MIDI files will encode note offs as note ons with velocity zero
+                if isa(event2, MIDI.MIDIEvent) && (event2.status & 0xF0 == MIDI.NOTEOFF || (event2.status & 0xF0 == MIDI.NOTEON && event2.data[2] == 0)) && event.data[1] == event2.data[1]
                     push!(notes, Note(event.data[1], duration, tracktime, event.status & 0x0F, event.data[2]))
                     break
                 end
