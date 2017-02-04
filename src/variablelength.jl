@@ -1,9 +1,12 @@
+export readvariablelength, writevariablelength
+"""
+    readvariablelength(f::IO)
+Variable length numbers in MIDI files are represented as a sequence of bytes.
+If the first bit is 0, we're looking at the last byte in the sequence. The remaining
+7 bits indicate the number.
+"""
 function readvariablelength(f::IO)
-    #=
-    Variable length numbers in MIDI files are represented as a sequence of bytes.
-    If the first bit is 0, we're looking at the last byte in the sequence. The remaining
-    7 bits indicate the number.
-    =#
+
     mask = 0b10000000
     notmask = ~mask
     # Read the first byte
@@ -24,7 +27,13 @@ function readvariablelength(f::IO)
     end
 end
 
-function writevariablelength(f::IO, number::Int64)
+
+"""
+    writevariablelength(f::IO, number::Int)
+Write on `f` the given `number`, firstly converting it to the "variable length" format.
+See the documentation for more.
+"""
+function writevariablelength(f::IO, number::Int)
     if number < 128
         write(f, UInt8(number))
     else

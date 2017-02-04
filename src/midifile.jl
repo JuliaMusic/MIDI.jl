@@ -1,3 +1,5 @@
+export MIDIFile, readMIDIfile, writeMIDIfile
+
 """
     MIDIFile <: Any
 Type representing a file of MIDI data.
@@ -66,5 +68,3 @@ function writeMIDIfile(filename::AbstractString, data::MIDIFile)
 
     close(f)
 end
-
-export MIDIFile, readMIDIfile, writeMIDIfile

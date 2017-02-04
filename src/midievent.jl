@@ -1,3 +1,9 @@
+export MIDIEvent
+
+"""
+    MIDIEvent <: TrackEvent
+See `TrackEvent`.
+"""
 type MIDIEvent <: TrackEvent
     dT::Int
     status::UInt8
