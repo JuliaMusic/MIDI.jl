@@ -65,3 +65,4 @@ import Base.+, Base.-, Base.==
     n1.velocity == n2.velocity
 
 export Bs, C, Cs, Db, D, Ds, Eb, E, Fb, Es, F, Fs, Gb, G, Gs, Ab, A, As, Bb, B, Cb
+export Note
