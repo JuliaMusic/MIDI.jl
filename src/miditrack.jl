@@ -191,8 +191,9 @@ end
 Change the program (instrument) on the given channel.
 Time is absolute, not relative to the last event.
 
-The `program` must be specified in the range 0-127, **not** in 1-128!
+The `program` must be specified in the range 1-128, **not** in 0-127!
 """
 function programchange(track::MIDITrack, time::Integer, channel::UInt8, program::UInt8)
+    program -= 1
     addevent(track, time, MIDIEvent(0, PROGRAMCHANGE | channel, UInt8[program]))
 end
