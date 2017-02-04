@@ -4,7 +4,7 @@ export Note
     Note <: Any
 Data structure describing a "music note".
 ## Fields:
-* `value::UInt8` : Pitch, starting from C0, adding one per semitone.
+* `value::UInt8` : Pitch, starting from C0, adding one per semitone (middle-C is 60).
 * `duration::UInt64` : Duration in ticks.
 * `position::UInt64` : Position in absolute time (since beggining of track), in ticks.
 * `channel::UInt8` : Channel of the track that the note is played on.

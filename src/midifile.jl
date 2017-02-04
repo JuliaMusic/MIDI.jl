@@ -1,3 +1,5 @@
+export MIDIFile, readMIDIfile, writeMIDIfile
+
 """
     MIDIFile <: Any
 Type representing a file of MIDI data.
@@ -50,7 +52,7 @@ end
 Write a `MIDIFile` as a midi datatype to the given filename.
 """
 function writeMIDIfile(filename::AbstractString, data::MIDIFile)
-    if filename[end-4] != ".mid"
+    if filename[end-4:end] != ".mid"
       filename *= ".mid"
     end
 
@@ -66,5 +68,3 @@ function writeMIDIfile(filename::AbstractString, data::MIDIFile)
 
     close(f)
 end
-
-export MIDIFile, readMIDIfile, writeMIDIfile
