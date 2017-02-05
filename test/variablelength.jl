@@ -5,12 +5,19 @@ testvalues = [
     ([UInt8(0b10000001), UInt8(0b01111111)], 0b11111111)
 ]
 
-for (input, output) in testvalues
-    @test MIDI.readvariablelength(IOBuffer(input)) == output
-end
+@testset "variablelength tests" begin
 
-for (output, input) in testvalues
-    buf = IOBuffer()
-    MIDI.writevariablelength(buf, Int64(input))
-    @test takebuf_array(buf) == output
+    @testset "it should correctly read a variable length number" begin
+        for (input, output) in testvalues
+            @test MIDI.readvariablelength(IOBuffer(input)) == output
+        end
+    end
+
+    @testset "it should correctly write a variable length number" begin
+        for (output, input) in testvalues
+            buf = IOBuffer()
+            MIDI.writevariablelength(buf, Int64(input))
+            @test takebuf_array(buf) == output
+        end
+    end
 end
