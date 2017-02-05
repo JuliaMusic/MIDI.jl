@@ -39,7 +39,7 @@ octave number, and add it to one of the following
 - B  = 11
 - Cb = 11
 
-For example, to find C5, you would multiple 12 * 5 and add the number for C, which is 0 in this case. So C5 is 60.
+For example, to find C5, you would multiply 12 * 5 and add the number for C, which is 0 in this case. So C5 is 60.
 
 E4 = 12 * 4 + 4 = 52, D6 = 12 * 6 + 2 = 74 etc.
 
