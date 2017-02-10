@@ -1,5 +1,5 @@
 """
-A Julia library for reading and writing Midi files.
+A Julia library for reading and writing MIDI files.
 """
 module MIDI
 

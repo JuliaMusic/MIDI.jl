@@ -32,6 +32,10 @@ const EVENTTYPETOLENGTH = Dict(
     PITCHWHEELCHANGE => 2,
 )
 
+"""
+A dictionary that maps an instrument name (type `String`)
+to their hex value (type `UInt8`).
+"""
 const GM = Dict(
     "AcousticGrandPiano" => UInt8(1),
     "BrightAcousticPiano" => UInt8(2),
