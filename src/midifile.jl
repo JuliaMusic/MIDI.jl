@@ -49,7 +49,7 @@ end
 
 """
     writeMIDIfile(filename::AbstractString, data::MIDIFile)
-Write a `MIDIFile` as a midi datatype to the given filename.
+Write a `MIDIFile` as a ".mid" file to the given filename.
 """
 function writeMIDIfile(filename::AbstractString, data::MIDIFile)
     if filename[end-4:end] != ".mid"

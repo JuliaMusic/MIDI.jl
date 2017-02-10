@@ -5,8 +5,8 @@ export TrackEvent
 Abstract supertype for all MIDI events.
 
 All track events begin with a variable length time value (see `readvariablelength`)
-and must have a field named dT which contains it. This number notes how many ticks
-after the last event, the current even takes place.
+and must have a field named `dT` which contains it. This number notes after
+how many ticks since the last event does the current even takes place.
 
 `MIDIEvent`s then resume with a MIDI channel message
 defined in `constants.jl`. They're followed by 1 or 2 bytes, depending on the
