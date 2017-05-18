@@ -1,9 +1,11 @@
 MIDI
 ====
 
-A basic library for reading and writing MIDI data.
+A basic library for reading and writing MIDI data. Pull requests and suggestions are more than welcome. If you feel the API is clumsy or incomplete, please create a feature request.
 
-This is my first major Julia project, and is likely not idiomatic. It's also probably quite buggy. Pull requests and suggestions are more than welcome. If you feel the API is clumsy or incomplete, please create a feature request.
+| [**Package Evaluator**](http://pkg.julialang.org/?pkg=DynamicalBilliards#DynamicalBilliards) | **Travis**     | **AppVeyor** |
+|:-------------------:|:-----------------------:|:-----:|
+|[![](http://pkg.julialang.org/badges/DynamicalBilliards_0.6.svg)](http://pkg.julialang.org/?pkg=MIDI) | [![Build Status](https://travis-ci.org/JoelHobson/MIDI.jl.svg?branch=master)](https://travis-ci.org/JoelHobson/MIDI.jl) | [![Build status](https://ci.appveyor.com/api/projects/status/r087ojfuh2rtrxtm?svg=true)](https://ci.appveyor.com/project/Datseris/midi-jl)
 
 MIDI: The least you need to know
 ================================
