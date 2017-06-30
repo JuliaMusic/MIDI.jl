@@ -8,13 +8,13 @@ function type1totype0!(data::MIDIFile)
 		Use getprogramchangeevents for inspection.")
 	end
 	for track in data.tracks
-		toabsolutetime(track)
+		toabsolutetime!(track)
 	end
 	for track in data.tracks[2:end]
 		insertsorted!(data.tracks[1].events, track.events)
 	end
 	data.tracks = data.tracks[1:1]
-	fromabsolutetime(data.tracks[1])
+	fromabsolutetime!(data.tracks[1])
 	data.format = 0
 	data
 end
@@ -30,7 +30,7 @@ function type0totype1!(data::MIDIFile)
 	if data.format != UInt8(0)
 		error("Got type $(data.format); expecting type 0")
 	end
-	toabsolutetime(data.tracks[1])
+	toabsolutetime!(data.tracks[1])
 	push!(data.tracks, MIDITrack(Array{TrackEvent, 1}()))
 	nofchannels = 0
 	for event in data.tracks[1].events
@@ -51,7 +51,7 @@ function type0totype1!(data::MIDIFile)
 		if length(data.tracks[i].events) == 0
 			push!(trackstoremove, i)
 		else
-			fromabsolutetime(data.tracks[i])
+			fromabsolutetime!(data.tracks[i])
 		end
 	end
 	deleteat!(data.tracks, trackstoremove)
@@ -74,13 +74,13 @@ end
 function insertsorted!(events1::Array{TrackEvent, 1}, 
 					   event::TrackEvent)
 	i = 0
-	while events1[end - i].dT > event.dT
+	while i < length(events1) && events1[end - i].dT > event.dT
 		i += 1
 	end
 	insert!(events1, length(events1) - i + 1, event)
 end
 
-function toabsolutetime(track::MIDITrack)
+function toabsolutetime!(track::MIDITrack)
 	t = Int64(0)
 	for event in track.events
 		t += event.dT
@@ -88,7 +88,7 @@ function toabsolutetime(track::MIDITrack)
 	end
 end
 
-function fromabsolutetime(track::MIDITrack)
+function fromabsolutetime!(track::MIDITrack)
 	t0 = t1 = Int64(0)
 	for event in track.events
 		t1 = event.dT
