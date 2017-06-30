@@ -1,3 +1,9 @@
+export MetaEvent
+
+"""
+    MetaEvent <: TrackEvent
+See `TrackEvent`.
+"""
 type MetaEvent <: TrackEvent
     dT::Int
     metatype::UInt8

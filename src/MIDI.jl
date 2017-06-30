@@ -1,3 +1,6 @@
+"""
+A Julia library for reading and writing MIDI files.
+"""
 module MIDI
 
 include("trackevent.jl")

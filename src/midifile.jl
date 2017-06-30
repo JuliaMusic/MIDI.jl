@@ -1,3 +1,14 @@
+export MIDIFile, readMIDIfile, writeMIDIfile
+
+"""
+    MIDIFile <: Any
+Type representing a file of MIDI data.
+
+## Fields
+* `format::UInt16` : The format of the file. Can be 0, 1 or 2.
+* `timedivision::Int16` : The time division of the track, ticks-per-beat.
+* `tracks::Array{MIDITrack, 1}` : The array of contained tracks.
+"""
 type MIDIFile
     format::UInt16 # The format of the file. Can be 0, 1 or 2
     timedivision::Int16 # The time division of the track. Ticks per beat.
@@ -14,7 +25,10 @@ function readMIDIfileastype0(filename::AbstractString)
 	MIDIfile
 end
 
-# Reads a file into a MIDIFile data type
+"""
+    readMIDIfile(filename::AbstractString)
+Read a file into a MIDIFile data type.
+"""
 function readMIDIfile(filename::AbstractString)
     f = open(filename)
 
@@ -41,8 +55,15 @@ function readMIDIfile(filename::AbstractString)
     MIDIfile
 end
 
-# Writes a MIDI file to the given filename
+"""
+    writeMIDIfile(filename::AbstractString, data::MIDIFile)
+Write a `MIDIFile` as a ".mid" file to the given filename.
+"""
 function writeMIDIfile(filename::AbstractString, data::MIDIFile)
+    if length(filename) < 4 || filename[end-3:end] != ".mid"
+      filename *= ".mid"
+    end
+
     f = open(filename, "w")
 
     write(f, convert(Array{UInt8, 1}, MTHD)) # File identifier
@@ -55,5 +76,3 @@ function writeMIDIfile(filename::AbstractString, data::MIDIFile)
 
     close(f)
 end
-
-export MIDIFile, readMIDIfile, writeMIDIfile, readMIDIfileastype0

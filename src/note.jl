@@ -1,5 +1,15 @@
-# Fields should be self-explanatory. Position is an absolute time (in ticks) within the track.
-# Please note that velocity cannot be higher than 127 (0x7F).
+export Note
+
+"""
+    Note <: Any
+Data structure describing a "music note".
+## Fields:
+* `value::UInt8` : Pitch, starting from C0 = 0, adding one per semitone (middle-C is 60).
+* `duration::UInt64` : Duration in ticks.
+* `position::UInt64` : Position in absolute time (since beginning of track), in ticks.
+* `channel::UInt8` : Channel of the track that the note is played on.
+* `velocity::UInt8` : Dynamic intensity. Cannot be higher than 127 (0x7F).
+"""
 type Note
     value::UInt8
     duration::UInt64
@@ -17,28 +27,6 @@ type Note
         end
 end
 
-const Bs = 0
-const C = 0
-const Cs = 1
-const Db = 1
-const D = 2
-const Ds = 3
-const Eb = 3
-const E = 4
-const Fb = 4
-const Es = 5
-const F = 5
-const Fs = 6
-const Gb = 6
-const G = 7
-const Gs = 8
-const Ab = 8
-const A = 9
-const As = 10
-const Bb = 10
-const B = 11
-const Cb = 11
-
 import Base.+, Base.-, Base.==
 
 +(n::Note, i::Integer) = Note(n.value + i, n.duration, n.position, n.channel, n.velocity)
@@ -53,5 +41,3 @@ import Base.+, Base.-, Base.==
     n1.position == n2.position &&
     n1.channel == n2.channel &&
     n1.velocity == n2.velocity
-
-export Bs, C, Cs, Db, D, Ds, Eb, E, Fb, Es, F, Fs, Gb, G, Gs, Ab, A, As, Bb, B, Cb

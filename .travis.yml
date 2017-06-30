@@ -3,9 +3,8 @@ os:
   - linux
   - osx
 julia:
-#  - release TODO: Re-enable this when travis-ci has julia 0.4 as the release version.
-  - nightly
-  - 0.4
+  - 0.5
+  - 0.6
 notifications:
   email: false
 # uncomment the following lines to override the default test script

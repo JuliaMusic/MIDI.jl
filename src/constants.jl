@@ -2,13 +2,13 @@
 
 # Channel voice message identifiers. Only the first four bits matter, the remaining bits indicate the channel
 # These should be used as masks with the actual MIDI event header
-const NOTEOFF = 0b10000000
-const NOTEON = 0b10010000
-const POLYPHONICKEYPRESSURE = 0b10100000
-const CONTROLCHANGE = 0b10110000
-const PROGRAMCHANGE = 0b11000000
-const CHANNELPRESSURE = 0b11010000
-const PITCHWHEELCHANGE = 0b11100000
+const NOTEOFF = 0x80
+const NOTEON = 0x90
+const POLYPHONICKEYPRESSURE = 0xA0
+const CONTROLCHANGE = 0xB0
+const PROGRAMCHANGE = 0xC0
+const CHANNELPRESSURE = 0xD0
+const PITCHWHEELCHANGE = 0xE0
 
 # Event type codes
 const META = 0xFF
@@ -33,6 +33,10 @@ const EVENTTYPETOLENGTH = Dict(
     PITCHWHEELCHANGE => 2,
 )
 
+"""
+A dictionary that maps an instrument name (type `String`)
+to their hex value (type `UInt8`).
+"""
 const GM = Dict(
     "AcousticGrandPiano" => UInt8(1),
     "BrightAcousticPiano" => UInt8(2),

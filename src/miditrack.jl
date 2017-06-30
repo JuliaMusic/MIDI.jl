@@ -1,10 +1,17 @@
-#=
+export getnotes, addnote, addnotes
+
+"""
+    MIDITrack <: Any
+
+`MIDITrack` is simply a container for `TrackEvents`, since its only field is
+`events::Vector{TrackEvent}`.
+
 Track chunks begin with four bytes spelling out "MTrk", followed by the length
-in bytes of the track (see readvariablelength in util.jl), followed by a sequence
+(in bytes) of the track (see `readvariablelength`), followed by a sequence
 of events.
-=#
+"""
 type MIDITrack
-    events::Array{TrackEvent, 1}
+    events::Vector{TrackEvent}
 
     MIDITrack() = new(TrackEvent[])
     MIDITrack(events) = new(events)
@@ -123,33 +130,52 @@ function addevent(track::MIDITrack, time::Integer, newevent::TrackEvent)
     end
 end
 
-# Adds a note to a track
+"""
+    addnote(track::MIDITrack, note::Note)
+Add given `note` to given `track`, internally doing all translations from
+absolute time to relative time.
+"""
 function addnote(track::MIDITrack, note::Note)
     for (status, position) in [(NOTEON, note.position), (NOTEOFF, note.position + note.duration)]
         addevent(track, position, MIDIEvent(0, status | note.channel, UInt8[note.value, note.velocity]))
     end
 end
 
-# Adds a series of notes to a track
+"""
+    addnotes(track::MIDITrack, notes::Vector{Note})
+Add given `notes` to given `track`, internally doing all translations from
+absolute time to relative time.
+"""
 function addnotes(track::MIDITrack, notes::Array{Note, 1})
     for note in notes
         addnote(track, note)
     end
 end
 
-# Gets all of the notes on a track
+"""
+    getnotes(track::MIDITrack)
+Find all NOTEON and NOTEOFF midi events in the `track` that correspond to
+the same note value (pitch) and convert them into
+the `Note` datatype provided by this Package. Ordering is done based on position.
+
+There are special cases where NOTEOFF is actually encoded as NOTEON with 0 velocity.
+`getnotes` takes care of this.
+
+Returns: `Vector{Note}`.
+"""
 function getnotes(track::MIDITrack)
-    # Read through events until a noteon is found
     notes = Note[]
     tracktime = UInt64(0)
     for (i, event) in enumerate(track.events)
         tracktime += event.dT
-        if isa(event, MIDIEvent) && event.status & 0xF0 == NOTEON
+        # Read through events until a noteon with velocity higher tha 0 is found
+        if isa(event, MIDIEvent) && event.status & 0xF0 == NOTEON && event.data[2] > 0
             duration = UInt64(0)
             for event2 in track.events[i+1:length(track.events)]
                 duration += event2.dT
-                # If we have a MIDI event & it's a noteoff, and it's for the same note as the first event we found, make a note
-                if isa(event2, MIDIEvent) && event2.status & 0xF0 == NOTEOFF && event.data[1] == event2.data[1]
+                # If we have a MIDI event & it's a noteoff (or a note on with 0 velocity), and it's for the same note as the first event we found, make a note
+                # Many MIDI files will encode note offs as note ons with velocity zero
+                if isa(event2, MIDI.MIDIEvent) && (event2.status & 0xF0 == MIDI.NOTEOFF || (event2.status & 0xF0 == MIDI.NOTEON && event2.data[2] == 0)) && event.data[1] == event2.data[1]
                     push!(notes, Note(event.data[1], duration, tracktime, event.status & 0x0F, event.data[2]))
                     break
                 end
@@ -159,8 +185,15 @@ function getnotes(track::MIDITrack)
     sort!(notes, lt=((x, y)->x.position<y.position))
 end
 
-# Change the program (instrument) on the given channel. Time is absolute, not relative to the last event.
+"""
+    programchange(track::MIDITrack, time::Integer, channel::UInt8, program::UInt8)
+
+Change the program (instrument) on the given channel.
+Time is absolute, not relative to the last event.
+
+The `program` must be specified in the range 1-128, **not** in 0-127!
+"""
 function programchange(track::MIDITrack, time::Integer, channel::UInt8, program::UInt8)
-    program = program - 1 # Program changes are typically given in range 1-128, but represented internally as 0-127.
+    program -= 1
     addevent(track, time, MIDIEvent(0, PROGRAMCHANGE | channel, UInt8[program]))
 end

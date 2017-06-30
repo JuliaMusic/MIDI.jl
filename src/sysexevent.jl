@@ -1,3 +1,8 @@
+export SysexEvent
+"""
+    SysexEvent <: TrackEvent
+See `TrackEvent`.
+"""
 type SysexEvent <: TrackEvent
     dT::Int64
     data::Array{UInt8,1}

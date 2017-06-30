@@ -1,9 +1,11 @@
 MIDI
 ====
 
-A basic library for reading and writing MIDI data.
+A basic library for reading and writing MIDI data. Pull requests and suggestions are more than welcome. If you feel the API is clumsy or incomplete, please create a feature request.
 
-This is my first major Julia project, and is likely not idiomatic. It's also probably quite buggy. Pull requests and suggestions are more than welcome. If you feel the API is clumsy or incomplete, please create a feature request.
+| [**Package Evaluator**](http://pkg.julialang.org/?pkg=DynamicalBilliards#DynamicalBilliards) | **Travis**     | **AppVeyor** |
+|:-------------------:|:-----------------------:|:-----:|
+|[![](http://pkg.julialang.org/badges/DynamicalBilliards_0.6.svg)](http://pkg.julialang.org/?pkg=MIDI) | [![Build Status](https://travis-ci.org/JoelHobson/MIDI.jl.svg?branch=master)](https://travis-ci.org/JoelHobson/MIDI.jl) | [![Build status](https://ci.appveyor.com/api/projects/status/1a0ufac7gwessevh/?svg=true)](https://ci.appveyor.com/project/Datseris/midi-jl)
 
 MIDI: The least you need to know
 ================================
@@ -17,6 +19,31 @@ MIDI events handle things related to the sound, such as playing a note or moving
 Meta events take care of things like adding copyright text or authorship information.
 
 Sysex events are used to transmit arbitrary data. Their contents depend on the intended recipient.
+
+MIDI notes are indicated by numbers. You can use the chart below for reference. To get the number for a specific note, multiply 12 by the 
+octave number, and add it to one of the following
+- C  = 0
+- C# = 1
+- Db = 1
+- D  = 2
+- D# = 3
+- Eb = 3
+- E  = 4
+- F  = 5
+- F# = 6
+- Gb = 6
+- G  = 7
+- G# = 8
+- Ab = 8
+- A  = 9
+- A# = 10
+- Bb = 10
+- B  = 11
+- Cb = 11
+
+For example, to find C5, you would multiply 12 * 5 and add the number for C, which is 0 in this case. So C5 is 60.
+
+E4 = 12 * 4 + 4 = 52, D6 = 12 * 6 + 2 = 74 etc.
 
 Usage
 =====
@@ -33,7 +60,7 @@ Creating a new file with arbitrary notes
 ----------------------------------------
 
 ```
-# Arguments are pitch, duration (in ticks), position in track (in ticks), and velocity (0-127)
+# Arguments are pitch (MIDI note number), duration (in ticks), position in track (in ticks), channel (0-15) and velocity (0-127)
 C = MIDI.Note(60, 96, 0, 0)
 E = MIDI.Note(64, 96, 48, 0)
 G = MIDI.Note(67, 96, 96, 0)

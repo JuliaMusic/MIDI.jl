@@ -1,4 +1,4 @@
-validtestvalues = [
+validtestvalues = [ # Raw data and the miditrack it should be read into
     # Structure: MTrk, length in bytes (4 bytes long), data
     # Perhaps longer than it needs to be, but covers meta events, MIDI events, and running statuses.
     (
@@ -14,54 +14,63 @@ invalidtestvalues = [
     ([0x4d, 0x54, 0x72, 0x6c], ErrorException),
 ]
 
-for (input, output) in validtestvalues
-    result = MIDI.readtrack(IOBuffer(input))
-    @test length(result.events) == length(output.events)
-    for (e1, e2) in zip(result.events, output.events)
-        e1 == e2
+@testset "MIDITrack tests" begin
+    @testset "it should verify that the track is read correctly and all events are in the expected places" begin
+        for (input, output) in validtestvalues
+            result = MIDI.readtrack(IOBuffer(input))
+            @test length(result.events) == length(output.events)
+            for (e1, e2) in zip(result.events, output.events)
+                e1 == e2
+            end
+        end
     end
-end
 
-for (output, input) in validtestvalues
-    buf = IOBuffer()
-    MIDI.writetrack(buf, input)
-    @test takebuf_array(buf) == output
-end
+    @testset "it should successfully write a track" begin
+        for (output, input) in validtestvalues
+            buf = IOBuffer()
+            MIDI.writetrack(buf, input)
+            @test takebuf_array(buf) == output
+        end
+    end
 
-for (input, errtype) in invalidtestvalues
-    @test_throws errtype MIDI.readtrack(IOBuffer(input))
-end
+    @testset "it should fail when invalid track data is provided" begin
+        for (input, errtype) in invalidtestvalues
+            @test_throws errtype MIDI.readtrack(IOBuffer(input))
+        end
+    end
 
-# Test writing notes and program change events to a track
-C = MIDI.Note(60, 96, 0, 0)
-G = MIDI.Note(67, 96, 48, 0)
-E = MIDI.Note(64, 96, 96, 0)
-inc = 96
+    C = MIDI.Note(60, 96, 0, 0)
+    G = MIDI.Note(67, 96, 48, 0)
+    E = MIDI.Note(64, 96, 96, 0)
+    # Test writing notes and program change events to a track
+    inc = 96
+    track = MIDI.MIDITrack()
+    notes = MIDI.Note[]
+    for v in UInt8[1,2,3]
+        push!(notes, C)
+        push!(notes, E)
+        push!(notes, G)
+        MIDI.programchange(track, E.position + inc + inc, UInt8(0), v)
+        C.position += inc
+        E.position += inc
+        G.position += inc
+        C = MIDI.Note(60, 96, C.position+inc, 0)
+        E = MIDI.Note(64, 96, E.position+inc, 0)
+        G = MIDI.Note(67, 96, G.position+inc, 0)
+    end
 
-track = MIDI.MIDITrack()
-notes = MIDI.Note[]
-for v in UInt8[1,2,3]
-    push!(notes, C)
-    push!(notes, E)
-    push!(notes, G)
-    MIDI.programchange(track, E.position + inc + inc, UInt8(0), v)
-    C.position += inc
-    E.position += inc
-    G.position += inc
-    C = MIDI.Note(60, 96, C.position+inc, 0)
-    E = MIDI.Note(64, 96, E.position+inc, 0)
-    G = MIDI.Note(67, 96, G.position+inc, 0)
-end
+    MIDI.addnotes(track, notes)
 
-MIDI.addnotes(track, notes)
-
-buf = IOBuffer()
-MIDI.writetrack(buf, track)
-@test takebuf_array(buf) == [0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x52, 0x60, 0x90, 0x3c, 0x7f, 0x30, 0x43, 0x7f, 0x30, 0x80, 0x3c, 0x7f, 0x00, 0x90, 0x40, 0x7f, 0x30, 0x80, 0x43, 0x7f, 0x30, 0xc0, 0x00, 0x00, 0x80, 0x40, 0x7f, 0x00, 0x90, 0x3c, 0x7f, 0x30, 0x43, 0x7f, 0x30, 0x80, 0x3c, 0x7f, 0x00, 0x90, 0x40, 0x7f, 0x30, 0x80, 0x43, 0x7f, 0x30, 0xc0, 0x01, 0x00, 0x80, 0x40, 0x7f, 0x00, 0x90, 0x3c, 0x7f, 0x30, 0x43, 0x7f, 0x30, 0x80, 0x3c, 0x7f, 0x00, 0x90, 0x40, 0x7f, 0x30, 0x80, 0x43, 0x7f, 0x30, 0xc0, 0x02, 0x00, 0x80, 0x40, 0x7f, 0x00, 0xff, 0x2f, 0x00]
-
-sort!(notes, lt=((x, y)->x.position<y.position))
-
-# Test getting notes from a track
-for (n1, n2) in zip(notes, MIDI.getnotes(track))
-    @test n1 == n2
+    @testset "it should allow notes and program change events to be written to a track" begin
+        buf = IOBuffer()
+        MIDI.writetrack(buf, track)
+        @test takebuf_array(buf) == [0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x52, 0x60, 0x90, 0x3c, 0x7f, 0x30, 0x43, 0x7f, 0x30, 0x80, 0x3c, 0x7f, 0x00, 0x90, 0x40, 0x7f, 0x30, 0x80, 0x43, 0x7f, 0x30, 0xc0, 0x00, 0x00, 0x80, 0x40, 0x7f, 0x00, 0x90, 0x3c, 0x7f, 0x30, 0x43, 0x7f, 0x30, 0x80, 0x3c, 0x7f, 0x00, 0x90, 0x40, 0x7f, 0x30, 0x80, 0x43, 0x7f, 0x30, 0xc0, 0x01, 0x00, 0x80, 0x40, 0x7f, 0x00, 0x90, 0x3c, 0x7f, 0x30, 0x43, 0x7f, 0x30, 0x80, 0x3c, 0x7f, 0x00, 0x90, 0x40, 0x7f, 0x30, 0x80, 0x43, 0x7f, 0x30, 0xc0, 0x02, 0x00, 0x80, 0x40, 0x7f, 0x00, 0xff, 0x2f, 0x00]
+    end
+    
+    @testset "it should correctly get notes from a track" begin
+        sort!(notes, lt=((x, y)->x.position<y.position))
+        for (n1, n2) in zip(notes, MIDI.getnotes(track))
+            @test n1 == n2
+        end
+    end
 end
