@@ -74,7 +74,7 @@ end
 function insertsorted!(events1::Array{TrackEvent, 1}, 
 					   event::TrackEvent)
 	i = 0
-	while events1[end - i].dT > event.dT
+	while i < length(events1) && events1[end - i].dT > event.dT
 		i += 1
 	end
 	insert!(events1, length(events1) - i + 1, event)
