@@ -30,6 +30,9 @@ end
 Read a file into a MIDIFile data type.
 """
 function readMIDIfile(filename::AbstractString)
+    if length(f) < 4 || f[end-3:end] != ".mid"
+	f *= ".mid"
+    end
     f = open(filename)
 
     MIDIfile = MIDIFile()
