@@ -95,7 +95,7 @@ function writetrack(f::IO, track::MIDITrack)
     # Write the track end event
     writeevent(event_buffer, MetaEvent(0, METATRACKEND, UInt8[]))
 
-    bytes = takebuf_array(event_buffer)
+    bytes = take!(event_buffer)
 
     write(f, hton(UInt32(length(bytes))))
     write(f, bytes)

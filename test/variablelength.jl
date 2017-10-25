@@ -17,7 +17,7 @@ testvalues = [
         for (output, input) in testvalues
             buf = IOBuffer()
             MIDI.writevariablelength(buf, Int64(input))
-            @test takebuf_array(buf) == output
+            @test take!(buf) == output
         end
     end
 end
