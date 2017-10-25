@@ -73,7 +73,7 @@ for v in values(MIDI.GM) # GM is a map of all the general MIDI instrument names 
     push!(notes, E)
     push!(notes, G)
     # This changes the instrument currently used
-    MIDI.programchange(track, G.position + inc + inc, uint8(0), v)
+    MIDI.programchange(track, G.position + inc + inc, UInt8(0), v)
     C.position += inc
     E.position += inc
     G.position += inc
