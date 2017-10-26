@@ -13,9 +13,9 @@ type MIDIFile
     format::UInt16 # The format of the file. Can be 0, 1 or 2
     timedivision::Int16 # The time division of the track. Ticks per beat.
     tracks::Array{MIDITrack, 1} # An array of tracks
-
-    MIDIFile() = new(0,96,MIDITrack[])
 end
+
+MIDIFile() = MIDIFile(0,96,MIDITrack[])
 
 function readMIDIfileastype0(filename::AbstractString)
 	MIDIfile = readMIDIfile(filename)
