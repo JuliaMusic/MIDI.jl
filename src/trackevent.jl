@@ -15,7 +15,7 @@ the previous seen channel message is used. After that the MIDI command is encode
 
 `MetaEvent`s and `SysexEvent`s both resume with a specific byte (see `constants.jl`).
 """
-abstract type TrackEvent end
+@compat abstract type TrackEvent end
 
 function dt(e::TrackEvent)
     e.dT
