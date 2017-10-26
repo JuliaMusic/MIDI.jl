@@ -2,7 +2,6 @@
 A Julia library for reading and writing MIDI files.
 """
 module MIDI
-using Compat
 
 include("trackevent.jl")
 include("midievent.jl")
