@@ -5,7 +5,7 @@ A basic library for reading and writing MIDI data. Pull requests and suggestions
 
 | [**Package Evaluator**](http://pkg.julialang.org/?pkg=DynamicalBilliards#DynamicalBilliards) | **Travis**     | **AppVeyor** |
 |:-------------------:|:-----------------------:|:-----:|
-|[![](http://pkg.julialang.org/badges/DynamicalBilliards_0.6.svg)](http://pkg.julialang.org/?pkg=MIDI) | [![Build Status](https://travis-ci.org/JoelHobson/MIDI.jl.svg?branch=master)](https://travis-ci.org/JoelHobson/MIDI.jl) | [![Build status](https://ci.appveyor.com/api/projects/status/1a0ufac7gwessevh/?svg=true)](https://ci.appveyor.com/project/Datseris/midi-jl)
+|[![](http://pkg.julialang.org/badges/DynamicalBilliards_0.6.svg)](http://pkg.julialang.org/?pkg=MIDI) | [![Build Status](https://travis-ci.org/JoelHobson/MIDI.jl.svg?branch=master)](https://travis-ci.org/JoelHobson/MIDI.jl) | [![Build status](https://ci.appveyor.com/api/projects/status/1a0ufac7gwessevh/branch/master?svg=true)](https://ci.appveyor.com/project/JuliaDynamics/midi-jl/branch/master)
 
 MIDI: The least you need to know
 ================================
@@ -20,7 +20,7 @@ Meta events take care of things like adding copyright text or authorship informa
 
 Sysex events are used to transmit arbitrary data. Their contents depend on the intended recipient.
 
-MIDI notes are indicated by numbers. You can use the chart below for reference. To get the number for a specific note, multiply 12 by the 
+MIDI notes are indicated by numbers. You can use the chart below for reference. To get the number for a specific note, multiply 12 by the
 octave number, and add it to one of the following
 - C  = 0
 - C# = 1
