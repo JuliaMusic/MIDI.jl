@@ -14,7 +14,7 @@ function ismetaevent(b::UInt8)
     b == 0xFF
 end
 
-function readmetaevent(dT::Int64, f::IO)
+function readmetaevent(dT::Int, f::IO)
     # Meta events are 0xFF - type (1 byte) - variable length data length - data bytes
     skip(f, 1) # Skip the 0xff that starts the event
     metatype = read(f, UInt8)
@@ -28,7 +28,7 @@ function writeevent(f::IO, event::MetaEvent)
     writevariablelength(f, event.dT)
     write(f, META)
     write(f, event.metatype)
-    writevariablelength(f, convert(Int64, length(event.data)))
+    writevariablelength(f, convert(Int, length(event.data)))
     write(f, event.data)
 end
 

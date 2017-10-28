@@ -165,12 +165,12 @@ Returns: `Vector{Note}`.
 """
 function getnotes(track::MIDITrack)
     notes = Note[]
-    tracktime = UInt64(0)
+    tracktime = UInt(0)
     for (i, event) in enumerate(track.events)
         tracktime += event.dT
         # Read through events until a noteon with velocity higher tha 0 is found
         if isa(event, MIDIEvent) && event.status & 0xF0 == NOTEON && event.data[2] > 0
-            duration = UInt64(0)
+            duration = UInt(0)
             for event2 in track.events[i+1:length(track.events)]
                 duration += event2.dT
                 # If we have a MIDI event & it's a noteoff (or a note on with 0 velocity), and it's for the same note as the first event we found, make a note

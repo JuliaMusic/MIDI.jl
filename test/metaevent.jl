@@ -13,7 +13,7 @@
 
     @testset "it should correctly generate a metaevent from raw data" begin
         for (input, output) in validtestvalues
-            result = MIDI.readmetaevent(Int64(input[1]), IOBuffer(input[2:length(input)]))
+            result = MIDI.readmetaevent(Int(input[1]), IOBuffer(input[2:length(input)]))
             @test result.dT == output.dT && result.data == output.data
         end
     end
@@ -28,7 +28,7 @@
 
     @testset "it should fail when invalid raw data is provided" begin
         for (input, errtype) in invalidtestvalues
-            @test_throws errtype MIDI.readsysexevent(Int64(input[1]), IOBuffer(input[2:length(input)]))
+            @test_throws errtype MIDI.readsysexevent(Int(input[1]), IOBuffer(input[2:length(input)]))
         end
     end
 end

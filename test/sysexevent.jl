@@ -14,7 +14,7 @@ invalidtestvalues = [
 @testset "sysex event" begin
     @testset "it should correctly read a sysex event from raw data" begin
         for (input, output) in validtestvalues
-            result = MIDI.readsysexevent(Int64(input[1]), IOBuffer(input[2:length(input)]))
+            result = MIDI.readsysexevent(Int(input[1]), IOBuffer(input[2:length(input)]))
             @test result.dT == output.dT && result.data == output.data
         end
     end
@@ -30,6 +30,6 @@ end
 
 @testset "it should fail to read a sysex event when given invalid data" begin
     for (input, errtype) in invalidtestvalues
-        @test_throws errtype MIDI.readsysexevent(Int64(input[1]), IOBuffer(input[2:length(input)]))
+        @test_throws errtype MIDI.readsysexevent(Int(input[1]), IOBuffer(input[2:length(input)]))
     end
 end

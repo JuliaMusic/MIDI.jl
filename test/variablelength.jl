@@ -16,7 +16,7 @@ testvalues = [
     @testset "it should correctly write a variable length number" begin
         for (output, input) in testvalues
             buf = IOBuffer()
-            MIDI.writevariablelength(buf, Int64(input))
+            MIDI.writevariablelength(buf, Int(input))
             @test take!(buf) == output
         end
     end

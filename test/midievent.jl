@@ -12,10 +12,10 @@
             input_no_status = vcat([0x00], zeros(UInt8, MIDI.EVENTTYPETOLENGTH[status]))
             output = MIDI.MIDIEvent(0, status, zeros(UInt8, MIDI.EVENTTYPETOLENGTH[status]))
 
-            result = MIDI.readMIDIevent(Int64(input[1]), IOBuffer(input[2:length(input)]), UInt8(0))
+            result = MIDI.readMIDIevent(Int(input[1]), IOBuffer(input[2:length(input)]), UInt8(0))
             @test result.dT == output.dT && result.status == status && result.data == output.data
 
-            result = MIDI.readMIDIevent(Int64(input_no_status[1]), IOBuffer(input_no_status[2:length(input_no_status)]), status)
+            result = MIDI.readMIDIevent(Int(input_no_status[1]), IOBuffer(input_no_status[2:length(input_no_status)]), status)
             @test result.dT == output.dT && result.data == output.data
 
             input, output = output, input

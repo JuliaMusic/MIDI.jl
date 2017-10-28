@@ -81,7 +81,7 @@ function insertsorted!(events1::Array{TrackEvent, 1},
 end
 
 function toabsolutetime!(track::MIDITrack)
-	t = Int64(0)
+	t = Int(0)
 	for event in track.events
 		t += event.dT
 		event.dT = t
@@ -89,7 +89,7 @@ function toabsolutetime!(track::MIDITrack)
 end
 
 function fromabsolutetime!(track::MIDITrack)
-	t0 = t1 = Int64(0)
+	t0 = t1 = Int(0)
 	for event in track.events
 		t1 = event.dT
 		event.dT = event.dT - t0

@@ -26,7 +26,7 @@ function channelnumber(m::MIDIEvent)
     0x0F & m.status
 end
 
-function readMIDIevent(dT::Int64, f::IO, laststatus::UInt8)
+function readMIDIevent(dT::Int, f::IO, laststatus::UInt8)
     statusbyte = read(f, UInt8)
     highnybble = statusbyte & 0b11110000
 

@@ -127,8 +127,8 @@ end
 ```
 type Note
     value::UInt8
-    duration::UInt64
-    position::UInt64
+    duration::UInt
+    position::UInt
     channel::UInt8
     velocity::UInt8
 
