@@ -14,9 +14,9 @@ function readvariablelength(f::IO)
     bytes = UInt8[]
     if (b & mask) == 0
         # We're done here. The first bit isn't set, so the number is contained in the 7 remaining bits.
-        convert(Int64, b)
+        convert(Int, b)
     else
-        result = convert(Int64, 0)
+        result = convert(Int, 0)
         while (b & mask) == mask
             result <<= 7
             result += (b & notmask)
