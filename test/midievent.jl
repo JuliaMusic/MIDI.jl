@@ -17,17 +17,17 @@
 
             result = MIDI.readMIDIevent(Int64(input_no_status[1]), IOBuffer(input_no_status[2:length(input_no_status)]), status)
             @test result.dT == output.dT && result.data == output.data
-        
+
             input, output = output, input
             output_no_status = input_no_status
 
             buf = IOBuffer()
             MIDI.writeevent(buf, input, true)
-            @test takebuf_array(buf) == output
+            @test take!(buf) == output
 
             buf = IOBuffer()
             MIDI.writeevent(buf, input, false)
-            @test takebuf_array(buf) == output_no_status
+            @test take!(buf) == output_no_status
         end
     end
 end

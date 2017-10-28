@@ -24,7 +24,7 @@ end
     for (output, input) in validtestvalues
         buf = IOBuffer()
         MIDI.writeevent(buf, input)
-        @test takebuf_array(buf) == output
+        @test take!(buf) == output
     end
 end
 
