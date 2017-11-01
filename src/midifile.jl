@@ -63,7 +63,7 @@ end
 Write a `MIDIFile` as a ".mid" file to the given filename.
 """
 function writeMIDIfile(filename::AbstractString, data::MIDIFile)
-    if length(filename) < 4 || filename[end-3:end] != ".mid"
+    if length(filename) < 4 || lowercase(filename[end-3:end]) != ".mid"
       filename *= ".mid"
     end
 
