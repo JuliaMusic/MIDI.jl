@@ -70,7 +70,7 @@ G = MIDI.Note(67, 96, 96, 0)
 inc = 96
 file = MIDI.MIDIFile()
 track = MIDI.MIDITrack()
-notes = MIDI.Note[]
+notes = MIDI.Notes()
 i = 0
 for v in values(MIDI.GM) # GM is a map of all the general MIDI instrument names and their codes
     push!(notes, C)
