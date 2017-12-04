@@ -1,4 +1,5 @@
 export MIDIFile, readMIDIfile, writeMIDIfile
+export BPM, ms_per_tick
 
 """
     MIDIFile <: Any
