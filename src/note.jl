@@ -29,7 +29,6 @@ type Note
 end
 
 Notes = Vector{Note}
-Notes() = Note[]
 
 import Base.+, Base.-, Base.==
 
