@@ -1,8 +1,9 @@
-export Note
+export Note, Notes
 
 """
     Note <: Any
-Data structure describing a "music note".
+Data structure describing a "music note". The alias `Notes = Vector{Note}` is also
+provided.
 ## Fields:
 * `value::UInt8` : Pitch, starting from C0 = 0, adding one per semitone (middle-C is 60).
 * `duration::UInt` : Duration in ticks.
@@ -26,6 +27,8 @@ type Note
             new(value, duration, position, channel, velocity)
         end
 end
+
+Notes = Vector{Note}
 
 import Base.+, Base.-, Base.==
 

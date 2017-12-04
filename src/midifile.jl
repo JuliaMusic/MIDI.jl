@@ -27,7 +27,7 @@ end
 
 """
     readMIDIfile(filename::AbstractString)
-Read a file into a MIDIFile data type.
+Read a file into a `MIDIFile` data type.
 """
 function readMIDIfile(filename::AbstractString)
     if length(filename) < 4 || filename[end-3:end] != ".mid"

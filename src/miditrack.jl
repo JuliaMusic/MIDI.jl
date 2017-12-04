@@ -142,11 +142,11 @@ function addnote(track::MIDITrack, note::Note)
 end
 
 """
-    addnotes(track::MIDITrack, notes::Vector{Note})
+    addnotes(track::MIDITrack, notes::Notes)
 Add given `notes` to given `track`, internally doing all translations from
 absolute time to relative time.
 """
-function addnotes(track::MIDITrack, notes::Array{Note, 1})
+function addnotes(track::MIDITrack, notes::Notes)
     for note in notes
         addnote(track, note)
     end
@@ -161,7 +161,7 @@ the `Note` datatype provided by this Package. Ordering is done based on position
 There are special cases where NOTEOFF is actually encoded as NOTEON with 0 velocity.
 `getnotes` takes care of this.
 
-Returns: `Vector{Note}`.
+Returns: `Notes` (which is `Vector{Note}`).
 """
 function getnotes(track::MIDITrack)
     notes = Note[]
