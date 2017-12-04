@@ -79,3 +79,39 @@ function writeMIDIfile(filename::AbstractString, data::MIDIFile)
 
     close(f)
 end
+
+
+"""
+    BPM(midi)
+Given a `MIDIFile`, find and return the BPM where it was exported.
+"""
+function BPM(t::MIDI.MIDIFile)
+  # META-event list:
+  tlist = [x for x in t.tracks[1].events]
+  tttttt = Vector{UInt32}
+  # Find the one that corresponds to Set-Time:
+  for i in 1:length(tlist)
+    if typeof(tlist[i]) == MIDI.MetaEvent
+      y = tlist[i]
+      if y.metatype == 0x51
+        tttttt = y.data
+      end
+    end
+  end
+  # Get the microsecond number from this tt-tt-tt
+  unshift!(tttttt , 0x00)
+  u = ntoh(reinterpret(UInt32, tttttt)[1])
+  μs = Int64(u)
+  # BPM:
+  BPM = round(Int64, 60000000/μs)
+end
+
+"""
+    tick_in_ms(midi) -> ms::Float64
+Given a `MIDIFile`, return how many miliseconds is one tick.
+"""
+function tick_in_ms(midi::MIDI.MIDIFile)
+  tpq = midi.timedivision
+  BPM = BPM(midi)
+  tick_ms = (1000*60)/(BPM*tpq)
+end
