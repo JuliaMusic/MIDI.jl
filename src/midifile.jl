@@ -83,7 +83,7 @@ end
 
 """
     BPM(midi)
-Given a `MIDIFile`, find and return the BPM where it was exported.
+Return the BPM where the given `MIDIFile` was exported at.
 """
 function BPM(t::MIDI.MIDIFile)
   # META-event list:
@@ -103,15 +103,15 @@ function BPM(t::MIDI.MIDIFile)
   u = ntoh(reinterpret(UInt32, tttttt)[1])
   μs = Int64(u)
   # BPM:
-  BPM = round(Int64, 60000000/μs)
+  BPM = round(Int, 60000000/μs)
 end
 
 """
-    tick_in_ms(midi) -> ms::Float64
-Given a `MIDIFile`, return how many miliseconds is one tick.
+    ms_per_tick(midi, bpm::Integer = BPM(midi)) -> ms::Float64
+Given a `MIDIFile`, return how many miliseconds is one tick, based
+on the `bpm`. By default the `bpm` is the BPM the midi file was exported at.
 """
-function tick_in_ms(midi::MIDI.MIDIFile)
+function ms_per_tick(midi::MIDI.MIDIFile, bpm::Int = BPM(MIDI))
   tpq = midi.timedivision
-  BPM = BPM(midi)
-  tick_ms = (1000*60)/(BPM*tpq)
+  tick_ms = (1000*60)/(bpm*tpq)
 end
