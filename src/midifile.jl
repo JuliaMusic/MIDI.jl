@@ -1,4 +1,5 @@
 export MIDIFile, readMIDIfile, writeMIDIfile
+export BPM, ms_per_tick
 
 """
     MIDIFile <: Any
@@ -27,7 +28,7 @@ end
 
 """
     readMIDIfile(filename::AbstractString)
-Read a file into a MIDIFile data type.
+Read a file into a `MIDIFile` data type.
 """
 function readMIDIfile(filename::AbstractString)
     if length(filename) < 4 || filename[end-3:end] != ".mid"
@@ -78,4 +79,44 @@ function writeMIDIfile(filename::AbstractString, data::MIDIFile)
     map(track->writetrack(f, track), data.tracks)
 
     close(f)
+end
+
+
+"""
+    BPM(midi)
+Return the BPM where the given `MIDIFile` was exported at.
+"""
+function BPM(t::MIDI.MIDIFile)
+  # META-event list:
+  tlist = [x for x in t.tracks[1].events]
+  tttttt = Vector{UInt32}
+  # Find the one that corresponds to Set-Time:
+  # The event tttttt corresponds to the command
+  # FF 51 03 tttttt Set Tempo (in microseconds per MIDI quarter-note)
+  # See here (page 8):
+  # http://www.cs.cmu.edu/~music/cmsip/readings/Standard-MIDI-file-format-updated.pdf
+  for i in 1:length(tlist)
+    if typeof(tlist[i]) == MIDI.MetaEvent
+      y = tlist[i]
+      if y.metatype == 0x51
+        tttttt = y.data
+      end
+    end
+  end
+  # Get the microsecond number from tttttt
+  unshift!(tttttt , 0x00)
+  u = ntoh(reinterpret(UInt32, tttttt)[1])
+  μs = Int64(u)
+  # BPM:
+  BPM = round(Int, 60000000/μs)
+end
+
+"""
+    ms_per_tick(midi, bpm::Integer = BPM(midi)) -> ms::Float64
+Given a `MIDIFile`, return how many miliseconds is one tick, based
+on the `bpm`. By default the `bpm` is the BPM the midi file was exported at.
+"""
+function ms_per_tick(midi::MIDI.MIDIFile, bpm::Int = BPM(MIDI))
+  tpq = midi.timedivision
+  tick_ms = (1000*60)/(bpm*tpq)
 end

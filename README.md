@@ -56,19 +56,22 @@ MIDIfile = readMIDIfile("test.mid")
 writeMIDIfile("filename.mid", MIDIfile)
 ```
 
+Two functions that may also be of use are: `BPM(midi)` and `ms_per_tick(midi)`.
+
 Creating a new file with arbitrary notes
 ----------------------------------------
 
 ```
 # Arguments are pitch (MIDI note number), duration (in ticks), position in track (in ticks), channel (0-15) and velocity (0-127)
-C = MIDI.Note(60, 96, 0, 0)
-E = MIDI.Note(64, 96, 48, 0)
-G = MIDI.Note(67, 96, 96, 0)
+using MIDI
+C = Note(60, 96, 0, 0)
+E = Note(64, 96, 48, 0)
+G = Note(67, 96, 96, 0)
 
 inc = 96
-file = MIDI.MIDIFile()
-track = MIDI.MIDITrack()
-notes = MIDI.Note[]
+file = MIDIFile()
+track = MIDITrack()
+notes = Notes()
 i = 0
 for v in values(MIDI.GM) # GM is a map of all the general MIDI instrument names and their codes
     push!(notes, C)
@@ -79,15 +82,15 @@ for v in values(MIDI.GM) # GM is a map of all the general MIDI instrument names 
     C.position += inc
     E.position += inc
     G.position += inc
-    C = MIDI.Note(60, 96, C.position+inc, 0)
-    E = MIDI.Note(64, 96, E.position+inc, 0)
-    G = MIDI.Note(67, 96, G.position+inc, 0)
+    C = Note(60, 96, C.position+inc, 0)
+    E = Note(64, 96, E.position+inc, 0)
+    G = Note(67, 96, G.position+inc, 0)
     i += 1
 end
 
-MIDI.addnotes(track, notes)
+addnotes(track, notes)
 push!(file.tracks, track)
-MIDI.writeMIDIfile("test_out.mid", file)
+writeMIDIfile("test_out.mid", file)
 ```
 
 Data structures and functions you should know
@@ -137,6 +140,8 @@ end
 ```
 
 Value is a number indicating pitch class & octave (middle-C is 60). Position is an absolute time (in ticks) within the track. Please note that velocity cannot be higher than 127 (0x7F). Integers can be added to, or subtracted from notes to change the pitch, and notes can be directly compared with ==. Constants exist for the different pitch values at octave 0. MIDI.C, MIDI.Cs, MIDI.Db, etc. Enharmonic note constants exist as well (MIDI.Fb). Just add 12*n to the note to transpose to octave n.
+
+In addition, the alias `Notes = Vector{Note}` is also exported for ease-of-use.
 
 ```
 type MIDIEvent <: TrackEvent
