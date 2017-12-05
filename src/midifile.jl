@@ -91,6 +91,10 @@ function BPM(t::MIDI.MIDIFile)
   tlist = [x for x in t.tracks[1].events]
   tttttt = Vector{UInt32}
   # Find the one that corresponds to Set-Time:
+  # The event tttttt corresponds to the command
+  # FF 51 03 tttttt Set Tempo (in microseconds per MIDI quarter-note)
+  # See here (page 8):
+  # http://www.cs.cmu.edu/~music/cmsip/readings/Standard-MIDI-file-format-updated.pdf
   for i in 1:length(tlist)
     if typeof(tlist[i]) == MIDI.MetaEvent
       y = tlist[i]
@@ -99,7 +103,7 @@ function BPM(t::MIDI.MIDIFile)
       end
     end
   end
-  # Get the microsecond number from this tt-tt-tt
+  # Get the microsecond number from tttttt
   unshift!(tttttt , 0x00)
   u = ntoh(reinterpret(UInt32, tttttt)[1])
   μs = Int64(u)
