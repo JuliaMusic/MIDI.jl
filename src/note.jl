@@ -11,7 +11,7 @@ provided.
 * `channel::UInt8` : Channel of the track that the note is played on.
 * `velocity::UInt8` : Dynamic intensity. Cannot be higher than 127 (0x7F).
 """
-type Note
+mutable struct Note
     value::UInt8
     duration::UInt
     position::UInt
@@ -28,8 +28,6 @@ type Note
         end
 end
 
-Notes = Vector{Note}
-
 import Base.+, Base.-, Base.==
 
 +(n::Note, i::Integer) = Note(n.value + i, n.duration, n.position, n.channel, n.velocity)
@@ -44,3 +42,8 @@ import Base.+, Base.-, Base.==
     n1.position == n2.position &&
     n1.channel == n2.channel &&
     n1.velocity == n2.velocity
+
+mutable struct Notes
+    notes::Vector{Note}
+    tpq::Int16
+end

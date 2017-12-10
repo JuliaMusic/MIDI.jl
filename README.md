@@ -12,7 +12,7 @@ MIDI: The least you need to know
 
 A MIDI file typically comes in pieces called tracks that play simultaneously. Each track can have 16 different channels, numbered 0-15. Each channel can be thought of as a single instrument, though that instrument can be changed throughout that track. A track contains events. The three types of events are MIDI events, meta events, and system exclusive (SYSEX) events.
 
-All events begin with the time since the last event (dT) in ticks. The number of ticks per beat is given by the timedivision of the file. To make manipulating events easier, there's an `addevent(track::MIDITrack, time::Integer, newevent::TrackEvent)` function specified that lets you specify absolute time (in ticks).
+All events begin with the time since the last event (dT) in ticks. The number of ticks per beat is given by the tpq of the file. To make manipulating events easier, there's an `addevent(track::MIDITrack, time::Integer, newevent::TrackEvent)` function specified that lets you specify absolute time (in ticks).
 
 MIDI events handle things related to the sound, such as playing a note or moving the pitchwheel. There are constants in constants.jl to assist in creating these.
 
@@ -99,7 +99,7 @@ Data structures and functions you should know
 ```
 type MIDIFile
     format::UInt16 # The format of the file. Can be 0, 1 or 2
-    timedivision::Int16 # The time division of the track in ticks per beat.
+    tpq::Int16 # The time division of the track in ticks per beat.
     tracks::Array{MIDITrack, 1}
 
     MIDIFile() = new(0,96,MIDITrack[])

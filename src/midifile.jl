@@ -7,12 +7,12 @@ Type representing a file of MIDI data.
 
 ## Fields
 * `format::UInt16` : The format of the file. Can be 0, 1 or 2.
-* `timedivision::Int16` : The time division of the track, ticks-per-beat.
+* `tpq::Int16` : The time division of the track, ticks-per-beat.
 * `tracks::Array{MIDITrack, 1}` : The array of contained tracks.
 """
 type MIDIFile
     format::UInt16 # The format of the file. Can be 0, 1 or 2
-    timedivision::Int16 # The time division of the track. Ticks per beat.
+    tpq::Int16 # The time division of the track. Ticks per beat.
     tracks::Array{MIDITrack, 1} # An array of tracks
 end
 
@@ -52,7 +52,7 @@ function readMIDIfile(filename::AbstractString)
 
     # Get the number of tracks and time division
     numberoftracks = ntoh(read(f, UInt16))
-    MIDIfile.timedivision = ntoh(read(f, Int16))
+    MIDIfile.tpq = ntoh(read(f, Int16))
     MIDIfile.tracks = [readtrack(f) for x in 1:numberoftracks]
     close(f)
 
@@ -74,7 +74,7 @@ function writeMIDIfile(filename::AbstractString, data::MIDIFile)
     write(f, hton(convert(UInt32, 6))) # Header length
     write(f, hton(data.format))
     write(f, hton(convert(UInt16, length(data.tracks))))
-    write(f, hton(data.timedivision))
+    write(f, hton(data.tpq))
 
     map(track->writetrack(f, track), data.tracks)
 
@@ -117,6 +117,6 @@ Given a `MIDIFile`, return how many miliseconds is one tick, based
 on the `bpm`. By default the `bpm` is the BPM the midi file was exported at.
 """
 function ms_per_tick(midi::MIDI.MIDIFile, bpm::Int = BPM(MIDI))
-  tpq = midi.timedivision
+  tpq = midi.tpq
   tick_ms = (1000*60)/(bpm*tpq)
 end
