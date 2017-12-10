@@ -2,8 +2,7 @@ export Note, Notes
 
 """
     Note <: Any
-Data structure describing a "music note". The alias `Notes = Vector{Note}` is also
-provided.
+Data structure describing a "music note".
 ## Fields:
 * `value::UInt8` : Pitch, starting from C0 = 0, adding one per semitone (middle-C is 60).
 * `duration::UInt` : Duration in ticks.
@@ -43,7 +42,39 @@ import Base.+, Base.-, Base.==
     n1.channel == n2.channel &&
     n1.velocity == n2.velocity
 
+"""
+    Notes <: Any
+Data structure describing a collection of "music notes", bundled with a ticks
+per quarter note measure.
+## Fields:
+* `notes::Vector{Note}`
+* `tpq::Int16` : Ticks per quarter note. Defines the fundamental unit of measurement
+   of a note's position and duration, as well as the length of one quarter note.
+   Takes values from 1 to 960.
+
+`Notes` is iterated and accessed as if iterating or accessing its field `notes`.
+"""
 mutable struct Notes
     notes::Vector{Note}
     tpq::Int16
+    function Notes(notes, tpq)
+        if tpq < 1 || tpq > 960
+            throw(ArgumentError("Ticks per quarter note (tpq) must be ∈ [1, 960]"))
+        end
+        new(notes, tpq)
+    end
 end
+
+# Constructors for Notes:
+Notes(notes::Vector{Note}) = Notes(notes, 960)
+Notes() = Notes(Vector{Note}[], 960)
+
+# Iterator Interface for notes:
+Base.start(n::Notes) = start(n.notes)
+Base.next(n::Notes, i) = next(n.notes, i)
+Base.done(n::Notes, i) = done(n.notes, i)
+
+# Indexing
+Base.length(n::Notes) = length(n.notes)
+Base.endof(n::Notes) = endof(n.notes)
+Base.getindex(n::Notes, i) = n.notes[i]

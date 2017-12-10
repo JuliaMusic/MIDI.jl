@@ -142,18 +142,18 @@ function addnote(track::MIDITrack, note::Note)
 end
 
 """
-    addnotes(track::MIDITrack, notes::Notes)
+    addnotes(track::MIDITrack, notes)
 Add given `notes` to given `track`, internally doing all translations from
 absolute time to relative time.
 """
-function addnotes(track::MIDITrack, notes::Notes)
+function addnotes(track::MIDITrack, notes)
     for note in notes
         addnote(track, note)
     end
 end
 
 """
-    getnotes(track::MIDITrack)
+    getnotes(track::MIDITrack, tpq = 960) -> Notes
 Find all NOTEON and NOTEOFF midi events in the `track` that correspond to
 the same note value (pitch) and convert them into
 the `Note` datatype provided by this Package. Ordering is done based on position.
@@ -161,9 +161,11 @@ the `Note` datatype provided by this Package. Ordering is done based on position
 There are special cases where NOTEOFF is actually encoded as NOTEON with 0 velocity.
 `getnotes` takes care of this.
 
-Returns: `Notes` (which is `Vector{Note}`).
+Returns: `Notes`, setting the ticks per quarter note as `tpq`. You can find
+the originally exported
+ ticks per quarter note from the original `MIDIFile` through `midi.tpq`.
 """
-function getnotes(track::MIDITrack)
+function getnotes(track::MIDITrack, tpq = 960)
     notes = Note[]
     tracktime = UInt(0)
     for (i, event) in enumerate(track.events)
@@ -183,6 +185,7 @@ function getnotes(track::MIDITrack)
         end
     end
     sort!(notes, lt=((x, y)->x.position<y.position))
+    return Notes(notes, tpq)
 end
 
 """
