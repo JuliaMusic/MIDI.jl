@@ -120,3 +120,5 @@ function ms_per_tick(midi::MIDI.MIDIFile, bpm::Int = BPM(MIDI))
   tpq = midi.tpq
   tick_ms = (1000*60)/(bpm*tpq)
 end
+
+getnotes(midi::MIDIFile, trackno = 2) = getnotes(midi.tracks[trackno], midi.tpq)

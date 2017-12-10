@@ -12,10 +12,8 @@ of events.
 """
 type MIDITrack
     events::Vector{TrackEvent}
-
-    MIDITrack() = new(TrackEvent[])
-    MIDITrack(events) = new(events)
 end
+MIDITrack() = MIDITrack(TrackEvent[])
 
 function readtrack(f::IO)
     mtrk = join(map(Char, read(f, UInt8, 4)))
@@ -132,7 +130,7 @@ end
 
 """
     addnote(track::MIDITrack, note::Note)
-Add given `note` to given `track`, internally doing all translations from
+Add given `note` to given `track`, internally doing the translation from
 absolute time to relative time.
 """
 function addnote(track::MIDITrack, note::Note)
@@ -153,17 +151,21 @@ function addnotes(track::MIDITrack, notes)
 end
 
 """
-    getnotes(track::MIDITrack, tpq = 960) -> Notes
-Find all NOTEON and NOTEOFF midi events in the `track` that correspond to
-the same note value (pitch) and convert them into
-the `Note` datatype provided by this Package. Ordering is done based on position.
+    getnotes(midi::MIDIFile, trackno = 2)
 
-There are special cases where NOTEOFF is actually encoded as NOTEON with 0 velocity.
+Find all NOTEON and NOTEOFF midi events in the `trackno` track of a `midi`,
+that correspond to the same note value (pitch) and convert them into
+the `Note` datatype. There are special cases where NOTEOFF is actually encoded as NOTEON with 0 velocity.
 `getnotes` takes care of this.
+
+Notice that the first track of a `midi` doesn't have any notes.
+
+    getnotes(track::MIDITrack, tpq = 960)
+Find the notes from `track` directly, passing also the ticks per quarter note.
 
 Returns: `Notes`, setting the ticks per quarter note as `tpq`. You can find
 the originally exported
- ticks per quarter note from the original `MIDIFile` through `midi.tpq`.
+ticks per quarter note from the original `MIDIFile` through `midi.tpq`.
 """
 function getnotes(track::MIDITrack, tpq = 960)
     notes = Note[]
