@@ -1,6 +1,4 @@
-if current_module() != MIDI
-  using MIDI
-end
+using MIDI
 using Base.Test
 
 @testset "All tests" begin
