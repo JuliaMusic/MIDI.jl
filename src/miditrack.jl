@@ -1,4 +1,4 @@
-export getnotes, addnote, addnotes
+export getnotes, addnote!, addnotes!
 
 """
     MIDITrack <: Any
@@ -100,7 +100,7 @@ function writetrack(f::IO, track::MIDITrack)
 end
 
 # Adds an event to a track, with an absolute time
-function addevent(track::MIDITrack, time::Integer, newevent::TrackEvent)
+function addevent!(track::MIDITrack, time::Integer, newevent::TrackEvent)
     tracktime = 0
     addedevent = false
     for (i, event) in enumerate(track.events)
@@ -129,24 +129,24 @@ function addevent(track::MIDITrack, time::Integer, newevent::TrackEvent)
 end
 
 """
-    addnote(track::MIDITrack, note::Note)
+    addnote!(track::MIDITrack, note::Note)
 Add given `note` to given `track`, internally doing the translation from
 absolute time to relative time.
 """
-function addnote(track::MIDITrack, note::Note)
+function addnote!(track::MIDITrack, note::Note)
     for (status, position) in [(NOTEON, note.position), (NOTEOFF, note.position + note.duration)]
-        addevent(track, position, MIDIEvent(0, status | note.channel, UInt8[note.value, note.velocity]))
+        addevent!(track, position, MIDIEvent(0, status | note.channel, UInt8[note.value, note.velocity]))
     end
 end
 
 """
-    addnotes(track::MIDITrack, notes)
+    addnotes!(track::MIDITrack, notes)
 Add given `notes` to given `track`, internally doing all translations from
 absolute time to relative time.
 """
-function addnotes(track::MIDITrack, notes)
+function addnotes!(track::MIDITrack, notes)
     for note in notes
-        addnote(track, note)
+        addnote!(track, note)
     end
 end
 
@@ -200,5 +200,5 @@ The `program` must be specified in the range 1-128, **not** in 0-127!
 """
 function programchange(track::MIDITrack, time::Integer, channel::UInt8, program::UInt8)
     program -= 1
-    addevent(track, time, MIDIEvent(0, PROGRAMCHANGE | channel, UInt8[program]))
+    addevent!(track, time, MIDIEvent(0, PROGRAMCHANGE | channel, UInt8[program]))
 end

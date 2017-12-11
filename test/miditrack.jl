@@ -59,7 +59,7 @@ invalidtestvalues = [
         G = MIDI.Note(67, 96, G.position+inc, 0)
     end
 
-    MIDI.addnotes(track, notes)
+    MIDI.addnotes!(track, notes)
 
     @testset "it should allow notes and program change events to be written to a track" begin
         buf = IOBuffer()
