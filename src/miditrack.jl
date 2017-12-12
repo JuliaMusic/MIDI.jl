@@ -1,4 +1,4 @@
-export getnotes, addnote, addnotes
+export getnotes, addnote!, addnotes!
 
 """
     MIDITrack <: Any
@@ -12,10 +12,8 @@ of events.
 """
 type MIDITrack
     events::Vector{TrackEvent}
-
-    MIDITrack() = new(TrackEvent[])
-    MIDITrack(events) = new(events)
 end
+MIDITrack() = MIDITrack(TrackEvent[])
 
 function readtrack(f::IO)
     mtrk = join(map(Char, read(f, UInt8, 4)))
@@ -102,7 +100,7 @@ function writetrack(f::IO, track::MIDITrack)
 end
 
 # Adds an event to a track, with an absolute time
-function addevent(track::MIDITrack, time::Integer, newevent::TrackEvent)
+function addevent!(track::MIDITrack, time::Integer, newevent::TrackEvent)
     tracktime = 0
     addedevent = false
     for (i, event) in enumerate(track.events)
@@ -131,39 +129,45 @@ function addevent(track::MIDITrack, time::Integer, newevent::TrackEvent)
 end
 
 """
-    addnote(track::MIDITrack, note::Note)
-Add given `note` to given `track`, internally doing all translations from
+    addnote!(track::MIDITrack, note::Note)
+Add given `note` to given `track`, internally doing the translation from
 absolute time to relative time.
 """
-function addnote(track::MIDITrack, note::Note)
+function addnote!(track::MIDITrack, note::Note)
     for (status, position) in [(NOTEON, note.position), (NOTEOFF, note.position + note.duration)]
-        addevent(track, position, MIDIEvent(0, status | note.channel, UInt8[note.value, note.velocity]))
+        addevent!(track, position, MIDIEvent(0, status | note.channel, UInt8[note.value, note.velocity]))
     end
 end
 
 """
-    addnotes(track::MIDITrack, notes::Notes)
+    addnotes!(track::MIDITrack, notes)
 Add given `notes` to given `track`, internally doing all translations from
 absolute time to relative time.
 """
-function addnotes(track::MIDITrack, notes::Notes)
+function addnotes!(track::MIDITrack, notes)
     for note in notes
-        addnote(track, note)
+        addnote!(track, note)
     end
 end
 
 """
-    getnotes(track::MIDITrack)
-Find all NOTEON and NOTEOFF midi events in the `track` that correspond to
-the same note value (pitch) and convert them into
-the `Note` datatype provided by this Package. Ordering is done based on position.
+    getnotes(midi::MIDIFile, trackno = 2)
 
-There are special cases where NOTEOFF is actually encoded as NOTEON with 0 velocity.
+Find all NOTEON and NOTEOFF midi events in the `trackno` track of a `midi`,
+that correspond to the same note value (pitch) and convert them into
+the `Note` datatype. There are special cases where NOTEOFF is actually encoded as NOTEON with 0 velocity.
 `getnotes` takes care of this.
 
-Returns: `Notes` (which is `Vector{Note}`).
+Notice that the first track of a `midi` doesn't have any notes.
+
+    getnotes(track::MIDITrack, tpq = 960)
+Find the notes from `track` directly, passing also the ticks per quarter note.
+
+Returns: `Notes`, setting the ticks per quarter note as `tpq`. You can find
+the originally exported
+ticks per quarter note from the original `MIDIFile` through `midi.tpq`.
 """
-function getnotes(track::MIDITrack)
+function getnotes(track::MIDITrack, tpq = 960)
     notes = Note[]
     tracktime = UInt(0)
     for (i, event) in enumerate(track.events)
@@ -183,6 +187,7 @@ function getnotes(track::MIDITrack)
         end
     end
     sort!(notes, lt=((x, y)->x.position<y.position))
+    return Notes(notes, tpq)
 end
 
 """
@@ -195,5 +200,5 @@ The `program` must be specified in the range 1-128, **not** in 0-127!
 """
 function programchange(track::MIDITrack, time::Integer, channel::UInt8, program::UInt8)
     program -= 1
-    addevent(track, time, MIDIEvent(0, PROGRAMCHANGE | channel, UInt8[program]))
+    addevent!(track, time, MIDIEvent(0, PROGRAMCHANGE | channel, UInt8[program]))
 end
