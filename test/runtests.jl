@@ -8,4 +8,5 @@ using Base.Test
     include("midievent.jl")
     include("metaevent.jl")
     include("miditrack.jl")
+    include("midiio.jl")
 end
