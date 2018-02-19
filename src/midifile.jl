@@ -99,12 +99,20 @@ function BPM(t::MIDI.MIDIFile)
     if typeof(tlist[i]) == MIDI.MetaEvent
       y = tlist[i]
       if y.metatype == 0x51
-        tttttt = y.data
+        tttttt = deepcopy(y.data)
+        break
       end
     end
   end
+  # Ensure that tttttt is with correct form (first entry should be 0x00)
+  if tttttt[1] != 0x00
+      unshift!(tttttt, 0x00)
+  else
+      # Handle correctly "incorrect" cases where 0x00 has entered more than once
+      tttttt = tttttt[findin(tttttt, 0x00)[end]:end]
+  end
+
   # Get the microsecond number from tttttt
-  unshift!(tttttt , 0x00)
   u = ntoh(reinterpret(UInt32, tttttt)[1])
   μs = Int64(u)
   # BPM:
