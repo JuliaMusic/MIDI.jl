@@ -108,11 +108,11 @@ function BPM(t::MIDI.MIDIFile)
   u = ntoh(reinterpret(UInt32, tttttt)[1])
   μs = Int64(u)
   # BPM:
-  BPM = round(Int, 60000000/μs)
+  bpm = round(Int, 60000000/μs)
 end
 
 """
-    ms_per_tick(midi, bpm::Integer = BPM(midi)) -> ms::Float64
+    ms_per_tick(midi, bpm::Integer = BPM(midi)) -> ms
 Given a `MIDIFile`, return how many miliseconds is one tick, based
 on the `bpm`. By default the `bpm` is the BPM the midi file was exported at.
 """
