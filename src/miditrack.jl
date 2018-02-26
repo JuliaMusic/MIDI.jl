@@ -1,4 +1,5 @@
 export getnotes, addnote!, addnotes!
+export MIDITrack
 
 """
     MIDITrack <: Any
