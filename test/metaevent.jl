@@ -1,4 +1,4 @@
-@testset "Metaevent Tests" begin
+@testset "Metaevent" begin
     validtestvalues = [
         # Structure: dT (variable length), begin byte (0xFF), type byte, length (variable length type), data
         # dT is a variable length value which is handled by readvariablelength and not readsysexevent. We don't need to test it here, which

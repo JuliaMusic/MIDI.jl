@@ -54,12 +54,12 @@ per quarter note measure.
 
 `Notes` is iterated and accessed as if iterating or accessing its field `notes`.
 """
-mutable struct Notes
+struct Notes
     notes::Vector{Note}
     tpq::Int16
     function Notes(notes, tpq)
         if tpq < 1 || tpq > 960
-            throw(ArgumentError("Ticks per quarter note (tpq) must be ∈ [1, 960]"))
+            throw(ArgumentError("Ticks per quarter note (tpq) must ∈ [1, 960]"))
         end
         new(notes, tpq)
     end
@@ -77,4 +77,13 @@ Base.done(n::Notes, i) = done(n.notes, i)
 # Indexing
 Base.length(n::Notes) = length(n.notes)
 Base.endof(n::Notes) = endof(n.notes)
-Base.getindex(n::Notes, i) = n.notes[i]
+Base.getindex(n::Notes, i::Int) = n.notes[i]
+Base.getindex(n::Notes, r::AbstractVector{Int}) = Notes(n.notes[r], n.tpq)
+
+# Pushing
+Base.push!(no::Notes, n::Note) = push!(no.notes , n)
+function Base.append!(n1::Notes, n2::Notes)
+    n1.tpq == n2.tpq || throw(ArgumentError("The Notes do not have same tpq."))
+    append!(n1.notes, n2.notes)
+    return n1
+end
