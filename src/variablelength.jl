@@ -34,6 +34,11 @@ Write on `f` the given `number`, firstly converting it to the "variable length" 
 See the documentation for more.
 """
 function writevariablelength(f::IO, number::Int)
+    if number < 0 || number > 0x0FFFFFFF
+        error("Unable to write variable length value ",
+              string(number),
+              " as it does not fit in the range [0, 0x0FFFFFFF].")
+    end
     if number < 128
         write(f, UInt8(number))
     else

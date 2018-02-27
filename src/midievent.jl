@@ -46,6 +46,10 @@ function readMIDIevent(dT::Int, f::IO, laststatus::UInt8)
 end
 
 function writeevent(f::IO, event::MIDIEvent, writestatus::Bool)
+    if event.dT < 0
+        error("Negative deltas are not allowed. Please reorder your events.")
+    end
+    
     writevariablelength(f, event.dT)
 
     if writestatus

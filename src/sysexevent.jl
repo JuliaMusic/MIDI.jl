@@ -34,6 +34,10 @@ function readsysexevent(dT::Int, f::IO)
 end
 
 function writeevent(f::IO, event::SysexEvent)
+    if event.dT < 0
+        error("Negative deltas are not allowed. Please reorder your events.")
+    end
+    
     writevariablelength(f, event.dT)
     write(f, SYSEX)
     writevariablelength(f, length(event.data) + 1) # +1 for the ending F7

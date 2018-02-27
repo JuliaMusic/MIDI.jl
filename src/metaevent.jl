@@ -25,6 +25,9 @@ function readmetaevent(dT::Int, f::IO)
 end
 
 function writeevent(f::IO, event::MetaEvent)
+    if event.dT < 0
+        error("Negative deltas are not allowed. Please reorder your events.")
+    end
     writevariablelength(f, event.dT)
     write(f, META)
     write(f, event.metatype)
