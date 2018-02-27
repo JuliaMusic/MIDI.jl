@@ -16,14 +16,14 @@ function readvariablelength(f::IO)
         # We're done here. The first bit isn't set, so the number is contained in the 7 remaining bits.
         convert(Int, b)
     else
-        result = convert(Int, 0)
+        result = convert(UInt32, 0)
         while (b & mask) == mask
             result <<= 7
             result += (b & notmask)
             b = read(f, UInt8)
         end
         result = (result << 7) + b # No need to "& notmask", since the most significant bit is 0
-        result
+        Int(reinterpret(Int32,result))
     end
 end
 
