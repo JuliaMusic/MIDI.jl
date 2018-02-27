@@ -94,7 +94,7 @@ function fromabsolutetime!(track::MIDITrack)
 		t1 = event.dT
 		event.dT = event.dT - t0
 		if event.dT < 0
-			error("Negative relative dT")
+			error("Negative deltas are not allowed. Please reorder your events.")
 		end
 		t0 = t1
 	end
