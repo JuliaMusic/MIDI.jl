@@ -78,3 +78,6 @@ Base.done(n::Notes, i) = done(n.notes, i)
 Base.length(n::Notes) = length(n.notes)
 Base.endof(n::Notes) = endof(n.notes)
 Base.getindex(n::Notes, i) = n.notes[i]
+
+# Pushing
+Base.push!(no::Notes, n::Note) = push!(no.notes , n)
