@@ -14,7 +14,7 @@ invalidtestvalues = [
     ([0x4d, 0x54, 0x72, 0x6c], ErrorException),
 ]
 
-@testset "MIDITrack tests" begin
+@testset "MIDITrack" begin
     @testset "it should verify that the track is read correctly and all events are in the expected places" begin
         for (input, output) in validtestvalues
             result = MIDI.readtrack(IOBuffer(input))

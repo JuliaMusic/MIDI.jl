@@ -1,4 +1,4 @@
-@testset "MIDIEvent tests" begin
+@testset "MIDIEvent" begin
     # test one of each length of status bytes
     statusbytes = [MIDI.NOTEOFF, MIDI.CHANNELPRESSURE];
 
