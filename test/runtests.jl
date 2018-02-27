@@ -9,4 +9,5 @@ using Base.Test
     include("metaevent.jl")
     include("miditrack.jl")
     include("midiio.jl")
+    include("negative_delta.jl")
 end
