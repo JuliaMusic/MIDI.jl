@@ -1,7 +1,8 @@
-export Note, Notes
+export Note, Notes, AbstractNote
+abstract type AbstractNote end
 
 """
-    Note <: Any
+    Note <: AbstractNote
 Data structure describing a "music note".
 ## Fields:
 * `value::UInt8` : Pitch, starting from C0 = 0, adding one per semitone (middle-C is 60).
@@ -10,7 +11,7 @@ Data structure describing a "music note".
 * `channel::UInt8` : Channel of the track that the note is played on.
 * `velocity::UInt8` : Dynamic intensity. Cannot be higher than 127 (0x7F).
 """
-mutable struct Note
+mutable struct Note <: AbstractNote
     value::UInt8
     duration::UInt
     position::UInt
@@ -43,31 +44,31 @@ import Base.+, Base.-, Base.==
     n1.velocity == n2.velocity
 
 """
-    Notes <: Any
+    Notes{N<:AbstractNote}
 Data structure describing a collection of "music notes", bundled with a ticks
 per quarter note measure.
 ## Fields:
-* `notes::Vector{Note}`
+* `notes::Vector{N}`
 * `tpq::Int16` : Ticks per quarter note. Defines the fundamental unit of measurement
    of a note's position and duration, as well as the length of one quarter note.
    Takes values from 1 to 960.
 
 `Notes` is iterated and accessed as if iterating or accessing its field `notes`.
 """
-struct Notes
-    notes::Vector{Note}
+struct Notes{N <: AbstractNote}
+    notes::Vector{N}
     tpq::Int16
-    function Notes(notes, tpq)
-        if tpq < 1 || tpq > 960
-            throw(ArgumentError("Ticks per quarter note (tpq) must ∈ [1, 960]"))
-        end
-        new(notes, tpq)
-    end
 end
 
 # Constructors for Notes:
-Notes(notes::Vector{Note}) = Notes(notes, 960)
-Notes() = Notes(Vector{Note}[], 960)
+function Notes(notes::Vector{N}, tpq::Int = 960) where {N <: AbstractNote}
+    if tpq < 1 || tpq > 960
+        throw(ArgumentError("Ticks per quarter note (tpq) must ∈ [1, 960]"))
+    end
+    Notes{N}(notes, tpq)
+end
+
+Notes() = Notes{Note}(Vector{Note}[], 960)
 
 # Iterator Interface for notes:
 Base.start(n::Notes) = start(n.notes)
