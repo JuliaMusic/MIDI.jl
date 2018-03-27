@@ -130,11 +130,13 @@ function addevent!(track::MIDITrack, time::Integer, newevent::TrackEvent)
 end
 
 """
-    addnote!(track::MIDITrack, note::Note)
+    addnote!(track::MIDITrack, note::AbstractNote)
 Add given `note` to given `track`, internally doing the translation from
 absolute time to relative time.
 """
-function addnote!(track::MIDITrack, note::Note)
+function addnote!(track::MIDITrack, anote::AbstractNote)
+    # Convert to `Note`
+    note = Note(anote)
     for (status, position) in [(NOTEON, note.position), (NOTEOFF, note.position + note.duration)]
         addevent!(track, position, MIDIEvent(0, status | note.channel, UInt8[note.value, note.velocity]))
     end
@@ -164,7 +166,7 @@ Notice that the first track of a `midi` doesn't have any notes.
     getnotes(track::MIDITrack, tpq = 960)
 Find the notes from `track` directly, passing also the ticks per quarter note.
 
-Returns: `Notes`, setting the ticks per quarter note as `tpq`. You can find
+Returns: `Notes{Note}`, setting the ticks per quarter note as `tpq`. You can find
 the originally exported
 ticks per quarter note from the original `MIDIFile` through `midi.tpq`.
 """

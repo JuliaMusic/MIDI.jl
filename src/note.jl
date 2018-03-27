@@ -27,6 +27,7 @@ mutable struct Note <: AbstractNote
             new(value, duration, position, channel, velocity)
         end
 end
+Note(n::Note) = n
 
 import Base.+, Base.-, Base.==
 
@@ -82,8 +83,8 @@ Base.getindex(n::Notes, i::Int) = n.notes[i]
 Base.getindex(n::Notes, r::AbstractVector{Int}) = Notes(n.notes[r], n.tpq)
 
 # Pushing
-Base.push!(no::Notes, n::Note) = push!(no.notes , n)
-function Base.append!(n1::Notes, n2::Notes)
+Base.push!(no::Notes{N}, n::N) where {N <: AbstractNote} = push!(no.notes, n)
+function Base.append!(n1::Notes{N}, n2::Notes{N}) where {N}
     n1.tpq == n2.tpq || throw(ArgumentError("The Notes do not have same tpq."))
     append!(n1.notes, n2.notes)
     return n1

@@ -49,8 +49,8 @@ end
 Value is a number indicating pitch class & octave (middle-C is 60). Position is an absolute time (in ticks) within the track. Please note that velocity cannot be higher than 127 (0x7F). Integers can be added to, or subtracted from notes to change the pitch, and notes can be directly compared with ==. Constants exist for the different pitch values at octave 0. MIDI.C, MIDI.Cs, MIDI.Db, etc. Enharmonic note constants exist as well (MIDI.Fb). Just add 12*n to the note to transpose to octave n.
 
 ```julia
-mutable struct Notes
-    notes::Vector{Note}
+mutable struct Note{N<:AbstractNote}
+    notes::Vector{N}
     tpq::Int16
 end
 ```
