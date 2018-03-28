@@ -6,7 +6,6 @@
     end
 end
 
-
 cd(@__DIR__)
 
 @testset "Notes" begin
@@ -16,6 +15,7 @@ cd(@__DIR__)
 
     @test notes.tpq == 960
     @test typeof(notes[1]) == Note
-    @test typeof(notes[1:3]) == Notes
+    @test typeof(notes[1:3]) == Notes{Note}
+    @test typeof(notes[1:3]) <: Notes
     @test notes[1:3].notes == notes.notes[1:3]
 end
