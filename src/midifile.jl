@@ -124,7 +124,7 @@ end
 Given a `MIDIFile`, return how many miliseconds is one tick, based
 on the `bpm`. By default the `bpm` is the BPM the midi file was exported at.
 """
-function ms_per_tick(midi::MIDI.MIDIFile, bpm::Int = BPM(MIDI))
+function ms_per_tick(midi::MIDI.MIDIFile, bpm::Int = BPM(midi))
   tpq = midi.tpq
   tick_ms = (1000*60)/(bpm*tpq)
 end
