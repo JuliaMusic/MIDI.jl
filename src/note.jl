@@ -89,3 +89,24 @@ function Base.append!(n1::Notes{N}, n2::Notes{N}) where {N}
     append!(n1.notes, n2.notes)
     return n1
 end
+
+# Pretty printing
+function Base.show(io::IO, note::N) where {N<:AbstractNote}
+    mprint = Base.datatype_name(N)
+    print(io, "$(mprint)(val = $(Int(note.value)), dur = $(Int(note.duration)), "*
+    "pos = $(Int(note.position)), cha = $(Int(note.channel)), "*
+    "vel = $(Int(note.velocity)))")
+end
+
+function Base.show(io::IO, notes::Notes{N}) where {N}
+    mprint = Base.datatype_name(N)
+    print(io, "$(length(notes)) $(mprint)s with tpq=$(notes.tpq)")
+    i = 1
+    while i ≤ min(3, length(notes))
+        print(io, "\n", " ", notes[i])
+        i += 1
+    end
+    if length(notes) > 3
+        print(io, "\n", "  ⋮")
+    end
+end
