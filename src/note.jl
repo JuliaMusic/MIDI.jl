@@ -102,7 +102,7 @@ function Base.show(io::IO, notes::Notes{N}) where {N}
     mprint = Base.datatype_name(N)
     print(io, "$(length(notes)) $(mprint)s with tpq=$(notes.tpq)")
     i = 1
-    while i ≤ min(3, length(notes))
+    while i ≤ min(10, length(notes))
         print(io, "\n", " ", notes[i])
         i += 1
     end
