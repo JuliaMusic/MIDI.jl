@@ -80,7 +80,7 @@ Base.done(n::Notes, i) = done(n.notes, i)
 Base.length(n::Notes) = length(n.notes)
 Base.endof(n::Notes) = endof(n.notes)
 Base.getindex(n::Notes, i::Int) = n.notes[i]
-Base.getindex(n::Notes, r::AbstractVector{Int}) = Notes(n.notes[r], n.tpq)
+Base.getindex(n::Notes, r) = Notes(n.notes[r], n.tpq)
 
 # Pushing
 Base.push!(no::Notes{N}, n::N) where {N <: AbstractNote} = push!(no.notes, n)
