@@ -138,7 +138,7 @@ function addnote!(track::MIDITrack, anote::AbstractNote)
     # Convert to `Note`
     note = Note(anote)
     for (status, position) in [(NOTEON, note.position), (NOTEOFF, note.position + note.duration)]
-        addevent!(track, position, MIDIEvent(0, status | note.channel, UInt8[note.value, note.velocity]))
+        addevent!(track, position, MIDIEvent(0, status | note.channel, UInt8[note.pitch, note.velocity]))
     end
 end
 
