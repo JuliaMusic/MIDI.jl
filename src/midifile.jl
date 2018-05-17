@@ -35,7 +35,7 @@ end
 Read a file into a `MIDIFile` data type.
 """
 function readMIDIfile(filename::AbstractString)
-    if length(filename) < 4 || isMIDIFile(filename)
+    if length(filename) < 4 || !isMIDIFile(filename)
 	f *= ".mid"
     end
     f = open(filename)
@@ -68,7 +68,7 @@ end
 Write a `MIDIFile` as a ".mid" file to the given filename.
 """
 function writeMIDIfile(filename::AbstractString, data::MIDIFile)
-    if length(filename) < 4 || isMIDIFile(filename)
+    if length(filename) < 4 || !isMIDIFile(filename)
       filename *= ".mid"
     end
 
