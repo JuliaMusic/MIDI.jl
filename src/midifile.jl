@@ -26,12 +26,16 @@ function readMIDIfileastype0(filename::AbstractString)
 	MIDIfile
 end
 
+function isMIDIFile(filename::AbstractString)::Bool
+    endswith(lowercase(filename), ".mid")
+end
+
 """
     readMIDIfile(filename::AbstractString)
 Read a file into a `MIDIFile` data type.
 """
 function readMIDIfile(filename::AbstractString)
-    if length(filename) < 4 || filename[end-3:end] != ".mid"
+    if length(filename) < 4 || isMIDIFile(filename)
 	f *= ".mid"
     end
     f = open(filename)
@@ -64,7 +68,7 @@ end
 Write a `MIDIFile` as a ".mid" file to the given filename.
 """
 function writeMIDIfile(filename::AbstractString, data::MIDIFile)
-    if length(filename) < 4 || lowercase(filename[end-3:end]) != ".mid"
+    if length(filename) < 4 || isMIDIFile(filename)
       filename *= ".mid"
     end
 
