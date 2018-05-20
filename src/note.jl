@@ -111,11 +111,11 @@ end
 function Base.show(io::IO, note::N) where {N<:AbstractNote}
     mprint = Base.datatype_name(N)
     nn = rpad(pitchname(note.pitch), 4)
-    chpr = note.channel == 0 ? "" : "on channel $(note.channel) "
+    chpr = note.channel == 0 ? "" : " | channel $(note.channel)"
     velprint = rpad("vel = $(Int(note.velocity))", 9)
-    print(io, "$(mprint) $nn $chpr| $velprint | "*
+    print(io, "$(mprint) $nn | $velprint | "*
     "pos = $(Int(note.position)), "*
-    "dur = $(Int(note.duration))")
+    "dur = $(Int(note.duration))"*chpr)
 end
 
 function Base.show(io::IO, notes::Notes{N}) where {N}
