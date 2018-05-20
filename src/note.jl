@@ -97,6 +97,11 @@ const notenames = Dict(
 0=>"C", 1=>"C♯", 2=>"D", 3=>"D♯", 4=>"E", 5=>"F", 6=>"F♯", 7=>"G", 8=>"G♯", 9=>"A",
 10 =>"A♯", 11=>"B")
 
+"""
+    pitchname(pitch) -> string
+Return the name of the pitch, e.g. `F5`, `A♯5` etc. in modern notation given the
+value in integer.
+"""
 function pitchname(i)
     notename = notenames[mod(i, 12)]
     octave = i÷12
