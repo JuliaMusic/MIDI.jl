@@ -6,25 +6,27 @@ abstract type AbstractNote end
 Data structure describing a "music note".
 ## Fields:
 * `pitch::UInt8` : Pitch, starting from C0 = 0, adding one per semitone (middle-C is 60).
-* `duration::UInt` : Duration in ticks.
-* `position::UInt` : Position in absolute time (since beginning of track), in ticks.
-* `channel::UInt8` : Channel of the track that the note is played on.
 * `velocity::UInt8` : Dynamic intensity. Cannot be higher than 127 (0x7F).
+* `position::UInt` : Position in absolute time (since beginning of track), in ticks.
+* `duration::UInt` : Duration in ticks.
+* `channel::UInt8 = 0` : Channel of the track that the note is played on.
+
+If the `channel` of the note is `0` (default) it is not printed with `show`.
 """
 mutable struct Note <: AbstractNote
     pitch::UInt8
-    duration::UInt
-    position::UInt
-    channel::UInt8
     velocity::UInt8
+    position::UInt
+    duration::UInt
+    channel::UInt8
 
-    Note(pitch, duration, position, channel, velocity=0x7F) =
+    Note(pitch, velocity, position, duration, channel = 0) =
         if channel > 0x7F
             error( "Channel must be less than 128" )
         elseif velocity > 0x7F
             error( "Velocity must be less than 128" )
         else
-            new(pitch, duration, position, channel, velocity)
+            new(pitch, velocity, position, duration, channel)
         end
 end
 @inline Note(n::Note) = n
@@ -103,10 +105,12 @@ end
 
 function Base.show(io::IO, note::N) where {N<:AbstractNote}
     mprint = Base.datatype_name(N)
-    nn = rpad(pitchname(note.pitch)*",",4)
-    print(io, "$(mprint)($nn dur = $(Int(note.duration)), "*
-    "pos = $(Int(note.position)), cha = $(Int(note.channel)), "*
-    "vel = $(Int(note.velocity)))")
+    nn = rpad(pitchname(note.pitch), 4)
+    chpr = note.channel == 0 ? "" : "on channel $(note.channel) "
+    velprint = rpad("vel = $(Int(note.velocity))", 9)
+    print(io, "$(mprint) $nn $chpr| $velprint | "*
+    "pos = $(Int(note.position)), "*
+    "dur = $(Int(note.duration))")
 end
 
 function Base.show(io::IO, notes::Notes{N}) where {N}
@@ -117,7 +121,7 @@ function Base.show(io::IO, notes::Notes{N}) where {N}
         print(io, "\n", " ", notes[i])
         i += 1
     end
-    if length(notes) > 3
+    if length(notes) > 10
         print(io, "\n", "  ⋮")
     end
 end

@@ -183,7 +183,7 @@ function getnotes(track::MIDITrack, tpq = 960)
                 # If we have a MIDI event & it's a noteoff (or a note on with 0 velocity), and it's for the same note as the first event we found, make a note
                 # Many MIDI files will encode note offs as note ons with velocity zero
                 if isa(event2, MIDI.MIDIEvent) && (event2.status & 0xF0 == MIDI.NOTEOFF || (event2.status & 0xF0 == MIDI.NOTEON && event2.data[2] == 0)) && event.data[1] == event2.data[1]
-                    push!(notes, Note(event.data[1], duration, tracktime, event.status & 0x0F, event.data[2]))
+                    push!(notes, Note(event.data[1], event.data[2], tracktime, duration, event.status & 0x0F))
                     break
                 end
             end

@@ -15,7 +15,7 @@ invalidtestvalues = [
 ]
 
 @testset "MIDITrack" begin
-    @testset "it should verify that the track is read correctly and all events are in the expected places" begin
+    @testset "Verify that track is read correctly" begin
         for (input, output) in validtestvalues
             result = MIDI.readtrack(IOBuffer(input))
             @test length(result.events) == length(output.events)
@@ -25,7 +25,7 @@ invalidtestvalues = [
         end
     end
 
-    @testset "it should successfully write a track" begin
+    @testset "Successfully write a track" begin
         for (output, input) in validtestvalues
             buf = IOBuffer()
             MIDI.writetrack(buf, input)
@@ -33,15 +33,15 @@ invalidtestvalues = [
         end
     end
 
-    @testset "it should fail when invalid track data is provided" begin
+    @testset "Fail when invalid track data is provided" begin
         for (input, errtype) in invalidtestvalues
             @test_throws errtype MIDI.readtrack(IOBuffer(input))
         end
     end
 
-    C = MIDI.Note(60, 96, 0, 0)
-    G = MIDI.Note(67, 96, 48, 0)
-    E = MIDI.Note(64, 96, 96, 0)
+    C = MIDI.Note(60, 96, 0, 5)
+    G = MIDI.Note(67, 96, 48, 5)
+    E = MIDI.Note(64, 96, 96, 5)
     # Test writing notes and program change events to a track
     inc = 96
     track = MIDI.MIDITrack()
@@ -61,13 +61,13 @@ invalidtestvalues = [
 
     MIDI.addnotes!(track, notes)
 
-    @testset "it should allow notes and program change events to be written to a track" begin
+    @testset "Allow notes and program change events" begin
         buf = IOBuffer()
         MIDI.writetrack(buf, track)
         @test take!(buf) == [0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x52, 0x60, 0x90, 0x3c, 0x7f, 0x30, 0x43, 0x7f, 0x30, 0x80, 0x3c, 0x7f, 0x00, 0x90, 0x40, 0x7f, 0x30, 0x80, 0x43, 0x7f, 0x30, 0xc0, 0x00, 0x00, 0x80, 0x40, 0x7f, 0x00, 0x90, 0x3c, 0x7f, 0x30, 0x43, 0x7f, 0x30, 0x80, 0x3c, 0x7f, 0x00, 0x90, 0x40, 0x7f, 0x30, 0x80, 0x43, 0x7f, 0x30, 0xc0, 0x01, 0x00, 0x80, 0x40, 0x7f, 0x00, 0x90, 0x3c, 0x7f, 0x30, 0x43, 0x7f, 0x30, 0x80, 0x3c, 0x7f, 0x00, 0x90, 0x40, 0x7f, 0x30, 0x80, 0x43, 0x7f, 0x30, 0xc0, 0x02, 0x00, 0x80, 0x40, 0x7f, 0x00, 0xff, 0x2f, 0x00]
     end
 
-    @testset "it should correctly get notes from a track" begin
+    @testset "Correctly get notes from a track" begin
         sort!(notes, lt=((x, y)->x.position<y.position))
         for (n1, n2) in zip(notes, MIDI.getnotes(track))
             @test n1 == n2
