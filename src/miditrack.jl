@@ -202,6 +202,8 @@ Time is absolute, not relative to the last event.
 The `program` must be specified in the range 1-128, **not** in 0-127!
 """
 function programchange(track::MIDITrack, time::Integer, channel::UInt8, program::UInt8)
+    warning("This function has not been tested. Please test it before using "*
+    "and be kind enough to report whether it worked!")
     program -= 1
     addevent!(track, time, MIDIEvent(0, PROGRAMCHANGE | channel, UInt8[program]))
 end

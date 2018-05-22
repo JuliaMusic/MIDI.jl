@@ -16,7 +16,7 @@ type MIDIFile
     tracks::Array{MIDITrack, 1} # An array of tracks
 end
 
-MIDIFile() = MIDIFile(0,96,MIDITrack[])
+MIDIFile() = MIDIFile(0,960,MIDITrack[])
 
 function readMIDIfileastype0(filename::AbstractString)
 	MIDIfile = readMIDIfile(filename)
