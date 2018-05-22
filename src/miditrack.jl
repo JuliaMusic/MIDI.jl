@@ -138,7 +138,7 @@ function addnote!(track::MIDITrack, anote::AbstractNote)
     # Convert to `Note`
     note = Note(anote)
     for (status, position) in [(NOTEON, note.position), (NOTEOFF, note.position + note.duration)]
-        addevent!(track, position, MIDIEvent(0, status | note.channel, UInt8[note.value, note.velocity]))
+        addevent!(track, position, MIDIEvent(0, status | note.channel, UInt8[note.pitch, note.velocity]))
     end
 end
 
@@ -183,7 +183,7 @@ function getnotes(track::MIDITrack, tpq = 960)
                 # If we have a MIDI event & it's a noteoff (or a note on with 0 velocity), and it's for the same note as the first event we found, make a note
                 # Many MIDI files will encode note offs as note ons with velocity zero
                 if isa(event2, MIDI.MIDIEvent) && (event2.status & 0xF0 == MIDI.NOTEOFF || (event2.status & 0xF0 == MIDI.NOTEON && event2.data[2] == 0)) && event.data[1] == event2.data[1]
-                    push!(notes, Note(event.data[1], duration, tracktime, event.status & 0x0F, event.data[2]))
+                    push!(notes, Note(event.data[1], event.data[2], tracktime, duration, event.status & 0x0F))
                     break
                 end
             end
@@ -202,6 +202,8 @@ Time is absolute, not relative to the last event.
 The `program` must be specified in the range 1-128, **not** in 0-127!
 """
 function programchange(track::MIDITrack, time::Integer, channel::UInt8, program::UInt8)
+    warn("This function has not been tested. Please test it before using "*
+    "and be kind enough to report whether it worked!")
     program -= 1
     addevent!(track, time, MIDIEvent(0, PROGRAMCHANGE | channel, UInt8[program]))
 end

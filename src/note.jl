@@ -5,40 +5,42 @@ abstract type AbstractNote end
     Note <: AbstractNote
 Data structure describing a "music note".
 ## Fields:
-* `value::UInt8` : Pitch, starting from C0 = 0, adding one per semitone (middle-C is 60).
-* `duration::UInt` : Duration in ticks.
-* `position::UInt` : Position in absolute time (since beginning of track), in ticks.
-* `channel::UInt8` : Channel of the track that the note is played on.
+* `pitch::UInt8` : Pitch, starting from C0 = 0, adding one per semitone (middle-C is 60).
 * `velocity::UInt8` : Dynamic intensity. Cannot be higher than 127 (0x7F).
+* `position::UInt` : Position in absolute time (since beginning of track), in ticks.
+* `duration::UInt` : Duration in ticks.
+* `channel::UInt8 = 0` : Channel of the track that the note is played on.
+
+If the `channel` of the note is `0` (default) it is not printed with `show`.
 """
 mutable struct Note <: AbstractNote
-    value::UInt8
-    duration::UInt
-    position::UInt
-    channel::UInt8
+    pitch::UInt8
     velocity::UInt8
+    position::UInt
+    duration::UInt
+    channel::UInt8
 
-    Note(value, duration, position, channel, velocity=0x7F) =
+    Note(pitch, velocity, position, duration, channel = 0) =
         if channel > 0x7F
             error( "Channel must be less than 128" )
         elseif velocity > 0x7F
             error( "Velocity must be less than 128" )
         else
-            new(value, duration, position, channel, velocity)
+            new(pitch, velocity, position, duration, channel)
         end
 end
-Note(n::Note) = n
+@inline Note(n::Note) = n
 
 import Base.+, Base.-, Base.==
 
-+(n::Note, i::Integer) = Note(n.value + i, n.duration, n.position, n.channel, n.velocity)
++(n::Note, i::Integer) = Note(n.pitch + i, n.duration, n.position, n.channel, n.velocity)
 +(i::Integer, n::Note) = n + i
 
--(n::Note, i::Integer) = Note(n.value - i, n.duration, n.position, n.channel, n.velocity)
+-(n::Note, i::Integer) = Note(n.pitch - i, n.duration, n.position, n.channel, n.velocity)
 -(i::Integer, n::Note) = n - i
 
 ==(n1::Note, n2::Note) =
-    n1.value == n2.value &&
+    n1.pitch == n2.pitch &&
     n1.duration == n2.duration &&
     n1.position == n2.position &&
     n1.channel == n2.channel &&
@@ -52,7 +54,7 @@ per quarter note measure.
 * `notes::Vector{N}`
 * `tpq::Int16` : Ticks per quarter note. Defines the fundamental unit of measurement
    of a note's position and duration, as well as the length of one quarter note.
-   Takes values from 1 to 960.
+   Takes pitchs from 1 to 960.
 
 `Notes` is iterated and accessed as if iterating or accessing its field `notes`.
 """
@@ -91,11 +93,29 @@ function Base.append!(n1::Notes{N}, n2::Notes{N}) where {N}
 end
 
 # Pretty printing
+const notenames = Dict(
+0=>"C", 1=>"C♯", 2=>"D", 3=>"D♯", 4=>"E", 5=>"F", 6=>"F♯", 7=>"G", 8=>"G♯", 9=>"A",
+10 =>"A♯", 11=>"B")
+
+"""
+    pitchname(pitch) -> string
+Return the name of the pitch, e.g. `F5`, `A♯5` etc. in modern notation given the
+value in integer.
+"""
+function pitchname(i)
+    notename = notenames[mod(i, 12)]
+    octave = i÷12
+    return notename*string(octave)
+end
+
 function Base.show(io::IO, note::N) where {N<:AbstractNote}
     mprint = Base.datatype_name(N)
-    print(io, "$(mprint)(val = $(Int(note.value)), dur = $(Int(note.duration)), "*
-    "pos = $(Int(note.position)), cha = $(Int(note.channel)), "*
-    "vel = $(Int(note.velocity)))")
+    nn = rpad(pitchname(note.pitch), 4)
+    chpr = note.channel == 0 ? "" : " | channel $(note.channel)"
+    velprint = rpad("vel = $(Int(note.velocity))", 9)
+    print(io, "$(mprint) $nn | $velprint | "*
+    "pos = $(Int(note.position)), "*
+    "dur = $(Int(note.duration))"*chpr)
 end
 
 function Base.show(io::IO, notes::Notes{N}) where {N}
@@ -106,7 +126,7 @@ function Base.show(io::IO, notes::Notes{N}) where {N}
         print(io, "\n", " ", notes[i])
         i += 1
     end
-    if length(notes) > 3
+    if length(notes) > 10
         print(io, "\n", "  ⋮")
     end
 end
