@@ -103,10 +103,6 @@ addnotes!(track::MIDITrack, notes) # Adds a series of notes to a track
 getnotes(midi::MIDIFile, trackno = 2)
 getnotes(track::MIDITrack, tpq = 960)
 
-# Change the program (instrument) on the given channel.
-# Time is ABSOLUTE, not relative to the last event.
-programchange(track::MIDITrack, time::Integer, channel::UInt8, program::UInt8)
-
 # Add custom event (again, time is absolute)
 addevent!(track::MIDITrack, time::Integer, newevent::TrackEvent)
 ```
