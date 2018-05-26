@@ -2,9 +2,9 @@
 
 A basic library for reading and writing MIDI data. Pull requests and suggestions are more than welcome. If you feel the API is clumsy or incomplete, please open an Issue about it.
 
-| [**Package Evaluator**](http://pkg.julialang.org/?pkg=DynamicalBilliards#DynamicalBilliards) | **Travis**     | **AppVeyor** |
-|:-------------------:|:-----------------------:|:-----:|
-|[![](http://pkg.julialang.org/badges/DynamicalBilliards_0.6.svg)](http://pkg.julialang.org/?pkg=MIDI) | [![Build Status](https://travis-ci.org/JoelHobson/MIDI.jl.svg?branch=master)](https://travis-ci.org/JoelHobson/MIDI.jl) | [![Build status](https://ci.appveyor.com/api/projects/status/1a0ufac7gwessevh/branch/master?svg=true)](https://ci.appveyor.com/project/JuliaDynamics/midi-jl/branch/master)
+|**Travis** | **AppVeyor** |
+|:-------------------:|:-----------------------:|
+| [![Build Status](https://travis-ci.org/JuliaMusic/MIDI.jl.svg?branch=master)](https://travis-ci.org/JuliaMusic/MIDI.jl) | [![Build status](https://ci.appveyor.com/api/projects/status/4mpn9vgfa7wh0jtq?svg=true)](https://ci.appveyor.com/project/JuliaDynamics/midi-jl-h79xk)
 
 ---
 
