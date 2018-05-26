@@ -11,7 +11,7 @@ Track chunks begin with four bytes spelling out "MTrk", followed by the length
 (in bytes) of the track (see `readvariablelength`), followed by a sequence
 of events.
 """
-type MIDITrack
+mutable struct MIDITrack
     events::Vector{TrackEvent}
 end
 MIDITrack() = MIDITrack(TrackEvent[])
