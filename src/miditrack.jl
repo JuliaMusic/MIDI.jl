@@ -1,4 +1,4 @@
-export getnotes, addnote!, addnotes!
+export getnotes, addnote!, addnotes!, addevent!
 export MIDITrack
 
 """
@@ -100,7 +100,11 @@ function writetrack(f::IO, track::MIDITrack)
     write(f, bytes)
 end
 
-# Adds an event to a track, with an absolute time
+"""
+    addevent!(track::MIDITrack, time::Int, event::TrackEvent)
+Add an event to the `track` at given `time`. The `time` is in absolute time,
+not relative.
+"""
 function addevent!(track::MIDITrack, time::Integer, newevent::TrackEvent)
     tracktime = 0
     addedevent = false
