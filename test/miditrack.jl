@@ -73,4 +73,22 @@ invalidtestvalues = [
             @test n1 == n2
         end
     end
+
+    @testset "Track names" begin
+
+        # correct tracks
+        midi = readMIDIfile("doxy.mid")
+        @test trackname(midi.tracks[2]) == "Drums"
+        @test trackname(midi.tracks[3]) == "Bass"
+        @test trackname(midi.tracks[4]) == "ORIGINAL"
+
+        # broken track
+        midi.tracks[2].events = midi.tracks[2].events[10:end]
+        @test trackname(midi.tracks[2]) == "No track name found"
+
+        # add track name
+        addtrackname!(midi.tracks[2],"Uagadugu")
+        @test trackname(midi.tracks[2]) == "Uagadugu"
+
+    end
 end
