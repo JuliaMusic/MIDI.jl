@@ -90,5 +90,8 @@ invalidtestvalues = [
         addtrackname!(midi.tracks[2],"Uagadugu")
         @test trackname(midi.tracks[2]) == "Uagadugu"
 
+        # replace track name
+        addtrackname!(midi.tracks[2],"Overwrite")
+        @test trackname(midi.tracks[2]) == "Overwrite"
     end
 end
