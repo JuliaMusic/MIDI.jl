@@ -93,5 +93,11 @@ invalidtestvalues = [
         # replace track name
         addtrackname!(midi.tracks[2],"Overwrite")
         @test trackname(midi.tracks[2]) == "Overwrite"
+
+        # save and reopen
+        writeMIDIfile("changedname.mid",midi)
+        midi = readMIDIfile("changedname.mid")
+        @test trackname(midi.tracks[2]) == "Overwrite"
+        rm("changedname.mid")
     end
 end
