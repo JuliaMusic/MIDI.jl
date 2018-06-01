@@ -263,13 +263,11 @@ end
 
 function findnameevent(track::MIDI.MIDITrack)
     # find track name MetaEvent
-    # (has dt zero and occurs before any other event with nonzero dt)
     position = 0
     for (i,event) in enumerate(track.events)
-        if event.dT != 0
-            break
-        elseif event.dT == 0 && isa(event, MIDI.MetaEvent) && event.metatype == 0x03
+        if isa(event, MIDI.MetaEvent) && event.metatype == 0x03
             position = i
+            break
         end
     end
     return position

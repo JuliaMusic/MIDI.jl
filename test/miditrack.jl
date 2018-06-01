@@ -99,5 +99,11 @@ invalidtestvalues = [
         midi = readMIDIfile("changedname.mid")
         @test trackname(midi.tracks[2]) == "Overwrite"
         rm("changedname.mid")
+
+        # find name at nonzero position
+        meta = deepcopy(midi.tracks[2].events[1])
+        deleteat!(midi.tracks[2].events,1)
+        addevent!(midi.tracks[2],6666,meta)
+        @test trackname(midi.tracks[2]) == "Overwrite"
     end
 end
