@@ -1,5 +1,4 @@
 using MIDI
-using Base.Test
 
 cd(@__DIR__)
 
@@ -8,10 +7,9 @@ cd(@__DIR__)
     @test midi.tpq == 960
     @test length(midi.tracks) == 4
 
-    notes = getnotes(midi.tracks[4])
+    notes = getnotes(midi, 4)
 
-    @test length(notes.notes) > 1
-    @test start(notes) == 1
+    @test length(notes) == 533
     @test notes.tpq == 960
 
     @test notes[1].pitch == 65

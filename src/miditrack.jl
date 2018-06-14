@@ -17,9 +17,10 @@ end
 MIDITrack() = MIDITrack(TrackEvent[])
 
 function readtrack(f::IO)
-    mtrk = join(map(Char, read(f, UInt8, 4)))
+
+    mtrk = join(map(Char, read!(f, Array{UInt8}(undef, 4))))
     if mtrk != MTRK
-        error("Not a valid MIDI file. Expected MTrk, got $(mtrk) starting at byte $(hex(position(f)-4, 2))")
+        error("Not a valid MIDI file. Expected MTrk, got $(mtrk) starting at byte $(string(position(f)-4, base = 16, pad = 2))")
     end
     track = MIDITrack()
 
@@ -296,8 +297,8 @@ Time is absolute, not relative to the last event.
 The `program` must be specified in the range 1-128, **not** in 0-127!
 """
 function programchange(track::MIDITrack, time::Integer, channel::UInt8, program::UInt8)
-    warn("This function has not been tested. Please test it before using "*
-    "and be kind enough to report whether it worked!")
+    @warn "This function has not been tested. Please test it before using "*
+    "and be kind enough to report whether it worked!"
     program -= 1
     addevent!(track, time, MIDIEvent(0, PROGRAMCHANGE | channel, UInt8[program]))
 end

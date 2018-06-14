@@ -76,13 +76,14 @@ end
 Notes() = Notes{Note}(Vector{Note}[], 960)
 
 # Iterator Interface for notes:
-Base.start(n::Notes) = start(n.notes)
-Base.next(n::Notes, i) = next(n.notes, i)
-Base.done(n::Notes, i) = done(n.notes, i)
+Base.iterate(n::Notes) = iterate(n.notes)
+Base.iterate(n::Notes, i) = iterate(n.notes, i)
+Base.eltype(::Type{Notes{N}}) where {N} = N
 
 # Indexing
 Base.length(n::Notes) = length(n.notes)
-Base.endof(n::Notes) = endof(n.notes)
+Base.lastindex(n::Notes) = lastindex(n.notes)
+Base.firstindex(n::Notes) = firstindex(n.notes)
 Base.getindex(n::Notes, i::Int) = n.notes[i]
 Base.getindex(n::Notes, r) = Notes(n.notes[r], n.tpq)
 
@@ -111,7 +112,7 @@ function pitchname(i)
 end
 
 function Base.show(io::IO, note::N) where {N<:AbstractNote}
-    mprint = Base.datatype_name(N)
+    mprint = nameof(N)
     nn = rpad(pitchname(note.pitch), 4)
     chpr = note.channel == 0 ? "" : " | channel $(note.channel)"
     velprint = rpad("vel = $(Int(note.velocity))", 9)
@@ -121,7 +122,7 @@ function Base.show(io::IO, note::N) where {N<:AbstractNote}
 end
 
 function Base.show(io::IO, notes::Notes{N}) where {N}
-    mprint = Base.datatype_name(N)
+    mprint = nameof(N)
     print(io, "$(length(notes)) $(mprint)s with tpq=$(notes.tpq)")
     i = 1
     while i ≤ min(10, length(notes))
