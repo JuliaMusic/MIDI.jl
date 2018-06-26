@@ -134,6 +134,77 @@ function addevent!(track::MIDITrack, time::Integer, newevent::TrackEvent)
 end
 
 """
+    addevent_hint!(track::MIDITrack, time::Int, event::TrackEvent,
+                    eventindex::UInt, eventtime::UInt)
+
+Add an event to the `track` at given `time`. The `time` is in absolute time,
+not relative. Provide the index `eventindex` and the absolute time `eventtime`
+of a [`TrackEvent`](@ref) in the MIDITrack to be faster than [`addevent!`](@ref).
+`eventtime` has to be smaller than `time`.
+Returns the index and absolute time of the added event.
+"""
+function addevent_hint!(track::MIDITrack, time::Integer, newevent::TrackEvent,
+                    eventindex::Int, eventtime::Int)
+    # start at known position
+    tracktime = eventtime
+    addedevent = false
+
+    # start at known index
+    for i = (eventindex+1):length(track.events)
+        if tracktime + track.events[i].dT > time
+            # Add to track at position
+            newdt = time - tracktime
+            println(newdt)
+            newevent.dT = Int(newdt)
+            insert!(track.events, i, newevent)
+            addedevent = true
+            eventindex = i
+
+            nextevent = track.events[i+1]
+            nextevent.dT -= newdt
+
+            break
+        else
+            tracktime += track.events[i].dT
+        end
+    end
+
+    if !addedevent
+        newdt = time - tracktime
+        newevent.dT = newdt
+        push!(track.events, newevent)
+        eventindex = length(track.events)+1
+    end
+    return (eventindex, Int(time))
+end
+
+"""
+    addnotes_fast!(track::MIDITrack, notes)
+Add given `notes` to given `track`, internally doing all translations from
+absolute time to relative time. `notes` MUST be ordered successively.
+"""
+function addnotes_fast!(track::MIDITrack, notes)
+    # first write all NOTEON
+    eventindex = 0
+    eventtime = 0
+    for anote in notes
+        note = Note(anote)
+        eventindex, eventtime = addevent_hint!(track, note.position, MIDIEvent(0, NOTEON | note.channel, UInt8[note.pitch, note.velocity]), eventindex, eventtime)
+        println("$eventindex, $eventtime")
+    end
+
+    # then write all NOTEOFF
+    eventindex = 0
+    eventtime = 0
+    for anote in notes
+        note = Note(anote)
+        eventindex, eventtime = addevent_hint!(track, note.position + note.duration, MIDIEvent(0, NOTEOFF | note.channel, UInt8[note.pitch, note.velocity]), eventindex, eventtime)
+        println("$eventindex, $eventtime")
+    end
+
+end
+
+"""
     addnote!(track::MIDITrack, note::AbstractNote)
 Add given `note` to given `track`, internally doing the translation from
 absolute time to relative time.
