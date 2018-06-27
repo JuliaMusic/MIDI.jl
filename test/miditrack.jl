@@ -175,35 +175,31 @@ invalidtestvalues = [
 
     end
 
-    @testset "addnotes_fast!" begin
-        track_fast = MIDI.MIDITrack()
-        track_conv = MIDI.MIDITrack()
+    @testset "addnotes!" begin
 
-        # generate random notes
-        rnotes = Note[]
-        pos = 0
-        for i in 1:1000
-            pos += rand(51:500)
-            note = Note(rand(UInt8), rand(0:127), pos, rand(1:50))
-            push!(rnotes, note)
+        midi = readMIDIfile("doxy.mid")
+        original_track = deepcopy(midi.tracks[2])
+        test_track = deepcopy(midi.tracks[2])
+
+        # remove notes from test track
+        notes = getnotes(test_track)
+        deletes = Vector{Int}()
+        for (i,event) in enumerate(test_track.events)
+            if isa(event, MIDIEvent) && (event.status & 0xF0) in [NOTEON, NOTEOFF]
+                push!(deletes, i)
+            end
         end
-        rnotes1 = rnotes[2:2:end]
-        rnotes2 = sort(rnotes[1:2:end], lt=((x, y)->x.position<y.position))
+        deleteat!(test_track.events, deletes)
 
-        # conventionally add first half of the notes to both tracks
-        addnotes!(track_fast, rnotes1)
-        addnotes!(track_conv, rnotes1)
+        # add them again  to the emptied track
+        addnotes!(test_track, notes)
 
-        # add second half conventional or fast
-        MIDI.addnotes_fast!(track_fast, rnotes2)
-        addnotes!(track_conv, rnotes2)
-
-        # if identical -> fast way as correct as conventional
-        notes_fast = getnotes(track_fast)
-        notes_conv = getnotes(track_conv)
+        # get the notes of the original and the testing track and compare
+        onotes = getnotes(original_track)
+        tnotes = getnotes(test_track)
         identical = true
-        for i = 1:length(notes_conv)
-            if notes_conv[i] != notes_fast[i]
+        for i = 1:length(onotes)
+            if onotes[i] != tnotes[i]
                 identical = false
             end
         end
