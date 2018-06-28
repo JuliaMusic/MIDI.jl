@@ -1,4 +1,4 @@
-export getnotes, addnote!, addnotes!, addevent!, trackname, addtrackname!
+export getnotes, addnote!, addnotes!, addevent!, addevents!, trackname, addtrackname!
 export MIDITrack
 
 """
@@ -104,6 +104,9 @@ end
     addevent!(track::MIDITrack, time::Int, event::TrackEvent)
 Add an event to the `track` at given `time`. The `time` is in absolute time,
 not relative.
+
+If you want to add multiple events in one go, you should use the [`addevents!`](@ref)
+function instead.
 """
 function addevent!(track::MIDITrack, time::Integer, newevent::TrackEvent)
     tracktime = 0
@@ -134,6 +137,103 @@ function addevent!(track::MIDITrack, time::Integer, newevent::TrackEvent)
 end
 
 """
+    addevent_hint!(track::MIDITrack, time::Int, event::TrackEvent,
+                    eventindex::UInt, eventtime::UInt)
+
+Add an event to the `track` at given `time`. The `time` is in absolute time,
+not relative. `eventindex` and `eventtime` have to be the index and the absolute
+time of a known event in `track` which lays BEFORE the position where `event` shall be added.
+This shortens the search for the correct position for `event` by skipping all
+`TrackEvents` before the specified one.
+
+Returns the index and absolute time of the added event.
+"""
+function addevent_hint!(track::MIDITrack, time::Integer, newevent::TrackEvent,
+                    eventindex::Integer, eventtime::Integer)
+    # start at known position
+    eventtime > time && throw(ArgumentError("Eventtime has to be smaller than time."))
+    tracktime = eventtime
+    startindex = eventindex+1
+
+    addedevent = false
+
+    # start at known index
+    for i = (startindex):length(track.events)
+        if tracktime + track.events[i].dT > time
+
+            # Add to track at position
+            newdt = time - tracktime
+            newevent.dT = newdt
+            insert!(track.events, i, newevent)
+            addedevent = true
+            eventindex = i
+
+            # update dT of following event
+            nextevent = track.events[i+1]
+            nextevent.dT -= newdt
+
+            break
+        else
+            tracktime += track.events[i].dT
+        end
+    end
+
+    if !addedevent
+        newdt = time - tracktime
+        newevent.dT = newdt
+        push!(track.events, newevent)
+        eventindex = length(track.events)
+    end
+    return (eventindex, Int(time))
+end
+
+"""
+    addevents!(track::MIDITrack, times, events)
+
+Add given `events` to given `track` at given `times`, internally
+doing all translations from absolute time to relative time.
+
+Using this function is more efficient than a loop over single [`addevent!`](@ref)
+calls.
+"""
+function addevents!(track::MIDITrack, times::AbstractArray{Int}, events)
+
+    # get a permutation that gives temporal order
+    if issorted(times)
+        perm = collect(1:length(times))
+    else
+        perm = sortperm(times)
+    end
+
+    # add the notes to the track using the faster version of addevent
+    eventindex = 0
+    eventtime = 0
+    for i = 1:length(times)
+        eventindex, eventtime = addevent_hint!(track,times[perm[i]], events[perm[i]], eventindex, eventtime)
+    end
+end
+
+"""
+    addnotes!(track::MIDITrack, notes)
+Add given `notes` to given `track`, internally doing all translations from
+absolute time to relative time.
+"""
+function addnotes!(track::MIDITrack, notes)
+    # generate all events to be written to the track
+    events = Vector{MIDI.TrackEvent}()
+    posis = Vector{Int}()
+    for anote in notes
+        note = Note(anote)
+        for (status, position) in [(NOTEON, note.position), (NOTEOFF, note.position + note.duration)]
+            push!(events, MIDIEvent(0, status | note.channel, UInt8[note.pitch, note.velocity]))
+            push!(posis, position)
+        end
+    end
+
+    addevents!(track, posis, events)
+end
+
+"""
     addnote!(track::MIDITrack, note::AbstractNote)
 Add given `note` to given `track`, internally doing the translation from
 absolute time to relative time.
@@ -146,16 +246,6 @@ function addnote!(track::MIDITrack, anote::AbstractNote)
     end
 end
 
-"""
-    addnotes!(track::MIDITrack, notes)
-Add given `notes` to given `track`, internally doing all translations from
-absolute time to relative time.
-"""
-function addnotes!(track::MIDITrack, notes)
-    for note in notes
-        addnote!(track, note)
-    end
-end
 
 """
     getnotes(midi::MIDIFile, trackno = 2)
