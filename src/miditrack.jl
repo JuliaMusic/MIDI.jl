@@ -104,6 +104,9 @@ end
     addevent!(track::MIDITrack, time::Int, event::TrackEvent)
 Add an event to the `track` at given `time`. The `time` is in absolute time,
 not relative.
+
+If you want to add multiple events in one go, you should use the [`addevents!`](@ref)
+function instead.
 """
 function addevent!(track::MIDITrack, time::Integer, newevent::TrackEvent)
     tracktime = 0
@@ -146,7 +149,7 @@ This shortens the search for the correct position for `event` by skipping all
 Returns the index and absolute time of the added event.
 """
 function addevent_hint!(track::MIDITrack, time::Integer, newevent::TrackEvent,
-                    eventindex::Int, eventtime::Int)
+                    eventindex::Integer, eventtime::Integer)
     # start at known position
     eventtime > time && throw(ArgumentError("Eventtime has to be smaller than time."))
     tracktime = eventtime
@@ -185,12 +188,15 @@ function addevent_hint!(track::MIDITrack, time::Integer, newevent::TrackEvent,
 end
 
 """
-    addevents!(track::MIDITrack, times::Vector{Int}, events::Vector{<:TrackEvent})
+    addevents!(track::MIDITrack, times, events)
 
 Add given `events` to given `track` at given `times`, internally
 doing all translations from absolute time to relative time.
+
+Using this function is more efficient than a loop over single [`addevent!`](@ref)
+calls.
 """
-function addevents!(track::MIDITrack, times::Vector{Int}, events::Vector{TrackEvent})
+function addevents!(track::MIDITrack, times::AbstractArray{Int}, events)
 
     # get a permutation that gives temporal order
     if issorted(times)
