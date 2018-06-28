@@ -1,4 +1,4 @@
-export getnotes, addnote!, addnotes!, addevent!, trackname, addtrackname!
+export getnotes, addnote!, addnotes!, addevent!, addevents!, trackname, addtrackname!
 export MIDITrack
 
 """
@@ -138,14 +138,17 @@ end
                     eventindex::UInt, eventtime::UInt)
 
 Add an event to the `track` at given `time`. The `time` is in absolute time,
-not relative. Provide the index `eventindex` and the absolute time `eventtime`
-of a [`TrackEvent`](@ref) in the MIDITrack to be faster than [`addevent!`](@ref).
-`eventtime` has to be smaller than `time`.
+not relative. `eventindex` and `eventtime` have to be the index and the absolute
+time of a known event in `track` which lays BEFORE the position where `event` shall be added.
+This shortens the search for the correct position for `event` by skipping all
+`TrackEvents` before the specified one.
+
 Returns the index and absolute time of the added event.
 """
 function addevent_hint!(track::MIDITrack, time::Integer, newevent::TrackEvent,
                     eventindex::Int, eventtime::Int)
     # start at known position
+    eventtime > time && throw(ArgumentError("Eventtime has to be smaller than time."))
     tracktime = eventtime
     startindex = eventindex+1
 
@@ -182,6 +185,29 @@ function addevent_hint!(track::MIDITrack, time::Integer, newevent::TrackEvent,
 end
 
 """
+    addevents!(track::MIDITrack, times::Vector{Int}, events::Vector{TrackEvent})
+
+Add given `events` to given `track` at given `times`, internally
+doing all translations from absolute time to relative time.
+"""
+function addevents!(track::MIDITrack, times::Vector{Int}, events::Vector{TrackEvent})
+
+    # get a permutation that gives temporal order
+    if issorted(times)
+        perm = collect(1:length(times))
+    else
+        perm = sortperm(times)
+    end
+
+    # add the notes to the track using the faster version of addevent
+    eventindex = 0
+    eventtime = 0
+    for i = 1:length(times)
+        eventindex, eventtime = addevent_hint!(track,times[perm[i]], events[perm[i]], eventindex, eventtime)
+    end
+end
+
+"""
     addnotes!(track::MIDITrack, notes)
 Add given `notes` to given `track`, internally doing all translations from
 absolute time to relative time.
@@ -198,15 +224,7 @@ function addnotes!(track::MIDITrack, notes)
         end
     end
 
-    # get a permutation that gives temporal order
-    perm = sortperm(posis)
-
-    # add the notes to the track using the faster version of addevent
-    eventindex = 0
-    eventtime = 0
-    for i = 1:length(posis)
-        eventindex, eventtime = addevent_hint!(track, posis[perm[i]], events[perm[i]], eventindex, eventtime)
-    end
+    addevents!(track, posis, events)
 end
 
 """
