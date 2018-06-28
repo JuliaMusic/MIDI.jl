@@ -185,7 +185,7 @@ function addevent_hint!(track::MIDITrack, time::Integer, newevent::TrackEvent,
 end
 
 """
-    addevents!(track::MIDITrack, times::Vector{Int}, events::Vector{TrackEvent})
+    addevents!(track::MIDITrack, times::Vector{Int}, events::Vector{<:TrackEvent})
 
 Add given `events` to given `track` at given `times`, internally
 doing all translations from absolute time to relative time.
