@@ -1,5 +1,5 @@
 using MIDI
-using Base.Test
+using Test
 
 include("variablelength.jl")
 include("sysexevent.jl")

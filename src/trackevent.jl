@@ -32,16 +32,14 @@ mutable struct MetaEvent <: TrackEvent
     data::Array{UInt8,1}
 end
 
-function ismetaevent(b::UInt8)
-    b == 0xFF
-end
+@inline ismetaevent(b::UInt8) = b == 0xFF
 
 function readmetaevent(dT::Int, f::IO)
     # Meta events are 0xFF - type (1 byte) - variable length data length - data bytes
     skip(f, 1) # Skip the 0xff that starts the event
     metatype = read(f, UInt8)
     datalength = readvariablelength(f)
-    data = read(f, UInt8, datalength)
+    data = read!(f, Array{UInt8}(undef, datalength))
 
     MetaEvent(dT, metatype, data)
 end
@@ -101,7 +99,7 @@ function readMIDIevent(dT::Int, f::IO, laststatus::UInt8)
         skip(f, -1)
     end
 
-    data = read(f, UInt8, toread)
+    data = read!(f, Array{UInt8}(undef, toread))
 
     MIDIEvent(dT, statusbyte, data)
 end
@@ -137,9 +135,7 @@ mutable struct SysexEvent <: TrackEvent
     data::Array{UInt8,1}
 end
 
-function issysexevent(b::UInt8)
-    b == 0xF0
-end
+issysexevent(b::UInt8) = b == 0xF0
 
 function readsysexevent(dT::Int, f::IO)
     data = UInt8[]
