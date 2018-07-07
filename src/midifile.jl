@@ -70,7 +70,7 @@ function writeMIDIfile(filename::AbstractString, data::MIDIFile)
 
     f = open(filename, "w")
 
-    write(f, convert(Array{UInt8, 1}, MTHD)) # File identifier
+    write(f, MTHD) # File identifier
     write(f, hton(convert(UInt32, 6))) # Header length
     write(f, hton(data.format))
     write(f, hton(convert(UInt16, length(data.tracks))))

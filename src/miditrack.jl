@@ -73,7 +73,7 @@ function readtrack(f::IO)
 end
 
 function writetrack(f::IO, track::MIDITrack)
-    write(f, convert(Array{UInt8, 1}, MTRK)) # Track identifier
+    write(f, MTRK) # Track identifier
 
     writingMIDI = false
     previous_status = UInt8(0)
