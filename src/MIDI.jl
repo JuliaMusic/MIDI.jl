@@ -3,7 +3,7 @@ A Julia library for reading and writing MIDI files.
 """
 module MIDI
 
-using Compat: @warn
+using Compat: @warn, undef
 
 include("note.jl")
 include("trackevent.jl")
