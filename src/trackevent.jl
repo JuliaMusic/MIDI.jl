@@ -41,7 +41,7 @@ function readmetaevent(dT::Int, f::IO)
     skip(f, 1) # Skip the 0xff that starts the event
     metatype = read(f, UInt8)
     datalength = readvariablelength(f)
-    data = read(f, UInt8, datalength)
+    data = read!(f, Array{UInt8}(undef, datalength))
 
     MetaEvent(dT, metatype, data)
 end
@@ -101,7 +101,7 @@ function readMIDIevent(dT::Int, f::IO, laststatus::UInt8)
         skip(f, -1)
     end
 
-    data = read(f, UInt8, toread)
+    data = read!(f, Array{UInt8}(undef, toread))
 
     MIDIEvent(dT, statusbyte, data)
 end
