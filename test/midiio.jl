@@ -1,5 +1,5 @@
 using MIDI
-using Base.Test
+using Compat.Test
 
 cd(@__DIR__)
 
@@ -11,7 +11,9 @@ cd(@__DIR__)
     notes = getnotes(midi.tracks[4])
 
     @test length(notes.notes) > 1
-    @test start(notes) == 1
+    if VERSION < v"0.7-"
+        @test start(notes) == 1
+    end
     @test notes.tpq == 960
 
     @test notes[1].pitch == 65

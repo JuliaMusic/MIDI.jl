@@ -1,5 +1,5 @@
 using MIDI
-using Base.Test
+using Compat.Test
 
 include("variablelength.jl")
 include("sysexevent.jl")
