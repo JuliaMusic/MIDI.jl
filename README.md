@@ -26,19 +26,19 @@ Sysex events are used to transmit arbitrary data. Their contents depend on the i
 
 ## Basic types
 ```julia
-type MIDIFile
+mutable struct MIDIFile
     format::UInt16 # The format of the file. Can be 0, 1 or 2
     tpq::Int16 # The time division of the track in ticks per beat.
     tracks::Array{MIDITrack, 1}
 end
 
-type MIDITrack
+mutable struct MIDITrack
     events::Array{TrackEvent, 1}
 end
 ```
 
 ```julia
-type Note
+mutable struct Note
     pitch::UInt8
     duration::UInt
     position::UInt
@@ -60,19 +60,19 @@ is that it allows one to obtain the note position within a bar, making
 working with notes easier.
 
 ```julia
-type MIDIEvent <: TrackEvent
+mutable struct MIDIEvent <: TrackEvent
     dT::Int
     status::UInt8
     data::Array{UInt8,1}
 end
 
-type MetaEvent <: TrackEvent
+mutable struct MetaEvent <: TrackEvent
     dT::Int
     metatype::UInt8
     data::Array{UInt8,1}
 end
 
-type SysexEvent <: TrackEvent
+mutable struct SysexEvent <: TrackEvent
     dT::Int
     data::Array{UInt8,1}
 end
