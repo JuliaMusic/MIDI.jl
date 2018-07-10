@@ -56,7 +56,7 @@ per quarter note measure.
 * `notes::Vector{N}`
 * `tpq::Int16` : Ticks per quarter note. Defines the fundamental unit of measurement
    of a note's position and duration, as well as the length of one quarter note.
-   Takes pitchs from 1 to 960.
+   Takes values from 1 to 960.
 
 `Notes` is iterated and accessed as if iterating or accessing its field `notes`.
 """

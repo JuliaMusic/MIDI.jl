@@ -8,7 +8,7 @@ export MIDITrack
 `events::Vector{TrackEvent}`.
 
 Track chunks begin with four bytes spelling out "MTrk", followed by the length
-(in bytes) of the track (see `readvariablelength`), followed by a sequence
+(in bytes) of the track (see [`readvariablelength`](@ref)), followed by a sequence
 of events.
 """
 mutable struct MIDITrack

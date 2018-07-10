@@ -7,7 +7,7 @@ Type representing a file of MIDI data.
 
 ## Fields
 * `format::UInt16` : The format of the file. Can be 0, 1 or 2.
-* `tpq::Int16` : The time division of the track, ticks-per-beat.
+* `tpq::Int16` : The time division of the track, ticks-per-quarter-note.
 * `tracks::Array{MIDITrack, 1}` : The array of contained tracks.
 """
 mutable struct MIDIFile
