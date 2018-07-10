@@ -106,10 +106,10 @@ function BPM(t::MIDI.MIDIFile)
   end
   # Ensure that tttttt is with correct form (first entry should be 0x00)
   if tttttt[1] != 0x00
-      unshift!(tttttt, 0x00)
+      pushfirst!(tttttt, 0x00)
   else
       # Handle correctly "incorrect" cases where 0x00 has entered more than once
-      tttttt = tttttt[findin(tttttt, 0x00)[end]:end]
+      tttttt = tttttt[findall(in(0x00), tttttt)[end]:end]
   end
 
   # Get the microsecond number from tttttt

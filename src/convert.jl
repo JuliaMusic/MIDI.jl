@@ -45,7 +45,7 @@ function type0totype1!(data::MIDIFile)
 			push!(data.tracks[channelnum + 2].events, event)
 		end
 	end
-	shift!(data.tracks)
+	popfirst!(data.tracks)
 	trackstoremove = []
 	for i in 1:length(data.tracks)
 		if length(data.tracks[i].events) == 0
