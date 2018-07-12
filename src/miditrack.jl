@@ -306,12 +306,12 @@ end
 """
     trackname(track::MIDI.MIDITrack)
 
-Return the name of the given [`MIDITrack`](@ref) as a string,
-by finding the "track name" [`MetaEvent`](@ref).
+Return the name of the given `track` as a string,
+by finding the "track name" `MetaEvent`.
 """
 function trackname(track::MIDI.MIDITrack)
 
-    pos = findnameevent(track)
+    pos = findtrackname(track)
     if pos == 0
         return "No track name found"
     # check if there really is a name
@@ -331,8 +331,8 @@ end
 """
     addtrackname!(track::MIDI.MIDITrack, name::String)
 
-Add a name of the given [`MIDITrack`](@ref) by attaching the correct
-"track name" [`MetaEvent`](@ref) to the track.
+Add a name to the given `track` by attaching the
+"track name" `MetaEvent` to the start of the `track`.
 """
 function addtrackname!(track::MIDI.MIDITrack, name::String)
     # construct fitting name event
@@ -343,17 +343,15 @@ function addtrackname!(track::MIDI.MIDITrack, name::String)
     meta = MetaEvent(0,0x03,data)
 
     # remove existing name
-    prev = findnameevent(track)
+    prev = findtrackname(track)
     if prev != 0
         deleteat!(track.events, prev)
     end
 
-    # add event to track
     addevent!(track, 0, meta)
 end
 
-function findnameevent(track::MIDI.MIDITrack)
-    # find track name MetaEvent
+function findtrackname(track::MIDI.MIDITrack)
     position = 0
     for (i,event) in enumerate(track.events)
         if isa(event, MIDI.MetaEvent) && event.metatype == 0x03
