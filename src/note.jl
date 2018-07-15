@@ -113,7 +113,7 @@ end
 
 function Base.show(io::IO, note::N) where {N<:AbstractNote}
     mprint = nameof(N)
-    nn = rpad(pitchname(note.pitch), 4)
+    nn = rpad(pitchname(note.pitch), 3)
     chpr = note.channel == 0 ? "" : " | channel $(note.channel)"
     velprint = rpad("vel = $(Int(note.velocity))", 9)
     print(io, "$(mprint) $nn | $velprint | "*
