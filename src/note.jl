@@ -121,7 +121,7 @@ function Base.show(io::IO, note::N) where {N<:AbstractNote}
     "dur = $(Int(note.duration))"*chpr)
 end
 
-function Base.show(io::IO, notes::Notes{N}) where {N}
+function Base.show(io::IO, ::MIME"text/plain", notes::Notes{N}) where {N}
     mprint = nameof(N)
     print(io, "$(length(notes)) $(mprint)s with tpq=$(notes.tpq)")
     i = 1
@@ -132,4 +132,8 @@ function Base.show(io::IO, notes::Notes{N}) where {N}
     if length(notes) > 10
         print(io, "\n", "  ⋮")
     end
+end
+function Base.show(io::IO, notes::Notes{N}) where {N}
+    mprint = nameof(N)
+    print(io, "Notes{$(mprint)} with $(length(notes)) notes")
 end
