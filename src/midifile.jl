@@ -87,46 +87,45 @@ end
 Return the BPM where the given `MIDIFile` was exported at.
 """
 function BPM(t::MIDI.MIDIFile)
-  # META-event list:
-  tlist = [x for x in t.tracks[1].events]
-  tttttt = Vector{UInt32}
-  # Find the one that corresponds to Set-Time:
-  # The event tttttt corresponds to the command
-  # FF 51 03 tttttt Set Tempo (in microseconds per MIDI quarter-note)
-  # See here (page 8):
-  # http://www.cs.cmu.edu/~music/cmsip/readings/Standard-MIDI-file-format-updated.pdf
-  for i in 1:length(tlist)
-    if typeof(tlist[i]) == MIDI.MetaEvent
-      y = tlist[i]
-      if y.metatype == 0x51
-        tttttt = deepcopy(y.data)
-        break
-      end
+    # META-event list:
+    tttttt = Vector{UInt32}()
+    # Find the one that corresponds to Set-Time:
+    # The event tttttt corresponds to the command
+    # FF 51 03 tttttt Set Tempo (in microseconds per MIDI quarter-note)
+    # See here (page 8):
+    # http://www.cs.cmu.edu/~music/cmsip/readings/Standard-MIDI-file-format-updated.pdf
+    for event in t.tracks[1].events
+        if typeof(event) == MetaEvent
+            if event.metatype == 0x51
+                tttttt = deepcopy(event.data)
+                break
+            end
+        end
     end
-  end
-  # Ensure that tttttt is with correct form (first entry should be 0x00)
-  if tttttt[1] != 0x00
-      unshift!(tttttt, 0x00)
-  else
-      # Handle correctly "incorrect" cases where 0x00 has entered more than once
-      tttttt = tttttt[findin(tttttt, 0x00)[end]:end]
-  end
+    # Ensure that tttttt is with correct form (first entry should be 0x00)
+    if tttttt[1] != 0x00
+        pushfirst!(tttttt, 0x00)
+    else
+        # Handle correctly "incorrect" cases where 0x00 has entered more than once
+        tttttt = tttttt[findin(tttttt, 0x00)[end]:end]
+    end
 
-  # Get the microsecond number from tttttt
-  u = ntoh(reinterpret(UInt32, tttttt)[1])
-  μs = Int64(u)
-  # BPM:
-  bpm = round(Int, 60000000/μs)
+    # Get the microsecond number from tttttt
+    u = ntoh(reinterpret(UInt32, tttttt)[1])
+    μs = Int64(u)
+    # BPM:
+    bpm = 60000000/μs
 end
 
+
+
 """
-    ms_per_tick(midi, bpm::Integer = BPM(midi)) -> ms
-Given a `MIDIFile`, return how many miliseconds is one tick, based
-on the `bpm`. By default the `bpm` is the BPM the midi file was exported at.
+    ms_per_tick(tpq, bpm)
+    ms_per_tick(midi::MIDIFile)
+Return how many miliseconds is one tick, based
+on the beats per minute `bpm` and ticks per quarter note `tpq`.
 """
-function ms_per_tick(midi::MIDI.MIDIFile, bpm::Int = BPM(midi))
-  tpq = midi.tpq
-  tick_ms = (1000*60)/(bpm*tpq)
-end
+ms_per_tick(midi::MIDI.MIDIFile, bpm = BPM(midi)) = ms_per_tick(midi.tpq, bpm)
+ms_per_tick(tpq, bpm) = (1000*60)/(bpm*tpq)
 
 getnotes(midi::MIDIFile, trackno = 2) = getnotes(midi.tracks[trackno], midi.tpq)

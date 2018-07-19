@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 # master
 work in progress changes are contained in this section.
 
+# v0.7.0
+
+## Breaking
+* `BPM(midi)` does not return the value rounded to an integer anymore. It returns
+  the computed division instead.
+
+* `ms_per_tick` has now two methods: either one that accepts `tpq, bpm` or
+  one that accepts a `midi` file.
+
+## Improvements
+* `BPM` is now faster as it iterates over events.
+
 
 # v0.6.2
 
