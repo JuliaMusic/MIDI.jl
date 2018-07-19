@@ -1,4 +1,20 @@
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
+and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+
 # master
+work in progress changes are contained in this section.
+
+
+# v0.6.2
+
+* Minor documentation Improvements.
+* Improvement on `show` of `Notes`, especially the vectorized form.
+
+# v0.6.0
+
+We now drop support for Julia 0.6 and only support ≥ 0.7.
 
 ## New `addevents!` function
 
