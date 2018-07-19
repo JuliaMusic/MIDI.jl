@@ -19,7 +19,7 @@ work in progress changes are contained in this section.
 
 ## Improvements
 * `BPM` is now faster as it iterates over events.
-
+* Pretty printing for `MIDIFile`.
 
 # v0.6.2
 

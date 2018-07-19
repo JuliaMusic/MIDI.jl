@@ -11,10 +11,17 @@ Type representing a file of MIDI data.
 * `tracks::Array{MIDITrack, 1}` : The array of contained tracks.
 """
 mutable struct MIDIFile
-    format::UInt16 # The format of the file. Can be 0, 1 or 2
-    tpq::Int16 # The time division of the track. Ticks per beat.
-    tracks::Array{MIDITrack, 1} # An array of tracks
+    format::UInt16 # Can be 0, 1 or 2
+    tpq::Int16 # The time division of the track. Ticks per quarter note
+    tracks::Vector{MIDITrack}
 end
+# Pretty print
+function Base.show(io::IO, midi::MIDIFile) where {N}
+    print(io, "MIDIFile:\n"*
+    "  format: $(Int(midi.format))\n  tracks: $(length(midi.tracks))\n"*
+    "  tpq: $(midi.tpq)")
+end
+
 
 MIDIFile() = MIDIFile(0,960,MIDITrack[])
 
