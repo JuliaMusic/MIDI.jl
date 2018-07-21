@@ -69,6 +69,9 @@ end
 """
     writeMIDIfile(filename::AbstractString, data::MIDIFile)
 Write a `MIDIFile` as a ".mid" file to the given filename.
+
+    writeMIDIfile(filename::AbstractString, notes::Notes)
+Create a `MIDIFile` directly from `notes`, using format 0.
 """
 function writeMIDIfile(filename::AbstractString, data::MIDIFile)
     if length(filename) < 4 || lowercase(filename[end-3:end]) != ".mid"
@@ -88,6 +91,16 @@ function writeMIDIfile(filename::AbstractString, data::MIDIFile)
     close(f)
 end
 
+function writeMIDIfile(filename::AbstractString, notes::Notes)
+    if length(filename) < 4 || lowercase(filename[end-3:end]) != ".mid"
+      filename *= ".mid"
+    end
+
+    track = MIDITrack()
+    addnotes!(track, notes)
+    midi = MIDIFile(0, notes.tpq, [track])
+    writeMIDIfile(filename, midi)
+end
 
 """
     BPM(midi)

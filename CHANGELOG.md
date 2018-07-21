@@ -22,6 +22,8 @@ work in progress changes are contained in this section.
 * Pretty printing for `MIDIFile`.
 * Added functions `textevent` and `findtextevents` that create and find
   text related meta events (lyrics, text, markers).
+* Possible to write a midi file directly from notes.
+
 
 # v0.6.2
 
