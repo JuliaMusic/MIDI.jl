@@ -1,4 +1,4 @@
-export getnotes, addnote!, addnotes!, addevent!, addevents!, trackname, addtrackname!
+export getnotes, addnote!, addnotes!, addevent!, addevents!
 export MIDITrack
 
 """
@@ -301,63 +301,4 @@ function programchange(track::MIDITrack, time::Integer, channel::UInt8, program:
     "and be kind enough to report whether it worked!"
     program -= 1
     addevent!(track, time, MIDIEvent(0, PROGRAMCHANGE | channel, UInt8[program]))
-end
-
-"""
-    trackname(track::MIDI.MIDITrack)
-
-Return the name of the given `track` as a string,
-by finding the "track name" `MetaEvent`.
-"""
-function trackname(track::MIDI.MIDITrack)
-
-    pos = findtrackname(track)
-    if pos == 0
-        return "No track name found"
-    # check if there really is a name
-    elseif length(track.events[pos].data) == 0
-        return "No track name found"
-    else
-        event = track.events[pos]
-        # extract the name (string(Char()) takes care of ASCII encoding)
-        trackname = string(Char(event.data[1]))
-        for c in event.data[2:end]
-            trackname *= string(Char(c))
-        end
-        return trackname
-    end
-end
-
-"""
-    addtrackname!(track::MIDI.MIDITrack, name::String)
-
-Add a name to the given `track` by attaching the
-"track name" `MetaEvent` to the start of the `track`.
-"""
-function addtrackname!(track::MIDI.MIDITrack, name::String)
-    # construct fitting name event
-    data = UInt8[]
-    for i = 1:length(name)
-        push!(data, UInt8(name[i]))
-    end
-    meta = MetaEvent(0,0x03,data)
-
-    # remove existing name
-    prev = findtrackname(track)
-    if prev != 0
-        deleteat!(track.events, prev)
-    end
-
-    addevent!(track, 0, meta)
-end
-
-function findtrackname(track::MIDI.MIDITrack)
-    position = 0
-    for (i,event) in enumerate(track.events)
-        if isa(event, MIDI.MetaEvent) && event.metatype == 0x03
-            position = i
-            break
-        end
-    end
-    return position
 end
