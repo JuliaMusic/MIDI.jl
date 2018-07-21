@@ -1,3 +1,5 @@
+using MIDI: NOTEON, NOTEOFF
+
 validtestvalues = [ # Raw data and the miditrack it should be read into
     # Structure: MTrk, length in bytes (4 bytes long), data
     # Perhaps longer than it needs to be, but covers meta events, MIDI events, and running statuses.
