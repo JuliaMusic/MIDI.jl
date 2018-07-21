@@ -17,7 +17,7 @@ notifications:
     on_build_failure: true
     on_build_status_changed: false
 
-nstall:
+install:
   - ps: "[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12"
 # If there's a newer build queued for the same PR, cancel this one
   - ps: if ($env:APPVEYOR_PULL_REQUEST_NUMBER -and $env:APPVEYOR_BUILD_NUMBER -ne ((Invoke-RestMethod `
