@@ -38,3 +38,7 @@ t = midi.tracks[1]
 @test findtextevents(:marker, t)[1] == ["A", "B"]
 @test findtextevents(:text, t)[1]  == ["t", "t", "tnl"]
 @test findtextevents(:lyric, t)[1] == ["l", "l", "lnt"]
+
+rm("texts.mid")
+
+end
