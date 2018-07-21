@@ -63,11 +63,6 @@ function findtrackname(track::MIDI.MIDITrack)
 end
 
 
-const s_to_text = Dict(
-:text => TEXTEV, :lyric => LYRICEV, :marker => MARKEREV
-)
-
-
 
 """
     textevent(eventtype, text)
@@ -77,11 +72,18 @@ appropriate type of `MetaEvent`.
 
 The returned event can be added to a [`MIDITrack`](@ref) via either
 [`addevent!`](@ref) or [`addevents!`](@ref) for multiple events.
+
+*Notice* - Cubase can read the marker events and MuseScore can read the lyrics
+events. We haven't seen any editor that can read the text events, so far.
 """
 function textevent(eventtype, text)
     data = [UInt8(a) for a in text]
     event = MetaEvent(0, s_to_text[eventtype], data)
 end
+
+const s_to_text = Dict(
+:text => TEXTEV, :lyric => LYRICEV, :marker => MARKEREV
+)
 
 """
     findtextevents(eventtype, track)
@@ -93,17 +95,22 @@ For convenience, this function does not return the events themselves.
 Instead, it returns three vectors: the first is the strings of the events,
 the second is the indices of the events in the `track` and the third is
 the absolute position of the events (since start of `track`).
+
+*Notice* - common music score editors like e.g. MuseScore, GuitarPro, etc., do
+not export the lyrics and text information when exporting midi files.
 """
 function findtextevents(eventtype, track)
     etype = s_to_text[eventtype]
     events = String[]
     idxs = Int[]
-    for (i, event) ∈ enumerate(track)
+    for (i, event) ∈ enumerate(track.events)
         if typeof(event) == MetaEvent && event.metatype == etype
-            push!(events, String(event.data))
+            # lol without copy the events are lost!
+            push!(events, String(copy(event.data)))
             push!(idxs, i)
         end
     end
-    abspos = _abspos(idxs, track)
+    length(idxs) == 0 && error("Found no events of such type")
+    abspos = get_abs_pos(idxs, track)
     return events, idxs, abspos
 end
