@@ -1,4 +1,4 @@
-export getnotes, addnote!, addnotes!, addevent!, addevents!, trackname, addtrackname!
+export getnotes, addnote!, addnotes!, addevent!, addevents!
 export MIDITrack
 
 """
@@ -201,7 +201,7 @@ function addevents!(track::MIDITrack, times::AbstractArray{Int}, events)
 
     # get a permutation that gives temporal order
     if issorted(times)
-        perm = collect(1:length(times))
+        perm = 1:length(times)
     else
         perm = sortperm(times)
     end
@@ -210,7 +210,9 @@ function addevents!(track::MIDITrack, times::AbstractArray{Int}, events)
     eventindex = 0
     eventtime = 0
     for i = 1:length(times)
-        eventindex, eventtime = addevent_hint!(track,times[perm[i]], events[perm[i]], eventindex, eventtime)
+        eventindex, eventtime = addevent_hint!(
+            track, times[perm[i]], events[perm[i]], eventindex, eventtime
+        )
     end
 end
 
@@ -303,61 +305,23 @@ function programchange(track::MIDITrack, time::Integer, channel::UInt8, program:
     addevent!(track, time, MIDIEvent(0, PROGRAMCHANGE | channel, UInt8[program]))
 end
 
-"""
-    trackname(track::MIDI.MIDITrack)
-
-Return the name of the given `track` as a string,
-by finding the "track name" `MetaEvent`.
-"""
-function trackname(track::MIDI.MIDITrack)
-
-    pos = findtrackname(track)
-    if pos == 0
-        return "No track name found"
-    # check if there really is a name
-    elseif length(track.events[pos].data) == 0
-        return "No track name found"
-    else
-        event = track.events[pos]
-        # extract the name (string(Char()) takes care of ASCII encoding)
-        trackname = string(Char(event.data[1]))
-        for c in event.data[2:end]
-            trackname *= string(Char(c))
-        end
-        return trackname
-    end
-end
 
 """
-    addtrackname!(track::MIDI.MIDITrack, name::String)
-
-Add a name to the given `track` by attaching the
-"track name" `MetaEvent` to the start of the `track`.
+    get_abs_pos(track::MIDITrack, idxs)
+Return the absolute positions (since track start) of the events given by the
+indices `idxs` of `track.events`.
 """
-function addtrackname!(track::MIDI.MIDITrack, name::String)
-    # construct fitting name event
-    data = UInt8[]
-    for i = 1:length(name)
-        push!(data, UInt8(name[i]))
-    end
-    meta = MetaEvent(0,0x03,data)
-
-    # remove existing name
-    prev = findtrackname(track)
-    if prev != 0
-        deleteat!(track.events, prev)
-    end
-
-    addevent!(track, 0, meta)
-end
-
-function findtrackname(track::MIDI.MIDITrack)
-    position = 0
-    for (i,event) in enumerate(track.events)
-        if isa(event, MIDI.MetaEvent) && event.metatype == 0x03
-            position = i
-            break
+function get_abs_pos(idxs, track::MIDITrack)
+    abspos = Int[]
+    evtime = 0
+    j = 1; L = length(idxs)
+    for (i, event) in enumerate(track.events)
+        evtime += event.dT
+        if i == idxs[j]
+            push!(abspos, evtime)
+            j += 1
+            j == L + 1 && return abspos
         end
     end
-    return position
+    return abspos
 end

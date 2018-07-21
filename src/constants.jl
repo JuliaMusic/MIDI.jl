@@ -22,6 +22,11 @@ const METASETTEMPO = 0x51
 const MTHD = "MThd"
 const MTRK = "MTrk"
 
+# Text event indentifiers
+const TEXTEV = 0x01
+const LYRICEV = 0x05
+const MARKEREV = 0x06
+
 # Number of data bytes following a given MIDI event type
 const EVENTTYPETOLENGTH = Dict(
     NOTEOFF => 2,
@@ -167,5 +172,3 @@ const GM = Dict(
     "Applause" => UInt8(127),
     "Gunshot" => UInt8(128)
 )
-
-export GM, NOTEOFF, NOTEON, POLYPHONICKEYPRESSURE, CONTROLCHANGE, PROGRAMCHANGE, CHANNELPRESSURE, PITCHWHEELCHANGE
