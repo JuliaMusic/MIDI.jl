@@ -1,4 +1,7 @@
 export Note, Notes, AbstractNote
+export pitch_to_name, name_to_pitch
+using Meta, Unicode
+
 abstract type AbstractNote end
 
 """
@@ -96,24 +99,57 @@ function Base.append!(n1::Notes{N}, n2::Notes{N}) where {N}
 end
 
 # Pretty printing
-const notenames = Dict(
+const PITCH_TO_NAME = Dict(
 0=>"C", 1=>"C♯", 2=>"D", 3=>"D♯", 4=>"E", 5=>"F", 6=>"F♯", 7=>"G", 8=>"G♯", 9=>"A",
 10 =>"A♯", 11=>"B")
+const NAME_TO_PITCH = Dict(
+v => k for (v, k) in zip(values(PITCH_TO_NAME), keys(PITCH_TO_NAME)))
 
 """
-    pitchname(pitch) -> string
-Return the name of the pitch, e.g. `F5`, `A♯5` etc. in modern notation given the
+    pitch_to_name(pitch) -> string
+Return the name of the pitch, e.g. `F5`, `A♯3` etc. in modern notation given the
 value in integer.
+
+Reminder: middle C has pitch `60` and is displayed as `C5`.
 """
-function pitchname(i)
-    notename = notenames[mod(i, 12)]
+function pitch_to_name(i)
+    notename = PITCH_TO_NAME[mod(i, 12)]
     octave = i÷12
     return notename*string(octave)
 end
 
+"""
+    name_to_pitch(p::String) -> Int
+Return the pitch value of the given note name `p`, which can be of the form
+`capital_letter*sharp*octave`. E.g. `name_to_pitch(D#6)` gives `75`.
+
+* `capital_letter` : from `"A"` to `"G"`.
+* `sharp` : one of `"#"` `"♯"` or `""`.
+* `octave` : any integer (as a string), the octave number (an octave is 12 pitches).
+  If not given it is assumed `"5"`.
+
+Reminder: middle C has pitch `60` and is displayed as `C5`.
+"""
+function name_to_pitch(p)
+    pe = collect(Unicode.graphemes(p))
+    pitch = NAME_TO_PITCH[pe[1]]
+    x = 0
+    if pe[2] == "#" || pe[2] == "♯"
+        x = 1
+    end
+    if length(pe) > 1 + x
+        octave = Meta.parse(join(pe[2+x:end]))
+    else
+        octave = 5
+    end
+
+    return pitch + x + 12octave
+end
+
+
 function Base.show(io::IO, note::N) where {N<:AbstractNote}
     mprint = nameof(N)
-    nn = rpad(pitchname(note.pitch), 3)
+    nn = rpad(pitch_to_name(note.pitch), 3)
     chpr = note.channel == 0 ? "" : " | channel $(note.channel)"
     velprint = rpad("vel = $(Int(note.velocity))", 9)
     print(io, "$(mprint) $nn | $velprint | "*

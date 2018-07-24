@@ -19,3 +19,12 @@ cd(@__DIR__)
     @test typeof(notes[1:3]) <: Notes
     @test notes[1:3].notes == notes.notes[1:3]
 end
+
+@testset "pitch names" begin
+    a = ["C5", "D12", "D#3", "G#52", "A#", "A♯23", "F♯"]
+    for n in a
+        @test n == pitch_to_name(name_to_pitch(n))
+    end
+    @test pitch_to_name(name_to_pitch("E#7")) == "F7"
+    @test pitch_to_name(name_to_pitch("B#")) == "C6"
+end

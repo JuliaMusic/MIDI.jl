@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 # master
 work in progress changes are contained in this section.
 
+# v0.8.0
+* Two new super-useful functions: `name_to_pitch` and `pitch_to_name`.
+
 # v0.7.0
 
 ## Breaking
