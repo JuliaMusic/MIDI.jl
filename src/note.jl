@@ -1,6 +1,6 @@
 export Note, Notes, AbstractNote
 export pitch_to_name, name_to_pitch
-using Meta, Unicode
+using Base.Meta, Base.Unicode
 
 abstract type AbstractNote end
 
