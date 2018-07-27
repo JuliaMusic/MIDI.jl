@@ -6,10 +6,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 # master
-work in progress changes are contained in this section.
 
 # v0.8.0
 * Two new super-useful functions: `name_to_pitch` and `pitch_to_name`.
+* Function `testmidi()` that returns the path to `doxy.mid`.
 
 # v0.7.0
 

@@ -12,4 +12,12 @@ include("variablelength.jl")
 include("convert.jl")
 include("findevents.jl")
 
+export testmidi
+
+"""
+    testmidi()
+Return the path to a test MIDI file.
+testmidi() = dir = joinpath(dirname(@__DIR__), "test", "doxy.mid")
+"""
+
 end
