@@ -71,7 +71,7 @@ end
 Write a `MIDIFile` as a ".mid" file to the given filename.
 
     writeMIDIfile(filename::AbstractString, notes::Notes)
-Create a `MIDIFile` directly from `notes`, using format 0.
+Create a `MIDIFile` directly from `notes`, using format 1.
 """
 function writeMIDIfile(filename::AbstractString, data::MIDIFile)
     if length(filename) < 4 || lowercase(filename[end-3:end]) != ".mid"
@@ -98,7 +98,7 @@ function writeMIDIfile(filename::AbstractString, notes::Notes)
 
     track = MIDITrack()
     addnotes!(track, notes)
-    midi = MIDIFile(0, notes.tpq, [track])
+    midi = MIDIFile(1, notes.tpq, [track])
     writeMIDIfile(filename, midi)
 end
 
