@@ -89,6 +89,7 @@ function writeMIDIfile(filename::AbstractString, data::MIDIFile)
     map(track->writetrack(f, track), data.tracks)
 
     close(f)
+    return data
 end
 
 function writeMIDIfile(filename::AbstractString, notes::Notes)
@@ -100,6 +101,7 @@ function writeMIDIfile(filename::AbstractString, notes::Notes)
     addnotes!(track, notes)
     midi = MIDIFile(1, notes.tpq, [track])
     writeMIDIfile(filename, midi)
+    return midi
 end
 
 """
