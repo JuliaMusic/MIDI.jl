@@ -66,6 +66,8 @@ function readMIDIfile(filename::AbstractString)
     MIDIfile
 end
 
+readMIDIfile() = readMIDIfile(testmidi())
+
 """
     writeMIDIfile(filename::AbstractString, data::MIDIFile)
 Write a `MIDIFile` as a ".mid" file to the given filename.
