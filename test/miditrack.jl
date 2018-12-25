@@ -79,7 +79,7 @@ invalidtestvalues = [
     @testset "Track names" begin
 
         # correct tracks
-        midi = readMIDIfile("doxy.mid")
+        midi = readMIDIFile("doxy.mid")
         @test trackname(midi.tracks[2]) == "Drums"
         @test trackname(midi.tracks[3]) == "Bass"
         @test trackname(midi.tracks[4]) == "ORIGINAL"
@@ -97,8 +97,8 @@ invalidtestvalues = [
         @test trackname(midi.tracks[2]) == "Overwrite"
 
         # save and reopen
-        writeMIDIfile("changedname.mid",midi)
-        midi = readMIDIfile("changedname.mid")
+        writeMIDIFile("changedname.mid",midi)
+        midi = readMIDIFile("changedname.mid")
         @test trackname(midi.tracks[2]) == "Overwrite"
         rm("changedname.mid")
 
@@ -179,7 +179,7 @@ invalidtestvalues = [
 
     @testset "addnotes!" begin
 
-        midi = readMIDIfile("doxy.mid")
+        midi = readMIDIFile("doxy.mid")
         original_track = deepcopy(midi.tracks[2])
         test_track = deepcopy(midi.tracks[2])
 

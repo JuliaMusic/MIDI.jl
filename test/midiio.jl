@@ -3,7 +3,7 @@ using MIDI
 cd(@__DIR__)
 
 @testset "MIDI IO" begin
-    midi = readMIDIfile("doxy.mid")
+    midi = readMIDIFile("doxy.mid")
     @test midi.tpq == 960
     @test length(midi.tracks) == 4
 

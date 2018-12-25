@@ -9,7 +9,7 @@ end
 cd(@__DIR__)
 
 @testset "Notes" begin
-    midi = readMIDIfile("doxy.mid")
+    midi = readMIDIFile("doxy.mid")
 
     notes = getnotes(midi.tracks[4])
 

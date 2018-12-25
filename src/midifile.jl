@@ -1,4 +1,4 @@
-export MIDIFile, readMIDIfile, writeMIDIfile
+export MIDIFile, readMIDIFile, writeMIDIFile
 export BPM, ms_per_tick
 
 """
@@ -25,25 +25,25 @@ end
 
 MIDIFile() = MIDIFile(0,960,MIDITrack[])
 
-function readMIDIfileastype0(filename::AbstractString)
-	MIDIfile = readMIDIfile(filename)
-	if MIDIfile.format == 1
-		type1totype0!(MIDIfile)
+function readMIDIFileastype0(filename::AbstractString)
+	MIDIFile = readMIDIFile(filename)
+	if MIDIFile.format == 1
+		type1totype0!(MIDIFile)
 	end
-	MIDIfile
+	MIDIFile
 end
 
 """
-    readMIDIfile(filename::AbstractString)
+    readMIDIFile(filename::AbstractString)
 Read a file into a `MIDIFile` data type.
 """
-function readMIDIfile(filename::AbstractString)
+function readMIDIFile(filename::AbstractString)
     if length(filename) < 4 || filename[end-3:end] != ".mid"
 	f *= ".mid"
     end
     f = open(filename)
 
-    MIDIfile = MIDIFile()
+    midifile = MIDIFile()
     # Check that it's a valid MIDI file - first four bytes should spell MThd
     mthd = join(map(Char, read!(f, Array{UInt8}(undef, 4))))
     if mthd != MTHD
@@ -55,27 +55,27 @@ function readMIDIfile(filename::AbstractString)
 
     # Read the format code. 0 = single track, 1 = multiple tracks, 2 = multiple songs
     # Remember - MIDI files store data in big-endian format, which is why ntoh is used
-    MIDIfile.format = ntoh(read(f, UInt16))
+    midifile.format = ntoh(read(f, UInt16))
 
     # Get the number of tracks and time division
     numberoftracks = ntoh(read(f, UInt16))
-    MIDIfile.tpq = ntoh(read(f, Int16))
-    MIDIfile.tracks = [readtrack(f) for x in 1:numberoftracks]
+    midifile.tpq = ntoh(read(f, Int16))
+    midifile.tracks = [readtrack(f) for x in 1:numberoftracks]
     close(f)
 
-    MIDIfile
+    midifile
 end
 
-readMIDIfile() = readMIDIfile(testmidi())
+readMIDIFile() = readMIDIFile(testmidi())
 
 """
-    writeMIDIfile(filename::AbstractString, data::MIDIFile)
+    writeMIDIFile(filename::AbstractString, data::MIDIFile)
 Write a `MIDIFile` as a ".mid" file to the given filename.
 
-    writeMIDIfile(filename::AbstractString, notes::Notes)
+    writeMIDIFile(filename::AbstractString, notes::Notes)
 Create a `MIDIFile` directly from `notes`, using format 1.
 """
-function writeMIDIfile(filename::AbstractString, data::MIDIFile)
+function writeMIDIFile(filename::AbstractString, data::MIDIFile)
     if length(filename) < 4 || lowercase(filename[end-3:end]) != ".mid"
       filename *= ".mid"
     end
@@ -94,7 +94,7 @@ function writeMIDIfile(filename::AbstractString, data::MIDIFile)
     return data
 end
 
-function writeMIDIfile(filename::AbstractString, notes::Notes)
+function writeMIDIFile(filename::AbstractString, notes::Notes)
     if length(filename) < 4 || lowercase(filename[end-3:end]) != ".mid"
       filename *= ".mid"
     end
@@ -102,7 +102,7 @@ function writeMIDIfile(filename::AbstractString, notes::Notes)
     track = MIDITrack()
     addnotes!(track, notes)
     midi = MIDIFile(1, notes.tpq, [track])
-    writeMIDIfile(filename, midi)
+    writeMIDIFile(filename, midi)
     return midi
 end
 
