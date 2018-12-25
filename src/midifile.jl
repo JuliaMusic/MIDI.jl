@@ -39,7 +39,7 @@ Read a file into a `MIDIFile` data type.
 """
 function readMIDIFile(filename::AbstractString)
     if length(filename) < 4 || filename[end-3:end] != ".mid"
-	f *= ".mid"
+		filename *= ".mid"
     end
     f = open(filename)
 
@@ -105,6 +105,12 @@ function writeMIDIFile(filename::AbstractString, notes::Notes)
     writeMIDIFile(filename, midi)
     return midi
 end
+
+# Deprecate readMIDIfile
+@deprecate readMIDIfile readMIDIFile
+@deprecate writeMIDIfile writeMIDIFile
+export readMIDIfile, writeMIDIfile
+
 
 """
     BPM(midi)
