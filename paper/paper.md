@@ -104,6 +104,6 @@ In the above, besides the intuitive `Notes` format, we also highlighted the func
 Such high-level interfaces is what make the **MIDI.jl** package extremely useful for musicians. Besides, **MIDI.jl** is (currently) the only MIDI library for the Julia language.
 
 # Extensions
-This easy to use high level interface allows **MIDI.jl** to be extendable. In another software package **MusicManipulations.jl** we provide general functions for manipulating (and futher analyzing) music data.
+This easy to use high level interface allows **MIDI.jl** to be extendable. In e.g. another software package **MusicManipulations.jl** we provide general functions for manipulating (and futher analyzing) music data.
 
 For example, the function `quantize` from the package **MusicManipulations.jl** allows the user to quantize any `Notes` instance to any grid. This functionality is offered by Digital Audio Workstations, like e.g. the software Cubase, but we offer ways to do it programmatically instead. Many other helpful functions are contained in **MusicManipulations.jl**, and for further reading we point to the official documentation of the [JuliaMusic](https://juliamusic.github.io/JuliaMusic_documentation.jl/latest/) GitHub organization, which hosts both **MIDI.jl** and **MusicManipulations.jl**, as well as other useful packages.
