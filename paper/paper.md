@@ -17,7 +17,7 @@ affiliations:
    index: 1
  - name: Department of Physics, Georg-August-Universität Göttingen
    index: 2
- - name: Joel Workplace
+ - name: Roadmunk Inc.
    index: 3
 date: 21 December 2018
 bibliography: paper.bib
