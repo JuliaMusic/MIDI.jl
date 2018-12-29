@@ -25,16 +25,17 @@ bibliography: paper.bib
 
 
 # Introduction
-**MIDI.jl** is a Julia [@Julia] package for reading, writing and analyzing [MIDI](https://www.midi.org/specifications) data. MIDI (Music Instrument Digital Interface) is a data format created to transmit music data across devices and computers. The ]actual MIDI interface](https://www.midi.org/specifications) is very low level, directly translating all music information to and from byte chunks.
+**MIDI.jl** is a Julia [@Julia] package for reading, writing and analyzing [MIDI](https://www.midi.org/specifications) data. MIDI (Music Instrument Digital Interface) is a data format created to transmit music data across devices and computers. The [actual MIDI interface](https://www.midi.org/specifications) is very low level, directly translating all music information to and from byte chunks.
 
-**MIDI.jl** takes a different approach: besides exposing all this low level interface, it also builds a useable and high-level interface on top of that. This makes reading MIDI data easier than even before.
+**MIDI.jl** takes a different approach: besides exposing all this low level interface, it also builds a useable high-level interface on top of that. This makes reading MIDI data easier than ever before.
 
 ## Documentation
-All functionality of **MIDI.jl** is very well documented and hosted online. The documentation link can be found [here](https://juliamusic.github.io/JuliaMusic_documentation.jl/latest/). Besides documentation of functions there are plenty of useful real world examples.
-Because of the rich documentation, in this paper we will only showcase specific strengths and design decision that can make working with music data very easy.
+All functionality of **MIDI.jl** is very well documented and hosted online. The documentation link can be found [here](https://juliamusic.github.io/JuliaMusic_documentation.jl/latest/).
+Besides documentation of functions there are plenty of useful real world examples.
+Because of the rich documentation, in this paper we will only showcase specific strengths and design decisions that can make working with music data very easy.
 
 # Made for Musicians
-The low level representation of the MIDI format is available from our **MIDI.jl** package. However the biggest strength of **MIDI.jl** is the ability to transform the raw MIDI data in a format that is readable and intuitive for people that are just musicians (with knowledge of just a bit of Julia) and not computer scientists or engineers with years of experience working with bits and bytes.
+The low level representation of the MIDI format is available from our **MIDI.jl** package. However the biggest strength of **MIDI.jl** is the ability to transform the raw MIDI data in a format that is readable and intuitive for people that are just musicians (with knowledge of just a bit of Julia) and not computer scientists or engineers with experience working with bits and bytes.
 
 What makes this possible is the data structures we create in order to provide easier handling of MIDI files. The most important data structure is the `Note` (and the plural version `Notes`). A music note can be (in its most basic level) deconstructed into just four numbers: the temporal position that the note is played, the duration, the pitch and the intensity (strength with which the note is played, also called velocity). A `Note` is a data structure that has exactly (and only) these four "quantities" as its "fields". All of these are accessible immediately with e.g. `Note.position` and their values can be mutated in place.
 
