@@ -8,4 +8,11 @@
 
 MIDI.jl is a complete Julia package for reading and writing MIDI data. Besides fundamentally basic types, like `MIDITrack` or `MetaEvent`, we have a robust type that describes a music note.
 
-Please visit the official documentation page for more: https://juliamusic.github.io/JuliaMusic_documentation.jl/latest/
+## Installation
+To install the latest stable release, use `]add MIDI`. To install the development version, use `]dev MIDI`.
+
+## Documentation
+For usage examples, documentation, contact info and everything else relevant with how `MIDI` works please visit the official documentation page: https://juliamusic.github.io/JuliaMusic_documentation.jl/latest/.
+
+## Other
+For the release history see the [CHANGELOG](CHANGELOG.md) file. For the contributor guide see [CONTRIBUTING](CONTRIBUTING.md). For the code of conduit see [COC](COC.md).
