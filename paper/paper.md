@@ -109,3 +109,5 @@ As of 8th January 2019, **MIDI.jl** is the only package for the Julia programmin
 
 # Conclusions
 In conclusion, **MIDI.jl** is a useful package with very intuitive usage, as we have demonstrated by our simple application. In addition it has plenty more use for scientific applications. In *G. Datseris, A. Ziereis, "Does it Swing? Microtiming Deviations and Swing Feeling in Jazz", under review*, the authors has used **MIDI.jl** and its extensions to not only read but also manipulate microtiming deviations of human recordings in order to enquire about the impact of microtiming deviations in the listening experience.
+
+# References
