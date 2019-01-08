@@ -43,7 +43,7 @@ These aspects can be deduced from the raw MIDI format with a lot of analyzing of
 ```julia
 getnotes(midi, args...)
 ```
-which obtains all note-specific information and stores it as a vector of notes, which we call `Notes`. This is very handful, as to "identify" a note in the MIDI format, one needs to first identify two different streams of bytes; one denotes the start and the other the end of the note. This quickly becomes tedious, but `getnotes` does not expose all these details to the user.
+which obtains all note-specific information and stores it as a vector of notes, which we call `Notes`. This is very convenient, as to "identify" a note in the MIDI format, one needs to first identify two different streams of bytes; one denotes the start and the other the end of the note. This quickly becomes tedious, but `getnotes` does not expose all these details to the user.
 
 # Example
 For example, this piece of code
@@ -105,6 +105,6 @@ In the above, besides the intuitive `Notes` format, we also highlighted the func
 Such high-level interfaces is what make the **MIDI.jl** package extremely useful for musicians. Besides, **MIDI.jl** is (currently) the only MIDI library for the Julia language.
 
 # Extensions
-This easy to use high level interface allows **MIDI.jl** to be extendable. In e.g. another software package **MusicManipulations.jl** we provide general functions for manipulating (and futher analyzing) music data.
+This easy to use high level interface allows **MIDI.jl** to be extendable. In e.g. another software package **MusicManipulations.jl** we provide general functions for manipulating (and further analyzing) music data.
 
-For example, the function `quantize` from the package **MusicManipulations.jl** allows the user to quantize any `Notes` instance to any grid. This functionality is offered by Digital Audio Workstations, like e.g. the software Cubase, but we offer ways to do it programmatically instead. Many other helpful functions are contained in **MusicManipulations.jl**, and for further reading we point to the official documentation of the [JuliaMusic](https://juliamusic.github.io/JuliaMusic_documentation.jl/latest/) GitHub organization, which hosts both **MIDI.jl** and **MusicManipulations.jl**, as well as other useful packages.
+For example, the function `quantize` from the package **MusicManipulations.jl** allows the user to quantize any `Notes` instance to any grid. This functionality is offered by Digital Audio Workstations, like the software Cubase, but we offer ways to do it programmatically instead. Many other helpful functions are contained in **MusicManipulations.jl**, and for further reading we point to the official documentation of the [JuliaMusic](https://juliamusic.github.io/JuliaMusic_documentation.jl/latest/) GitHub organization, which hosts both **MIDI.jl** and **MusicManipulations.jl**, as well as other useful packages.
