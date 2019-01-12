@@ -101,7 +101,7 @@ mtds_ms = mtds .* ms_per_tick(midi)
 ```
 Plotting the histogram of these gives
 
-![histogram](mtd_hist.png)
+![Histogram of the microtiming deviations of a simple piano recording.](mtd_hist.png)
 
 which, even if produced with an extremely small pool of data, follows the existing evidence that the distribution of the microtiming deviations follows a normal distribution.
 
