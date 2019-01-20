@@ -110,6 +110,6 @@ which, even if produced with an extremely small pool of data, follows the existi
 As of 8th January 2019, **MIDI.jl** is the only package for the Julia programming language that offers this functionality.
 
 # Conclusions
-In conclusion, **MIDI.jl** is a useful package with very intuitive usage, as we have demonstrated by our simple application. In addition it has plenty more use for scientific applications. In *G. Datseris et al. "Does it Swing? Microtiming Deviations and Swing Feeling in Jazz", under review*, the authors have used **MIDI.jl** and its extensions to not only read but also manipulate microtiming deviations of human recordings in order to inquire about the impact of microtiming deviations in the listening experience.
+In conclusion, **MIDI.jl** is a useful package with very intuitive usage, as we have demonstrated by our simple application. In addition it has plenty more use for scientific applications. In *G. Datseris et al. "Does it Swing? Microtiming Deviations and Swing Feeling in Jazz"* [@Datseris2019], the authors have used **MIDI.jl** and its extensions to not only read but also manipulate microtiming deviations of human recordings in order to inquire about the impact of microtiming deviations in the listening experience.
 
 # References
