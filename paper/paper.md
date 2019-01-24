@@ -99,11 +99,9 @@ mtds_ms = mtds .* ms_per_tick(midi)
   12.499987499999998
   13.461524999999998
 ```
-Plotting the histogram of these gives
+A plot of the histogram of these is presented in Figure 1. Even if produced with an extremely small pool of data, the plot follows the existing evidence that the distribution of the microtiming deviations follows a normal distribution.
 
 ![Histogram of the microtiming deviations of a simple piano recording.](mtd_hist.png)
-
-which, even if produced with an extremely small pool of data, follows the existing evidence that the distribution of the microtiming deviations follows a normal distribution.
 
 # Necessity of MIDI.jl
 
