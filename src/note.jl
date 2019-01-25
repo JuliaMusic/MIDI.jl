@@ -118,11 +118,6 @@ value in integer.
 Reminder: middle C has pitch `60` and is displayed as `C4`.
 """
 function pitch_to_name(i)
-    @warn "To abide with scientific pitch notation, `name_to_pitch` gives the notes "*
-    "one octave lower than before, i.e. now \"C4\" corresponds to midi pitch 60 "*
-    "and \"C-1\" to midi pitch 0. "*
-    "This change may break existing code but it is a bugfix of the wrong old way. "*
-    "use MIDI.jl version 1.0.0 for the previous version."
     notename = PITCH_TO_NAME[mod(i, 12)]
     octave = (i÷12)-1
     return notename*string(octave)
@@ -145,11 +140,6 @@ See http://newt.phys.unsw.edu.au/jw/notes.html
 and https://en.wikipedia.org/wiki/C_(musical_note) .
 """
 function name_to_pitch(p)
-    @warn "To abide with scientific pitch notation, `name_to_pitch` gives the notes "*
-    "one octave lower than before, i.e. now \"C4\" corresponds to midi pitch 60 "*
-    "and \"C-1\" to midi pitch 0. "*
-    "This change may break existing code but it is a bugfix of the wrong old way. "*
-    "use MIDI.jl version 1.0.0 for the previous version."
     pe = collect(Unicode.graphemes(p))
     pitch = NAME_TO_PITCH[pe[1]]
     x = 0

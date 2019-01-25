@@ -70,16 +70,16 @@ notes = getnotes(piano, midi.tpq)
 ```
 ```
 533 Notes with tpq=960
- Note F5  | vel = 69  | pos = 7427, dur = 181
- Note A♯5 | vel = 85  | pos = 7760, dur = 450
- Note D6  | vel = 91  | pos = 8319, dur = 356
- Note D5  | vel = 88  | pos = 8323, dur = 314
- Note G♯4 | vel = 88  | pos = 8327, dur = 358
- Note A♯5 | vel = 76  | pos = 8694, dur = 575
- Note G5  | vel = 66  | pos = 9281, dur = 273
- Note A♯5 | vel = 94  | pos = 9594, dur = 666
- Note F♯4 | vel = 98  | pos = 10189, dur = 307
- Note C5  | vel = 87  | pos = 10206, dur = 285
+ Note F4  | vel = 69  | pos = 7427, dur = 181
+ Note A♯4 | vel = 85  | pos = 7760, dur = 450
+ Note D5  | vel = 91  | pos = 8319, dur = 356
+ Note D4  | vel = 88  | pos = 8323, dur = 314
+ Note G♯3 | vel = 88  | pos = 8327, dur = 358
+ Note A♯4 | vel = 76  | pos = 8694, dur = 575
+ Note G4  | vel = 66  | pos = 9281, dur = 273
+ Note A♯4 | vel = 94  | pos = 9594, dur = 666
+ Note F♯3 | vel = 98  | pos = 10189, dur = 307
+ Note C4  | vel = 87  | pos = 10206, dur = 285
   ⋮
 ```
 We then compute their microtiming deviations. For the purpose of this article, we define the microtiming deviations of a note as the distance of the position of a note from its position when quantized on a 8th-note triplet grid (the pianist was playing triplets in the above midi file).
