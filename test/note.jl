@@ -26,6 +26,7 @@ end
         @test n == replace(pitch_to_name(name_to_pitch(n)), "♯" => "#")
     end
     @test pitch_to_name(name_to_pitch("E#7")) == "F7"
-    @test pitch_to_name(name_to_pitch("B#")) == "C6"
-    @test pitch_to_name(name_to_pitch("F♯")) == "F♯5"
+    @test pitch_to_name(name_to_pitch("B#")) == "C5"
+    @test pitch_to_name(name_to_pitch("F♯")) == "F♯4"
+    @test name_to_pitch("C4") == 60
 end
