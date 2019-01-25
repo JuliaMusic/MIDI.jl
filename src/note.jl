@@ -88,6 +88,7 @@ Base.lastindex(n::Notes) = lastindex(n.notes)
 Base.firstindex(n::Notes) = firstindex(n.notes)
 Base.getindex(n::Notes, i::Int) = n.notes[i]
 Base.getindex(n::Notes, r) = Notes(n.notes[r], n.tpq)
+Base.view(n::Notes, r) = view(n.notes, r)
 
 # Pushing
 Base.push!(no::Notes{N}, n::N) where {N <: AbstractNote} = push!(no.notes, n)
@@ -180,13 +181,19 @@ function Base.show(io::IO, notes::Vector{N}) where {N<:AbstractNote}
 end
 
 function _notevectorprint(io, notes)
-    i = 1
-    while i ≤ min(10, length(notes))
-        print(io, "\n", " ", notes[i])
-        i += 1
-    end
-    if length(notes) > 10
+    s = 7
+    if length(notes) > 2s
+        for note in (@view notes[1:s])
+            print(io, "\n", " ", note)
+        end
         print(io, "\n", "  ⋮")
+        for note in (@view notes[end-s+1:end])
+            print(io, "\n", " ", note)
+        end
+    else
+        for note in notes
+            print(io, "\n", " ", note)
+        end
     end
 end
 
