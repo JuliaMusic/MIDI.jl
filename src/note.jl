@@ -1,6 +1,5 @@
 export Note, Notes, AbstractNote
 export pitch_to_name, name_to_pitch
-using Base.Meta, Base.Unicode
 
 abstract type AbstractNote end
 
@@ -99,7 +98,12 @@ function Base.append!(n1::Notes{N}, n2::Notes{N}) where {N}
 end
 
 Base.copy(notes::Notes) = Notes(copy(notes.notes), notes.tpq)
-# Pretty printing
+
+
+#######################################################
+# string name <-> midi pitch
+#######################################################
+using Base.Meta, Base.Unicode
 const PITCH_TO_NAME = Dict(
 0=>"C", 1=>"C♯", 2=>"D", 3=>"D♯", 4=>"E", 5=>"F", 6=>"F♯", 7=>"G", 8=>"G♯", 9=>"A",
 10 =>"A♯", 11=>"B")
@@ -111,27 +115,41 @@ v => k for (v, k) in zip(values(PITCH_TO_NAME), keys(PITCH_TO_NAME)))
 Return the name of the pitch, e.g. `F5`, `A♯3` etc. in modern notation given the
 value in integer.
 
-Reminder: middle C has pitch `60` and is displayed as `C5`.
+Reminder: middle C has pitch `60` and is displayed as `C4`.
 """
 function pitch_to_name(i)
+    @warn "To abide with scientific pitch notation, `name_to_pitch` gives the notes "*
+    "one octave lower than before, i.e. now \"C4\" corresponds to midi pitch 60 "*
+    "and \"C-1\" to midi pitch 0. "*
+    "This change may break existing code but it is a bugfix of the wrong old way. "*
+    "use MIDI.jl version 1.0.0 for the previous version."
     notename = PITCH_TO_NAME[mod(i, 12)]
-    octave = i÷12
+    octave = (i÷12)-1
     return notename*string(octave)
 end
 
 """
     name_to_pitch(p::String) -> Int
 Return the pitch value of the given note name `p`, which can be of the form
-`capital_letter*sharp*octave`. E.g. `name_to_pitch(D#6)` gives `75`.
+`capital_letter*sharp*octave` where:
 
 * `capital_letter` : from `"A"` to `"G"`.
 * `sharp` : one of `"#"` `"♯"` or `""`.
 * `octave` : any integer (as a string), the octave number (an octave is 12 pitches).
   If not given it is assumed `"5"`.
 
-Reminder: middle C has pitch `60` and is displayed as `C5`.
+We define E.g. `name_to_pitch("C4") === 60` (i.e. string
+`"C4"`, representing the middle-C, corresponds to be pitch `60`).
+
+See http://newt.phys.unsw.edu.au/jw/notes.html
+and https://en.wikipedia.org/wiki/C_(musical_note) .
 """
 function name_to_pitch(p)
+    @warn "To abide with scientific pitch notation, `name_to_pitch` gives the notes "*
+    "one octave lower than before, i.e. now \"C4\" corresponds to midi pitch 60 "*
+    "and \"C-1\" to midi pitch 0. "*
+    "This change may break existing code but it is a bugfix of the wrong old way. "*
+    "use MIDI.jl version 1.0.0 for the previous version."
     pe = collect(Unicode.graphemes(p))
     pitch = NAME_TO_PITCH[pe[1]]
     x = 0
@@ -141,13 +159,15 @@ function name_to_pitch(p)
     if length(pe) > 1 + x
         octave = Meta.parse(join(pe[2+x:end]))
     else
-        octave = 5
+        octave = 4
     end
 
-    return pitch + x + 12octave
+    return pitch + x + 12(octave+1) # lowest possible octave is -1 but pitch starts from 0
 end
 
-
+#######################################################
+# pretty printing
+#######################################################
 function Base.show(io::IO, note::N) where {N<:AbstractNote}
     mprint = nameof(N)
     nn = rpad(pitch_to_name(note.pitch), 3)
