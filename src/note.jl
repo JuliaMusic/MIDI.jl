@@ -171,6 +171,15 @@ end
 function Base.show(io::IO, ::MIME"text/plain", notes::Notes{N}) where {N}
     mprint = nameof(N)
     print(io, "$(length(notes)) $(mprint)s with tpq=$(notes.tpq)")
+    _notevectorprint(io, notes)
+end
+function Base.show(io::IO, notes::Vector{N}) where {N<:AbstractNote}
+    mprint = nameof(N)
+    print(io, "$(length(notes))-element Vector{$mprint}")
+    _notevectorprint(io, notes)
+end
+
+function _notevectorprint(io, notes)
     i = 1
     while i ≤ min(10, length(notes))
         print(io, "\n", " ", notes[i])
@@ -180,6 +189,7 @@ function Base.show(io::IO, ::MIME"text/plain", notes::Notes{N}) where {N}
         print(io, "\n", "  ⋮")
     end
 end
+
 function Base.show(io::IO, notes::Notes{N}) where {N}
     mprint = nameof(N)
     print(io, "Notes{$(mprint)} with $(length(notes)) notes")
