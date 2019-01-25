@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 # master
 
+# v1.1.0
+See https://github.com/JuliaMusic/MIDI.jl/pull/112
+
+We have changed `name_to_pitch` so that `"C4"` corresponds to midi pitch 60.
+
+# v1.0.0
+No change, just stable release.
+
 # v0.8.0
 * Two new super-useful functions: `name_to_pitch` and `pitch_to_name`.
 * Function `testmidi()` that returns the path to `doxy.mid`.
