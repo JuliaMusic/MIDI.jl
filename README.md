@@ -1,8 +1,8 @@
 # MIDI.jl
 
-| **Documentation**   | **Travis**     | **AppVeyor** |
-|:--------:|:--------:|:---------------:|
-|[![](https://img.shields.io/badge/docs-online-blue.svg)](https://juliamusic.github.io/JuliaMusic_documentation.jl/latest/)| [![Build Status](https://travis-ci.org/JuliaMusic/MIDI.jl.svg?branch=master)](https://travis-ci.org/JuliaMusic/MIDI.jl) | [![Build status](https://ci.appveyor.com/api/projects/status/4mpn9vgfa7wh0jtq?svg=true)](https://ci.appveyor.com/project/JuliaDynamics/midi-jl-h79xk)
+| **Documentation**   | **Travis**     | **AppVeyor** | Citation |
+|:--------:|:--------:|:---------------:|:------:|
+|[![](https://img.shields.io/badge/docs-online-blue.svg)](https://juliamusic.github.io/JuliaMusic_documentation.jl/latest/)| [![Build Status](https://travis-ci.org/JuliaMusic/MIDI.jl.svg?branch=master)](https://travis-ci.org/JuliaMusic/MIDI.jl) | [![Build status](https://ci.appveyor.com/api/projects/status/4mpn9vgfa7wh0jtq?svg=true)](https://ci.appveyor.com/project/JuliaDynamics/midi-jl-h79xk) | [![status](http://joss.theoj.org/papers/e0cfc67982f857ed96d906ff2266aa15/status.svg)](http://joss.theoj.org/papers/e0cfc67982f857ed96d906ff2266aa15)
 
 ---
 
