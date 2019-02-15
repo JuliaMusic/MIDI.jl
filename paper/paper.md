@@ -53,7 +53,7 @@ For example, the function `quantize` from the package **MusicManipulations.jl** 
 
 
 # Scientific Application
-Microtiming deviations are defined as temporal deviations below the phrase level, typically in the millisecond range. These have been studied extensively in the literature and their importance and influence are debated strongly [@Madison2011, @Butterfield2010, @Madison2014, @Fruehauf2013, @Davies2013, @Senn2016, @Matsushita2016, @Hofmann2017, @Kilchenmann2015, @Benadon2009, @Butterfield2011, @Danielsen2015, @Danielsen2015a, @Senn2017, @Madison2014, @McGuiness2006, @Iyer2002].
+Microtiming deviations are defined as temporal deviations below the phrase level, typically in the millisecond range. These have been studied extensively in the literature and their importance and influence are debated strongly, see  [@Madison2011, @Butterfield2010, @Fruehauf2013, @Davies2013, @Senn2016, @Hofmann2017] and references therein.
 
 Qualitative studies of these microtiming deviations have been done extensively by Geisel and coworkers [@Hennig2011, @Hennig2014, @Raesaenen2015, @Sogorski2018]. A crucial finding is that the sequence of such deviations is not random but power-law correlated. In addition there is very strong evidence that their distribution is normal (Gaussian).
 
