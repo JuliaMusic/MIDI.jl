@@ -25,7 +25,7 @@ bibliography: paper.bib
 
 
 # Introduction
-**MIDI.jl** is a Julia [@Julia] package for reading, writing and analyzing [MIDI](https://www.midi.org/specifications) data.
+**MIDI.jl** is a Julia [@Julia] package for reading, writing and analyzing [MIDI](https://www.midi.org/specifications) data. In this paper we are briefly overviewing versions `1.1.0` or later for **MIDI.jl**.
 
 MIDI (Music Instrument Digital Interface) is a data format created to transmit music data across devices and computers. The [actual MIDI interface](https://www.midi.org/specifications) is very low level, directly translating all music information to and from byte chunks.
 **MIDI.jl** exposes all this low level interface, but it also builds a useable high-level interface on top of that. This makes reading MIDI data easier than ever before.
