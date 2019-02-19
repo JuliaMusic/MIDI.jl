@@ -28,7 +28,7 @@ bibliography: paper.bib
 **MIDI.jl** is a Julia [@Julia] package for reading, writing and analyzing [MIDI](https://www.midi.org/specifications) data. In this paper we are briefly overviewing versions `1.1.0` or later for **MIDI.jl**.
 
 MIDI (Music Instrument Digital Interface) is a data format created to transmit music data across devices and computers. The [actual MIDI interface](https://www.midi.org/specifications) is very low level, directly translating all music information to and from byte chunks.
-**MIDI.jl** exposes all this low level interface, but it also builds a useable high-level interface on top of that. This makes reading MIDI data easier than ever before.
+**MIDI.jl** exposes all this low level interface, but it also builds a useable high-level interface on top of that. This makes reading MIDI data intuitive and convenient, as we demonstrate in the following examples.
 
 # Documentation
 All functionality of **MIDI.jl** is very well documented and hosted online. The documentation link can be found [here](https://juliamusic.github.io/JuliaMusic_documentation.jl/latest/).
@@ -109,5 +109,20 @@ As of 8th January 2019, **MIDI.jl** is the only package for the Julia programmin
 
 # Conclusions
 In conclusion, **MIDI.jl** is a useful package with very intuitive usage, as we have demonstrated by our simple application. In addition it has plenty more use for scientific applications. In *G. Datseris et al. "Does it Swing? Microtiming Deviations and Swing Feeling in Jazz"* [@Datseris2019], the authors have used **MIDI.jl** and its extensions to not only read but also manipulate microtiming deviations of human recordings in order to inquire about the impact of microtiming deviations in the listening experience.
+
+# Related Software
+There is existing software that offers functionality similar, but not identical, to **MIDI.jl**. Some of these software are:
+
+* [mido](https://github.com/mido/mido)
+* [python-midi](https://github.com/vishnubob/python-midi)
+* [pretty-midi](https://github.com/craffel/pretty-midi), described also in this [document](https://colinraffel.com/publications/ismir2014intuitive.pdf)
+
+Notable differences between **MIDI.jl** and these libraries include (but are not limited to):
+1. The `Notes` data structure and `getnotes` functionality that exists in **MIDI.jl** 
+2. The extensibility of **MIDI.jl** into higher level applications not limited only to raw midi data (see **MusicManipulations.jl**).
+3. The fact that **MIDI.jl** is written for the Julia programming language.
+4. **MIDI.jl** has proper, multi-page and multi-example documentation that is hosted online and is automatically updated with every commit to the repository.
+4. **MIDI.jl** does not currently have the so-called "piano roll" functionality, which plots notes as in a DAW.
+5. There is also no sequencer functionality in **MIDI.jl**, which is in example in `python-midi`.
 
 # References
