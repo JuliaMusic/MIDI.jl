@@ -258,7 +258,8 @@ that correspond to the same note value (pitch) and convert them into
 the `Note` datatype. There are special cases where NOTEOFF is actually encoded as NOTEON with 0 velocity.
 `getnotes` takes care of this.
 
-Notice that the first track of a `midi` doesn't have any notes.
+Notice that the first track of a `midi` typically doesn't have any notes,
+which is why the function defaults to track 2.
 
     getnotes(track::MIDITrack, tpq = 960)
 Find the notes from `track` directly, passing also the ticks per quarter note.
