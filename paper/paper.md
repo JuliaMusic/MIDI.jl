@@ -118,11 +118,13 @@ There is existing software that offers functionality similar, but not identical,
 * [pretty-midi](https://github.com/craffel/pretty-midi), which also has an associated publication [@Raffel].
 
 Notable differences between **MIDI.jl** and these libraries include (but are not limited to):
+
 1. The `Notes` data structure and `getnotes` functionality that exists in **MIDI.jl**. Something similar exists in `pretty-midi` as well but for example there is no `channel` property.
 2. **MIDI.jl** is extended further into higher level applications like the ones offered by **MusicManipulations.jl** or the module `MotifSequenceGenerator` that can create specially random sequences of notes.
 3. The fact that **MIDI.jl** is written for the Julia programming language.
 4. **MIDI.jl** has proper, multi-page and multi-example documentation that is hosted online and is automatically updated with every commit to the repository.
 4. **MIDI.jl** does not currently have the so-called "piano roll" functionality, which plots notes as in a DAW.
 5. There is also no sequencer functionality in **MIDI.jl**, which is in example in `python-midi`.
+6. `pretty-midi` has some other high level functionality (like e.g. basic tempo estimation) also absent in **MIDI.jl**.
 
 # References
