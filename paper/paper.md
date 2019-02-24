@@ -115,7 +115,7 @@ There is existing software that offers functionality similar, but not identical,
 
 * [mido](https://github.com/mido/mido)
 * [python-midi](https://github.com/vishnubob/python-midi)
-* [pretty-midi](https://github.com/craffel/pretty-midi), which also has an associated publication [@RaffelMHSNLE14].
+* [pretty-midi](https://github.com/craffel/pretty-midi), which also has an associated publication [@Raffel].
 
 Notable differences between **MIDI.jl** and these libraries include (but are not limited to):
 1. The `Notes` data structure and `getnotes` functionality that exists in **MIDI.jl**. Something similar exists in `pretty-midi` as well but for example there is no `channel` property.
