@@ -25,20 +25,18 @@ bibliography: paper.bib
 
 
 # Introduction
-**MIDI.jl** is a Julia [@Julia] package for reading, writing and analyzing [MIDI](https://www.midi.org/specifications) data. In this paper we are briefly overviewing versions `1.1.0` or later for **MIDI.jl**.
+**MIDI.jl** is a Julia @Julia package for reading, writing and analyzing [MIDI](https://www.midi.org/specifications) data. In this paper, we are briefly overviewing versions `1.1.0` or later for **MIDI.jl**.
 
-MIDI (Music Instrument Digital Interface) is a data format created to transmit music data across devices and computers. The [actual MIDI interface](https://www.midi.org/specifications) is very low level, directly translating all music information to and from byte chunks.
-**MIDI.jl** exposes all this low level interface, but it also builds a useable high level interface on top of that. This makes reading MIDI data intuitive and convenient, as we demonstrate in the following examples.
+MIDI (Music Instrument Digital Interface) is a data format created to transmit music data across devices and computers. The [actual MIDI interface](https://www.midi.org/specifications) is low-level, directly translating all music information to and from byte chunks.
+**MIDI.jl** exposes all this low-level interface, but it also builds a useable high-level interface on top of that. This makes reading MIDI data intuitive and convenient, as we demonstrate in the following examples.
 
-# Documentation
-All functionality of **MIDI.jl** is very well documented and hosted online. The documentation link can be found [here](https://juliamusic.github.io/JuliaMusic_documentation.jl/latest/).
+All functionality of **MIDI.jl** is well documented and hosted online: https://juliamusic.github.io/JuliaMusic_documentation.jl/latest/.
 Besides documentation of functions there are plenty of useful real world examples.
-Because of the rich documentation, in this paper we will only showcase specific strengths and design decisions that can make working with music data very easy.
 
 # Intuitive and Simple Interface
-The biggest strength of **MIDI.jl** is the ability to transform the raw MIDI data in a format that is human-readable, intuitive and simple to use and manipulate. In addition the high level interface does not require knowledge of which exact MIDI code corresponds to which exact MIDI command.
+The biggest strength of **MIDI.jl** is the ability to transform the raw MIDI data in a format that is human-readable, intuitive and simple to use and manipulate. In addition, the high-level interface does not require knowledge of which exact MIDI code corresponds to which exact MIDI command.
 
-What makes this possible is the data structures we create in order to provide easier handling of MIDI files. The most important data structure is the `Note`/`Notes`. A music note can be (in its most basic level) deconstructed into just four numbers: the temporal position the note is played in, the duration, the pitch, and the intensity (strength with which the note is played, also called velocity). A `Note` is a data structure that has these four "quantities" as its "fields". All of these are accessible immediately with e.g. `Note.position` and their values can be mutated in place.
+What makes this possible is the data structures we have designed in order to provide easier handling of MIDI files. The most important data structure is the `Note`/`Notes`. A music note can be (in its most basic level) deconstructed into just four numbers: the temporal position the note is played in, the duration, the pitch, and the intensity (strength with which the note is played, also called velocity). A `Note` is a data structure that has these four "quantities" as its "fields". All of these are accessible immediately with e.g., `Note.position` and their values can be mutated in place.
 
 These aspects can be deduced from the raw MIDI format with a lot of analyzing of bytes. However, in **MIDI.jl** we provide a simple function:
 ```julia
@@ -47,18 +45,18 @@ getnotes(midi, args...)
 which obtains all note-specific information and stores it as a vector of notes, which we call `Notes`. This is very convenient, as to "identify" a note in the MIDI format, one needs to first identify two different streams of bytes; one denotes the start and the other the end of the note. This quickly becomes tedious, but `getnotes` does not expose all these details to the user.
 
 # Extensions
-The easy to use high level interface allows **MIDI.jl** to be extendable.  For instance, in another software package **MusicManipulations.jl** we provide general functions for manipulating (and further analyzing) music data.
+The easy-to-use high-level interface allows **MIDI.jl** to be extendable.  For instance, in another software package **MusicManipulations.jl** we provide general functions for manipulating (and further analyzing) music data.
 For example, the function `quantize` from the package **MusicManipulations.jl** allows the user to quantize any `Notes` instance to any grid.
 
 This functionality is offered by Digital Audio Workstations, like the software Cubase, but we offer ways to do it programmatically instead. Many other helpful functions are contained in **MusicManipulations.jl**, and for further reading we point to the official documentation of the [JuliaMusic](https://juliamusic.github.io/JuliaMusic_documentation.jl/latest/) GitHub organization, which hosts both **MIDI.jl** and **MusicManipulations.jl**, as well as other useful packages.
 
 
 # Scientific Application
-Microtiming deviations are defined as temporal deviations below the phrase level, typically in the millisecond range. These have been studied extensively in the literature and their importance and influence are debated strongly, see  [@Madison2011, @Butterfield2010, @Fruehauf2013, @Davies2013, @Senn2016, @Hofmann2017] and references therein.
+Microtiming deviations are defined as temporal deviations below the phrase level, typically in the millisecond range. These have been studied extensively in the literature and their importance and influence are debated strongly, see  @Madison2011, @Butterfield2010, @Fruehauf2013, @Davies2013, @Senn2016, @Hofmann2017 and references therein.
 
-Qualitative studies of these microtiming deviations have been done extensively by Geisel and coworkers [@Hennig2011, @Hennig2014, @Raesaenen2015, @Sogorski2018]. A crucial finding is that the sequence of such deviations is not random but power-law correlated. In addition there is very strong evidence that their distribution is normal (Gaussian).
+Qualitative studies of these microtiming deviations have been done extensively by Geisel and coworkers @Hennig2011, @Hennig2014, @Raesaenen2015, @Sogorski2018. A crucial finding is that the sequence of such deviations is not random but power-law correlated. In addition, there is strong evidence that their distribution is normal (Gaussian).
 
-In the following we will compute the distribution of the microtiming deviations of a piano track (played by a professional pianist) and show that indeed it approximates a normal distribution.
+In the following, we will compute the distribution of the microtiming deviations of a piano track (played by a professional pianist) and show that indeed it approximates a normal distribution.
 
 We first load the notes of the piano track:
 ```julia
@@ -104,12 +102,8 @@ A plot of the histogram of these is presented in Figure 1. Even if produced with
 
 ![Histogram of the microtiming deviations of a simple piano recording.](mtd_hist.png)
 
-# Necessity of MIDI.jl
-
-As of 8th January 2019, **MIDI.jl** is the only package for the Julia programming language that offers this functionality.
-
 # Conclusions
-In conclusion, **MIDI.jl** is a useful package with very intuitive usage, as we have demonstrated by our simple application. In addition, it has plenty more use for scientific applications. In *G. Datseris et al. "Does it Swing? Microtiming Deviations and Swing Feeling in Jazz"* [@Datseris2019], the authors have used **MIDI.jl** and its extensions to not only read but also manipulate microtiming deviations of human recordings in order to inquire about the impact of microtiming deviations in the listening experience.
+In conclusion, **MIDI.jl** is a useful package with intuitive usage, as we have demonstrated by our simple application. In addition, it has plenty more use for scientific applications. We currently have a manuscript titled *Does it Swing? Microtiming Deviations and Swing Feeling in Jazz* under review, where we have used **MIDI.jl** and its extensions to not only read but also manipulate microtiming deviations of human recordings in order to inquire about the impact of microtiming deviations in the listening experience.
 
 # Related Software
 There is existing software that offers functionality similar, but not identical, to **MIDI.jl**. Some of these software are:
@@ -123,6 +117,7 @@ Notable differences between **MIDI.jl** and these libraries include (but are not
 1. The `Notes` data structure and `getnotes` functionality that exists in **MIDI.jl**. Although the package `pretty-midi` contains similar functionality, it lacks the channel property.
 2. **MIDI.jl** is extended further into higher level applications like the ones offered by **MusicManipulations.jl** or the module `MotifSequenceGenerator` that can create specially random sequences of notes.
 3. The fact that **MIDI.jl** is written for the Julia programming language.
+4. The fact that **MIDI.jl** is the only package for handling MIDI data for the Julia programming language.
 4. **MIDI.jl** has proper, multi-page and multi-example documentation that is hosted online and is automatically updated with every commit to the repository.
 4. **MIDI.jl** does not currently have the so-called "piano roll" functionality, which plots notes as in a Digital Audio Workstation.
 5. Sequencer functionality, which has been implemented in the `python-midi` package, is currently lacking in **MIDI.jl**.
