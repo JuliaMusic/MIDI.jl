@@ -1,5 +1,5 @@
 ---
-title: 'MIDI.jl: Simple and intuitive handling of MIDI data.'
+title: '{MIDI}.jl: Simple and intuitive handling of MIDI data.'
 tags:
   - music
   - MIDI
