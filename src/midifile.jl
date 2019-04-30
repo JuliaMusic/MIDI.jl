@@ -106,11 +106,6 @@ function writeMIDIFile(filename::AbstractString, notes::Notes)
     return midi
 end
 
-# Deprecate readMIDIfile
-@deprecate readMIDIfile readMIDIFile
-@deprecate writeMIDIfile writeMIDIFile
-export readMIDIfile, writeMIDIfile
-
 
 """
     BPM(midi)
