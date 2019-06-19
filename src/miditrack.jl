@@ -15,6 +15,15 @@ mutable struct MIDITrack
     events::Vector{TrackEvent}
 end
 MIDITrack() = MIDITrack(TrackEvent[])
+# Pretty print
+function Base.show(io::IO, t::MIDITrack) where {N}
+    L = length(t.events)
+    M = count(x -> x isa MIDIEvent, t.events)
+    T = count(x -> x isa MetaEvent, t.events)
+    X = L - M - T
+    print(io, "$(L)-event MIDITrack: $M MIDI, $T Meta, $X Sysex")
+end
+
 
 function readtrack(f::IO)
 

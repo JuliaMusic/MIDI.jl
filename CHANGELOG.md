@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 # master
 
+# v1.3.0
+Improved the printing of `TrackEvent`s. They now state the amount of elements in them, as well as listing how many or of each type. E.g.:
+```
+julia> midi.tracks
+5-element Array{MIDITrack,1}:
+ 3-event MIDITrack: 0 MIDI, 3 Meta, 0 Sysex
+ 5729-event MIDITrack: 5728 MIDI, 1 Meta, 0 Sysex
+ 8467-event MIDITrack: 8466 MIDI, 1 Meta, 0 Sysex
+ 21487-event MIDITrack: 21486 MIDI, 1 Meta, 0 Sysex
+ 9773-event MIDITrack: 9772 MIDI, 1 Meta, 0 Sysex
+```
+
 # v1.2.0
 Removed deprecations.
 
