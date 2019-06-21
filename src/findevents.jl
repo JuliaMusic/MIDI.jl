@@ -2,6 +2,7 @@
 # are contained here
 
 export trackname, addtrackname!, textevent, findtextevents
+export tracknames
 
 """
     trackname(track::MIDI.MIDITrack)
@@ -27,6 +28,9 @@ function trackname(track::MIDI.MIDITrack)
         return trackname
     end
 end
+
+"`tracknames(m::MIDIFile) = trackname.(m.tracks)`"
+tracknames(m::MIDIFile) = trackname.(m.tracks)
 
 """
     addtrackname!(track::MIDI.MIDITrack, name::String)

@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 # master
+# v1.4.0
+* Added convenience function `tracknames(midi)`
 
 # v1.3.0
 Improved the printing of `TrackEvent`s. They now state the amount of elements in them, as well as listing how many or of each type. E.g.:
