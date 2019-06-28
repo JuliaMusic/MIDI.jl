@@ -37,18 +37,15 @@ end
 
 import Base.+, Base.-, Base.==
 
-+(n::Note, i::Integer) = Note(n.pitch + i, n.duration, n.position, n.channel, n.velocity)
-+(i::Integer, n::Note) = n + i
-
--(n::Note, i::Integer) = Note(n.pitch - i, n.duration, n.position, n.channel, n.velocity)
--(i::Integer, n::Note) = n - i
-
 ==(n1::Note, n2::Note) =
     n1.pitch == n2.pitch &&
     n1.duration == n2.duration &&
     n1.position == n2.position &&
     n1.channel == n2.channel &&
     n1.velocity == n2.velocity
+
+Base.copy(n::N) where {N<:AbstractNote} =
+N(n.pitch, n.velocity, n.position, n.duration, n.channel)
 
 """
     Notes{N<:AbstractNote}
