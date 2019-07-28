@@ -115,7 +115,8 @@ value in integer.
 
 Reminder: middle C has pitch `60` and is displayed as `C4`.
 """
-function pitch_to_name(i)
+function pitch_to_name(j)
+    i = Int(j)
     notename = PITCH_TO_NAME[mod(i, 12)]
     octave = (i÷12)-1
     return notename*string(octave)
