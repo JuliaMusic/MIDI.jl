@@ -5,10 +5,13 @@ abstract type AbstractNote end
 
 """
     Note <: AbstractNote
-Data structure describing a "music note".
+Mutable data structure describing a "music note". A bundle of many notes results
+in the [`Notes`](@ref) struct, which is the output of the [`getnotes`](@ref)
+function.
 ## Fields:
-* `pitch::UInt8` : Pitch, starting from C0 = 0, adding one per semitone
-  (middle-C is 60).
+* `pitch::UInt8` : Pitch, starting from C-1 = 0, adding one per semitone.
+  Use the functions [`name_to_pitch`](@ref) and
+  [`pitch_to_name`](@ref) for integer and string representations.
 * `velocity::UInt8` : Dynamic intensity. Cannot be higher than 127 (0x7F).
 * `position::UInt` : Position in absolute time (since beginning of track), in ticks.
 * `duration::UInt` : Duration in ticks.
@@ -52,7 +55,7 @@ N(n.pitch, n.velocity, n.position, n.duration, n.channel)
 Data structure describing a collection of "music notes", bundled with a ticks
 per quarter note measure.
 ## Fields:
-* `notes::Vector{N}`
+* `notes::Vector{N} where {N <: Notes}`
 * `tpq::Int16` : Ticks per quarter note. Defines the fundamental unit of measurement
    of a note's position and duration, as well as the length of one quarter note.
    Takes values from 1 to 960.
@@ -111,7 +114,7 @@ v => k for (v, k) in zip(values(PITCH_TO_NAME), keys(PITCH_TO_NAME)))
 """
     pitch_to_name(pitch) -> string
 Return the name of the pitch, e.g. `F5`, `A♯3` etc. in modern notation given the
-value in integer.
+pitch value in integer.
 
 Reminder: middle C has pitch `60` and is displayed as `C4`.
 """
@@ -133,7 +136,7 @@ Return the pitch value of the given note name `p`, which can be of the form
   If not given it is assumed `"5"`.
 
 We define E.g. `name_to_pitch("C4") === 60` (i.e. string
-`"C4"`, representing the middle-C, corresponds to be pitch `60`).
+`"C4"`, representing the middle-C, corresponds to pitch `60`).
 
 See http://newt.phys.unsw.edu.au/jw/notes.html
 and https://en.wikipedia.org/wiki/C_(musical_note) .
