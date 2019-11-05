@@ -4,20 +4,24 @@
 export trackname, addtrackname!, textevent, findtextevents
 export tracknames
 
+const NOTRACKNAME = "No track name found"
+
 """
     trackname(track::MIDI.MIDITrack)
 
 Return the name of the given `track` as a string,
 by finding the "track name" `MetaEvent`.
+
+If no such event exists, `"No track name found"` is returned.
 """
 function trackname(track::MIDI.MIDITrack)
 
     pos = findtrackname(track)
     if pos == 0
-        return "No track name found"
+        return NOTRACKNAME
     # check if there really is a name
     elseif length(track.events[pos].data) == 0
-        return "No track name found"
+        return NOTRACKNAME
     else
         event = track.events[pos]
         # extract the name (string(Char()) takes care of ASCII encoding)

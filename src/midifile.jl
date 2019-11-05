@@ -17,9 +17,17 @@ mutable struct MIDIFile
 end
 # Pretty print
 function Base.show(io::IO, midi::MIDIFile) where {N}
-    print(io, "MIDIFile:\n"*
-    "  format: $(Int(midi.format))\n  tracks: $(length(midi.tracks))\n"*
-    "  tpq: $(midi.tpq)")
+	tnames = tracknames(midi)
+	s = "MIDIFile (format=$(Int(midi.format)), tpq=$(midi.tpq)) "
+	if any(!isequal(NOTRACKNAME), tnames) # we have tracknames
+		s *= "with tracks:\n"
+		for t in tnames
+			s *= " "*t*"\n"
+		end
+	else # some track doesn't have a name
+		s *= "with $(length(midi.tracks)) tracks"
+	end
+	print(io, s)
 end
 
 
