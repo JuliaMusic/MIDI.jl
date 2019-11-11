@@ -5,7 +5,7 @@ os:
   - windows
 julia:
   - 1.0
-  - nightly
+  # - nightly # commented to save energy and time
 matrix:
   allow_failures:
   - julia: nightly
