@@ -1,7 +1,7 @@
 name = "MIDI"
 uuid = "f57c4921-e30c-5f49-b073-3f2f2ada663e"
 repo = "https://github.com/JuliaMusic/MIDI.jl.git"
-version = "1.5.1"
+version = "1.5.2"
 
 [deps]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"

@@ -25,3 +25,11 @@ end
     n = Note(0, 1, 1, 1)
     @test pitch_to_name(n.pitch) == "C-1"
 end
+
+@testset "copying notes" begin
+    midi = readMIDIFile("doxy.mid")
+    notes = getnotes(midi.tracks[4])
+    n2 = copy(notes)
+    notes[1].pitch = 1
+    @test n2[1].pitch ≠ 1
+end

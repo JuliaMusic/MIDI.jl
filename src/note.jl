@@ -98,7 +98,7 @@ function Base.append!(n1::Notes{N}, n2::Notes{N}) where {N}
     return n1
 end
 
-Base.copy(notes::Notes) = Notes(copy(notes.notes), notes.tpq)
+Base.copy(notes::Notes) = Notes([copy(n) for n in notes], notes.tpq)
 
 
 #######################################################
