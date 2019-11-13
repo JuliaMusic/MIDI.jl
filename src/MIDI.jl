@@ -12,12 +12,18 @@ include("variablelength.jl")
 include("convert.jl")
 include("findevents.jl")
 
-export testmidi
+export testmidi, testnotes
 
 """
     testmidi()
 Return the path to a test MIDI file.
 """
-testmidi() = dir = joinpath(dirname(@__DIR__), "test", "doxy.mid")
+testmidi() = joinpath(dirname(@__DIR__), "test", "doxy.mid")
+
+"""
+    testnotes()
+Return a test set of human-played MIDI notes on the piano.
+"""
+testnotes() = getnotes(readMIDIFile(testmidi()), 4)
 
 end
