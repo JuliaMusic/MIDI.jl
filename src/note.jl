@@ -70,12 +70,12 @@ end
 # Constructors for Notes:
 function Notes(notes::Vector{N}, tpq::Int = 960) where {N <: AbstractNote}
     if tpq < 1
-        throw(ArgumentError("Ticks per quarter note (tpq) must be > 1"))
+        throw(ArgumentError("Ticks per quarter note (tpq) must be >= 1"))
     end
     Notes{N}(notes, tpq)
 end
 
-Notes() = Notes{Note}(Vector{Note}[], tpq = 960)
+Notes(; tpq = 960) = Notes{Note}(Vector{Note}[], tpq)
 
 # Iterator Interface for notes:
 Base.iterate(n::Notes) = iterate(n.notes)
