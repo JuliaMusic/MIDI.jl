@@ -4,10 +4,13 @@ export pitch_to_name, name_to_pitch
 abstract type AbstractNote end
 
 """
-    Note <: AbstractNote
-Mutable data structure describing a "music note". A bundle of many notes results
+    Note(pitch, velocity, position, duration, channel = 0) <: AbstractNote
+Mutable data structure describing a music note. A bundle of many notes results
 in the [`Notes`](@ref) struct, which is the output of the [`getnotes`](@ref)
 function.
+
+If the `channel` of the note is `0` (default) it is not printed with `show`.
+
 ## Fields:
 * `pitch::UInt8` : Pitch, starting from C-1 = 0, adding one per semitone.
   Use the functions [`name_to_pitch`](@ref) and
@@ -17,8 +20,6 @@ function.
 * `duration::UInt` : Duration in ticks.
 * `channel::UInt8 = 0` : Channel of the track that the note is played on.
   Cannot be higher than 127 (0x7F).
-
-If the `channel` of the note is `0` (default) it is not printed with `show`.
 """
 mutable struct Note <: AbstractNote
     pitch::UInt8
@@ -38,7 +39,7 @@ mutable struct Note <: AbstractNote
 end
 @inline Note(n::Note) = n
 
-import Base.+, Base.-, Base.==
+import Base.==
 
 ==(n1::Note, n2::Note) =
     n1.pitch == n2.pitch &&
@@ -51,16 +52,11 @@ Base.copy(n::N) where {N<:AbstractNote} =
 N(n.pitch, n.velocity, n.position, n.duration, n.channel)
 
 """
-    Notes{N<:AbstractNote}
-Data structure describing a collection of "music notes", bundled with a ticks
-per quarter note measure.
-## Fields:
-* `notes::Vector{N} where {N <: Notes}`
-* `tpq::Int16` : Ticks per quarter note. Defines the fundamental unit of measurement
-   of a note's position and duration, as well as the length of one quarter note.
-   Takes values from 1 to 960.
+    Notes(note_vector, tpq = 960) -> Notes
+A data structure describing a collection of music notes, bundled with the ticks
+per quarter note (so that the notes can be attributed rhythmic value).
 
-`Notes` is iterated and accessed as if iterating or accessing its field `notes`.
+`Notes` can be iterated and accessed as the given `note_vector`.
 """
 struct Notes{N <: AbstractNote}
     notes::Vector{N}
@@ -78,8 +74,8 @@ end
 Notes(; tpq = 960) = Notes{Note}(Vector{Note}[], tpq)
 
 # Iterator Interface for notes:
-Base.iterate(n::Notes) = iterate(n.notes)
-Base.iterate(n::Notes, i) = iterate(n.notes, i)
+Base.iterate(n::Notes, i = 1) = iterate(n.notes, i)
+# Base.iterate(n::Notes, i) = iterate(n.notes, i)
 Base.eltype(::Type{Notes{N}}) where {N} = N
 
 # Indexing
