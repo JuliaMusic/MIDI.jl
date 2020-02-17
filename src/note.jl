@@ -9,7 +9,12 @@ Mutable data structure describing a music note. A bundle of many notes results
 in the [`Notes`](@ref) struct, which is the output of the [`getnotes`](@ref)
 function.
 
-If the `channel` of the note is `0` (default) it is not printed with `show`.
+If the `channel` of the note is `0` (default), it is not shown.
+
+You can also create a `Note` with the following keyword constructor:
+```julia
+Note(pitch, position; velocity = 100, duration = 960, channel = 0)
+```
 
 ## Fields:
 * `pitch::UInt8` : Pitch, starting from C-1 = 0, adding one per semitone.
@@ -37,6 +42,9 @@ mutable struct Note <: AbstractNote
             new(pitch, velocity, position, duration, channel)
         end
 end
+Note(pitch, position; velocity = 100, duration = 960, channel = 0) =
+Note(pitch, velocity, position, duration, channel)
+
 @inline Note(n::Note) = n
 
 import Base.==
