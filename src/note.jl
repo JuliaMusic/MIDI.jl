@@ -1,4 +1,4 @@
-export Note, Notes, AbstractNote
+export Note, Notes, AbstractNote, DrumNote
 export pitch_to_name, name_to_pitch
 
 abstract type AbstractNote end
@@ -47,9 +47,20 @@ Note(pitch, velocity, position, duration, channel)
 
 @inline Note(n::Note) = n
 
-import Base.==
+"""
+    DrumNote(pitch, position, duration = 960; velocity = 100)
+Shorthand constructor for a [`Note`](@ref) that is always on channel `9`.
+It is possible to specify pitch as a `String` (e.g. "Acoustic Snare"), which
+will be converted to actual pitch using [`DRUMKEY`](@ref).
+"""
+DrumNote(pitch, position, duration = 960; velocity = 100, gmmap = DRUMKEY) =
+Note(_drumpitch(pitch, gmmap), velocity, position, duration, 9)
 
-==(n1::Note, n2::Note) =
+_drumpitch(pitch::Real, gmmap) = pitch
+_drumpitch(pitch::String, gmmap) = name_to_pitch(gmmap[pitch])
+
+import Base.==
+==(n1::AbstractNote, n2::AbstractNote) =
     n1.pitch == n2.pitch &&
     n1.duration == n2.duration &&
     n1.position == n2.position &&

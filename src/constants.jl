@@ -172,3 +172,34 @@ const GM = Dict(
     "Applause" => UInt8(127),
     "Gunshot" => UInt8(128)
 )
+
+"""
+	DRUMKEY
+
+A dictionary that given the drum instrument as a string it returns the
+MIDI pitch that MuseScore uses. See
+https://musescore.org/sites/musescore.org/files/General%20MIDI%20Standard%20Percussion%20Set%20Key%20Map.pdf
+for a more complete list.
+"""
+const DRUMKEY = begin
+	a =
+	Dict(
+	"Acoustic Bass Drum" => "B1",
+	"Acoustic Snare" => "D2",
+	"Side Stick" => "C#2",
+	"Closed Hi-Hat" => "F#2",
+	"Open Hi-Hat" => "A#2",
+	"Pedal Hi-Hat" => "G#2",
+	"Ride Cymbal" => "D#3",
+	"Ride Bell" => "F3",
+	"Low-Mid Tom" => "B2",
+	"Cowbell" => "G#3",
+	"Tambourine" => "F#3",
+	"High Floor Tom" => "G2",
+	"Low Floor Tom" => "F2",
+	"Crash Cymbal 1" => "C#3",
+	"Crash Cymbal 2" => "A3"
+	)
+end
+
+export DRUMKEY
