@@ -84,7 +84,7 @@ Write a `MIDIFile` as a ".mid" file to the given filename.
 Create a `MIDIFile` directly from `notes`, using format 1.
 """
 function writeMIDIFile(filename::AbstractString, data::MIDIFile)
-    if length(filename) < 4 || lowercase(filename[end-3:end]) != ".mid"
+    if length(filename) < 4 || filename[end-3:end] != ".mid" && filename[end-3:end] != ".MID"
       filename *= ".mid"
     end
 
