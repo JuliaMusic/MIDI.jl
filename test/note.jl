@@ -21,6 +21,7 @@ end
     @test pitch_to_name(name_to_pitch("B#")) == "C5"
     @test pitch_to_name(name_to_pitch("F♯")) == "F♯4"
     @test name_to_pitch("C4") == 60
+    @test pitch_to_name(name_to_pitch("C")) == "C4"
 
     n = Note(0, 1, 1, 1)
     @test pitch_to_name(n.pitch) == "C-1"

@@ -160,7 +160,7 @@ function name_to_pitch(p)
     pe = collect(Unicode.graphemes(p))
     pitch = NAME_TO_PITCH[pe[1]]
     x = 0
-    if pe[2] == "#" || pe[2] == "♯"
+    if length(pe) >= 2 && (pe[2] == "#" || pe[2] == "♯")
         x = 1
     end
     if length(pe) > 1 + x
