@@ -119,34 +119,41 @@ Base.copy(notes::Notes) = Notes([copy(n) for n in notes], notes.tpq)
 #######################################################
 # string name <-> midi pitch
 #######################################################
-using Base.Meta, Base.Unicode
+using Base.Unicode
 const PITCH_TO_NAME = Dict(
 0=>"C", 1=>"C♯", 2=>"D", 3=>"D♯", 4=>"E", 5=>"F", 6=>"F♯", 7=>"G", 8=>"G♯", 9=>"A",
 10 =>"A♯", 11=>"B")
 const NAME_TO_PITCH = Dict(
-v => k for (v, k) in zip(values(PITCH_TO_NAME), keys(PITCH_TO_NAME)))
-
+(v => k for (v, k) in zip(values(PITCH_TO_NAME), keys(PITCH_TO_NAME)))...,
+"D♭"=>1, "E♭"=>3, "G♭"=>6, "A♭"=>8, "B♭"=>10)
+const SHARP_TO_FLAT = Dict(
+"C♯"=>"D♭", "D♯"=>"E♭", "F♯"=>"G♭", "G♯"=>"A♭", "A♯"=>"B♭"
+)
 """
-    pitch_to_name(pitch) -> string
+    pitch_to_name(pitch; flat=false) -> String
 Return the name of the pitch, e.g. `F5`, `A♯3` etc. in modern notation given the
-pitch value in integer.
+pitch value in integer. When `flat=true`, accidentals are printed as flats, 
+e.g. `A♯3` is printed as `B♭3`.
 
 Reminder: middle C has pitch `60` and is displayed as `C4`.
 """
-function pitch_to_name(j)
-    i = Int(j)
+function pitch_to_name(pitch; flat::Bool=false)
+    i = Int(pitch)
     notename = PITCH_TO_NAME[mod(i, 12)]
+    if flat
+        notename = get(SHARP_TO_FLAT, notename, notename)
+    end
     octave = (i÷12)-1
     return notename*string(octave)
 end
 
 """
-    name_to_pitch(p::String) -> Int
-Return the pitch value of the given note name `p`, which can be of the form
+    name_to_pitch(name::String) -> Int
+Return the pitch value of the given note name, which can be of the form
 `capital_letter*sharp*octave` where:
 
 * `capital_letter` : from `"A"` to `"G"`.
-* `sharp` : one of `"#"` `"♯"` or `""`.
+* `sharp` : one of `"#"` `"♯"` `"b"` `"♭"` or `""`. 
 * `octave` : any integer (as a string), the octave number (an octave is 12 pitches).
   If not given it is assumed `"5"`.
 
@@ -156,15 +163,19 @@ We define E.g. `name_to_pitch("C4") === 60` (i.e. string
 See http://newt.phys.unsw.edu.au/jw/notes.html
 and https://en.wikipedia.org/wiki/C_(musical_note) .
 """
-function name_to_pitch(p)
-    pe = collect(Unicode.graphemes(p))
+function name_to_pitch(name)
+    pe = collect(Unicode.graphemes(name))
     pitch = NAME_TO_PITCH[pe[1]]
     x = 0
-    if pe[2] == "#" || pe[2] == "♯"
-        x = 1
+    if length(pe) >= 2
+        if pe[2] == "#" || pe[2] == "♯"
+            x = 1
+        elseif pe[2] == "b" || pe[2] == "♭"
+            x = -1
+        end
     end
-    if length(pe) > 1 + x
-        octave = Meta.parse(join(pe[2+x:end]))
+    if isdigit(first(last(pe)))
+        octave = parse(Int, join(filter(isdigit ∘ first, pe)))
     else
         octave = 4
     end
