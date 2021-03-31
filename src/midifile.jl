@@ -1,5 +1,5 @@
 export MIDIFile, readMIDIFile, writeMIDIFile
-export BPM, ms_per_tick
+export BPM, time_signature, ms_per_tick
 
 """
     MIDIFile <: Any
@@ -150,7 +150,28 @@ function BPM(t::MIDI.MIDIFile)
     bpm = 60000000/μs
 end
 
+"""
+    time_signature(midi)
+Return the time signature of the given `MIDIFile`.
+"""
+function time_signature(t::MIDI.MIDIFile)
+    # Find the one that corresponds to Time Signature:
+    # FF 58 04 nn dd cc bb Time Signature
+    # See here (page 8):
+    # http://www.cs.cmu.edu/~music/cmsip/readings/Standard-MIDI-file-format-updated.pdf
+    for event in t.tracks[1].events
+        if typeof(event) == MetaEvent
+            if event.metatype == 0x58
+                nn, dd = event.data
+                ts = join(map(string, [nn, dd^2]), '/')
+                return ts
+            end
+        end
+    end
 
+    # Default time signature if it is not present in the file
+    return "4/4"
+end
 
 """
     ms_per_tick(tpq, bpm)
