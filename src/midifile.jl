@@ -153,6 +153,7 @@ end
 """
     time_signature(midi)
 Return the time signature of the given `MIDIFile`.
+Returns 4/4 if it doesn't find a time signature.
 """
 function time_signature(t::MIDI.MIDIFile)
     # Find the one that corresponds to Time Signature:
@@ -163,7 +164,7 @@ function time_signature(t::MIDI.MIDIFile)
         if typeof(event) == MetaEvent
             if event.metatype == 0x58
                 nn, dd = event.data
-                ts = join(map(string, [nn, 2^dd]), '/')
+                ts = string(nn) * "/" * string(2^dd)
                 return ts
             end
         end
