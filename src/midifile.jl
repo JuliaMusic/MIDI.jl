@@ -118,6 +118,7 @@ end
 """
     BPM(midi)
 Return the BPM where the given `MIDIFile` was exported at.
+Returns 120 if not found.
 """
 function BPM(t::MIDI.MIDIFile)
     # META-event list:
@@ -135,6 +136,12 @@ function BPM(t::MIDI.MIDIFile)
             end
         end
     end
+
+    # Default BPM if it is not present in the MIDI file.
+    if isempty(tttttt)
+        return 120.0
+    end
+
     # Ensure that tttttt is with correct form (first entry should be 0x00)
     if tttttt[1] != 0x00
         pushfirst!(tttttt, 0x00)
