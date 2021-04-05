@@ -1,5 +1,5 @@
 export MIDIFile, readMIDIFile, writeMIDIFile
-export BPM, time_signature, ms_per_tick
+export BPM, bpm, qpm, time_signature, ms_per_tick
 
 """
     MIDIFile <: Any
