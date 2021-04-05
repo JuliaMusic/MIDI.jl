@@ -175,6 +175,7 @@ function bpm(t::MIDI.MIDIFile)
         if typeof(event) == MetaEvent
             if event.metatype == 0x58
                 cc = event.data[3]
+                break
             end
         end
     end
