@@ -1,5 +1,5 @@
 export MIDIFile, readMIDIFile, writeMIDIFile
-export BPM, time_signature, ms_per_tick
+export BPM, bpm, qpm, time_signature, ms_per_tick
 
 """
     MIDIFile <: Any
@@ -114,13 +114,85 @@ function writeMIDIFile(filename::AbstractString, notes::Notes)
     return midi
 end
 
+"""
+    qpm(midi)
+Return the QPM where the given `MIDIFile` was exported at.
+Returns 120 if not found.
+"""
+function qpm(t::MIDI.MIDIFile)
+    # META-event list:
+    tttttt = Vector{UInt32}()
+    # Find the one that corresponds to Set-Time:
+    # The event tttttt corresponds to the command
+    # FF 51 03 tttttt Set Tempo (in microseconds per MIDI quarter-note)
+    # See here (page 8):
+    # http://www.cs.cmu.edu/~music/cmsip/readings/Standard-MIDI-file-format-updated.pdf
+    for event in t.tracks[1].events
+        if typeof(event) == MetaEvent
+            if event.metatype == 0x51
+                tttttt = deepcopy(event.data)
+                break
+            end
+        end
+    end
 
+    # Default QPM if it is not present in the MIDI file.
+    if isempty(tttttt)
+        return 120.0
+    end
+
+    # Ensure that tttttt is with correct form (first entry should be 0x00)
+    if tttttt[1] != 0x00
+        pushfirst!(tttttt, 0x00)
+    else
+        # Handle correctly "incorrect" cases where 0x00 has entered more than once
+        tttttt = tttttt[findin(tttttt, 0x00)[end]:end]
+    end
+
+    # Get the microsecond number from tttttt
+    u = ntoh(reinterpret(UInt32, tttttt)[1])
+    μs = Int64(u)
+    # QPM:
+    qpm = 60000000/μs
+end
+
+"""
+    bpm(midi)
+Return the BPM where the given `MIDIFile` was exported at.
+Returns QPM if not found.
+"""
+function bpm(t::MIDI.MIDIFile)
+    QPM = qpm(t)
+
+    # Default cc if not found
+    cc = 24
+
+    # Find the one that corresponds to Time Signature:
+    # FF 58 04 nn dd cc bb Time Signature
+    # See here (page 8):
+    # http://www.cs.cmu.edu/~music/cmsip/readings/Standard-MIDI-file-format-updated.pdf
+    for event in t.tracks[1].events
+        if typeof(event) == MetaEvent
+            if event.metatype == 0x58
+                cc = event.data[3]
+                break
+            end
+        end
+    end
+    bpm = QPM * 24 / cc
+end
+
+# Deprecated
 """
     BPM(midi)
 Return the BPM where the given `MIDIFile` was exported at.
 Returns 120 if not found.
 """
 function BPM(t::MIDI.MIDIFile)
+    @warn "This function is deprecated.
+    It returns quarter notes per minute instead of beats per minute.
+    Please use `bpm` for beats per minute and `qpm` for quarter notes per minute."
+
     # META-event list:
     tttttt = Vector{UInt32}()
     # Find the one that corresponds to Set-Time:

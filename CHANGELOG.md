@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+# v1.11.0
+* Added `qpm` that returns the quarter notes per minute tempo of a given MIDI
+* Added `bpm` that returns the beats per minute of a given MIDI
+* Deprecated `BPM`
 # v1.10.0
 * Added `time_signature` that returns the time signature of a given MIDI.
 # v1.9.0
