@@ -116,7 +116,7 @@ end
 
 """
     qpm(midi)
-Return the QPM where the given `MIDIFile` was exported at.
+Return the QPM (quarter notes per minute) where the given `MIDIFile` was exported at.
 Returns 120 if not found.
 """
 function qpm(t::MIDI.MIDIFile)
@@ -189,9 +189,9 @@ Return the BPM where the given `MIDIFile` was exported at.
 Returns 120 if not found.
 """
 function BPM(t::MIDI.MIDIFile)
-    @warn "This function is deprecated.
+    @warn """This function is deprecated.
     It returns quarter notes per minute instead of beats per minute.
-    Please use `bpm` for beats per minute and `qpm` for quarter notes per minute."
+    Please use `bpm` for beats per minute and `qpm` for quarter notes per minute."""
 
     # META-event list:
     tttttt = Vector{UInt32}()
