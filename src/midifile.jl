@@ -254,13 +254,13 @@ function time_signature(t::MIDI.MIDIFile)
 end
 
 """
-    ms_per_tick(tpq, bpm)
+    ms_per_tick(tpq, qpm)
     ms_per_tick(midi::MIDIFile)
 Return how many miliseconds is one tick, based
-on the beats per minute `bpm` and ticks per quarter note `tpq`.
+on the quarter notes per minute `qpm` and ticks per quarter note `tpq`.
 """
-ms_per_tick(midi::MIDI.MIDIFile, bpm = BPM(midi)) = ms_per_tick(midi.tpq, bpm)
-ms_per_tick(tpq, bpm) = (1000*60)/(bpm*tpq)
+ms_per_tick(midi::MIDI.MIDIFile, qpm = qpm(midi)) = ms_per_tick(midi.tpq, qpm)
+ms_per_tick(tpq, qpm) = (1000*60)/(qpm*tpq)
 
 getnotes(midi::MIDIFile, trackno = midi.format == 0 ? 1 : 2) = 
 getnotes(midi.tracks[trackno], midi.tpq)
