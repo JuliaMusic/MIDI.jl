@@ -1,5 +1,5 @@
 export MIDIFile, readMIDIFile, writeMIDIFile
-export BPM, bpm, qpm, time_signature, ms_per_tick
+export BPM, bpm, qpm, time_signature, get_tempo_changes, ms_per_tick
 
 """
     MIDIFile <: Any
@@ -251,6 +251,42 @@ function time_signature(t::MIDI.MIDIFile)
 
     # Default time signature if it is not present in the file
     return "4/4"
+end
+
+"""
+    get_tempo_changes(midi)
+Return the position and tempo in quarter notes per minute for all the Tempo events in the given `MIDIFile`.
+Returns [(0, 120.0)] if there are no tempo events.
+"""
+function get_tempo_changes(midi::MIDIFile)
+    # Stores (position, tempo) pairs
+    tempo_changes = [(0, 120.0)]
+    position = 0
+    for event in midi.tracks[1].events
+        position += event.dT
+        if event.metatype == 0x51
+            tttttt = deepcopy(event.data)
+
+            # Ensure 0x00 is at the start
+            if tttttt[1] != 0x00
+                pushfirst!(tttttt, 0x00)
+            else
+                # Handle incorrect cases
+                tttttt = tttttt[findin(tttttt, 0x00)[end]:end]
+            end
+
+            qpm = 6e7 / Int64(ntoh(reinterpret(UInt32, tttttt)[1]))
+
+            # Allow only one tempo change at the beginning
+            if position == 0
+                tempo_changes = [(0, qpm)]
+            else
+                push!(tempo_changes, (position, qpm))
+            end
+        end
+    end
+
+    tempo_changes
 end
 
 """
