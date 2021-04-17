@@ -1,5 +1,5 @@
 export MIDIFile, readMIDIFile, writeMIDIFile
-export BPM, bpm, qpm, time_signature, get_tempo_changes, ms_per_tick
+export BPM, bpm, qpm, time_signature, tempochanges, ms_per_tick
 
 """
     MIDIFile <: Any
@@ -254,11 +254,11 @@ function time_signature(t::MIDI.MIDIFile)
 end
 
 """
-    get_tempo_changes(midi)
+    tempochanges(midi)
 Return the position and tempo in quarter notes per minute for all the Tempo events in the given `MIDIFile`.
 Returns [(0, 120.0)] if there are no tempo events.
 """
-function get_tempo_changes(midi::MIDIFile)
+function tempochanges(midi::MIDIFile)
     # Stores (position, tempo) pairs
     tempo_changes = [(0, 120.0)]
     position = 0
