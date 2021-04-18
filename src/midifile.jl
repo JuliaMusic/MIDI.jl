@@ -1,5 +1,5 @@
 export MIDIFile, readMIDIFile, writeMIDIFile
-export BPM, bpm, qpm, time_signature, ms_per_tick
+export BPM, bpm, qpm, time_signature, tempochanges, ms_per_tick
 
 """
     MIDIFile <: Any
@@ -254,13 +254,51 @@ function time_signature(t::MIDI.MIDIFile)
 end
 
 """
-    ms_per_tick(tpq, bpm)
+    tempochanges(midi)
+Return a vector of (position, tempo) tuples for all the tempo events in the given `MIDIFile`
+where position is in absolute time (from the beginning of the file) in ticks
+and tempo is in quarter notes per minute.
+Returns [(0, 120.0)] if there are no tempo events.
+"""
+function tempochanges(midi::MIDIFile)
+    # Stores (position, tempo) pairs
+    tempo_changes = [(0, 120.0)]
+    position = 0
+    for event in midi.tracks[1].events
+        position += event.dT
+        if event.metatype == 0x51
+            tttttt = deepcopy(event.data)
+
+            # Ensure 0x00 is at the start
+            if tttttt[1] != 0x00
+                pushfirst!(tttttt, 0x00)
+            else
+                # Handle incorrect cases
+                tttttt = tttttt[findin(tttttt, 0x00)[end]:end]
+            end
+
+            qpm = 6e7 / Int64(ntoh(reinterpret(UInt32, tttttt)[1]))
+
+            # Allow only one tempo change at the beginning
+            if position == 0
+                tempo_changes = [(0, qpm)]
+            else
+                push!(tempo_changes, (position, qpm))
+            end
+        end
+    end
+
+    tempo_changes
+end
+
+"""
+    ms_per_tick(tpq, qpm)
     ms_per_tick(midi::MIDIFile)
 Return how many miliseconds is one tick, based
-on the beats per minute `bpm` and ticks per quarter note `tpq`.
+on the quarter notes per minute `qpm` and ticks per quarter note `tpq`.
 """
-ms_per_tick(midi::MIDI.MIDIFile, bpm = BPM(midi)) = ms_per_tick(midi.tpq, bpm)
-ms_per_tick(tpq, bpm) = (1000*60)/(bpm*tpq)
+ms_per_tick(midi::MIDI.MIDIFile, qpm = qpm(midi)) = ms_per_tick(midi.tpq, qpm)
+ms_per_tick(tpq, qpm) = (1000*60)/(qpm*tpq)
 
 getnotes(midi::MIDIFile, trackno = midi.format == 0 ? 1 : 2) = 
 getnotes(midi.tracks[trackno], midi.tpq)
