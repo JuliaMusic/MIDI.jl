@@ -256,7 +256,7 @@ end
 """
     tempochanges(midi)
 Return a vector of (position, tempo) tuples for all the tempo events in the given `MIDIFile`
-where position is expressed in ticks and tempo in quarter notes per minute.
+where position is in absolute time (from the beginning of the file) in ticks and tempo is in quarter notes per minute.
 Returns [(0, 120.0)] if there are no tempo events.
 """
 function tempochanges(midi::MIDIFile)
