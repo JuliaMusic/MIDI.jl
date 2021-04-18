@@ -47,7 +47,7 @@ Read a file into a `MIDIFile` data type.
 """
 function readMIDIFile(filename::AbstractString)
     # Filename does not end in ".mid", ".MID", ".midi"
-    if match(r"(?i)(\.mid)i?$", filename) === nothing
+    if match(r"\.(mid|MID|midi)$", filename) === nothing
 		filename *= ".mid"
     end
     f = open(filename)
@@ -85,7 +85,7 @@ Write a `MIDIFile` as a ".mid" file to the given filename.
 Create a `MIDIFile` directly from `notes`, using format 1.
 """
 function writeMIDIFile(filename::AbstractString, data::MIDIFile)
-    if match(r"(?i)(\.mid)i?$", filename) === nothing
+    if match(r"\.(mid|MID|midi)$", filename) === nothing
       filename *= ".mid"
     end
 
