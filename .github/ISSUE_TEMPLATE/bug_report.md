@@ -15,6 +15,6 @@ Please provide a piece of code that leads to the bug you encounter.
 
 If the code is **runnable**, it will help us identify the problem faster.
 
-**Agents.jl version**
+**MIDI.jl version**
 
-Please provide the version you use (you can do `Pkg.status("Agents")`.
+Please provide the version you use (you can do `Pkg.status("MIDI")`.
