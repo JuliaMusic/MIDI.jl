@@ -119,7 +119,7 @@ Returns 120 if not found.
 function qpm(t::MIDI.MIDIFile)
     # META-event list:
     tttttt = Vector{UInt32}()
-    # Find the one that corresponds to Set-Time:
+    # Find the one that corresponds to Set Tempo:
     # The event tttttt corresponds to the command
     # FF 51 03 tttttt Set Tempo (in microseconds per MIDI quarter-note)
     # See here (page 8):
@@ -135,6 +135,8 @@ function qpm(t::MIDI.MIDIFile)
 
     # Default QPM if it is not present in the MIDI file.
     if isempty(tttttt)
+        @warn """The Set Tempo event is not present in the given MIDI file.
+        A default value of 120.0 quarter notes per minute is returned."""
         return 120.0
     end
 
@@ -160,9 +162,7 @@ Returns QPM if not found.
 """
 function bpm(t::MIDI.MIDIFile)
     QPM = qpm(t)
-
-    # Default cc if not found
-    cc = 24
+    cc = -1
 
     # Find the one that corresponds to Time Signature:
     # FF 58 04 nn dd cc bb Time Signature
@@ -176,6 +176,14 @@ function bpm(t::MIDI.MIDIFile)
             end
         end
     end
+
+    if cc == -1
+        @warn """The Time Signature event is not present in the given MIDI file.
+        A default value of 24 cc (clocks per metronome click) is used for calculating the BPM."""
+        # Default cc if not found
+        cc = 24
+    end
+
     bpm = QPM * 24 / cc
 end
 
@@ -208,6 +216,8 @@ function BPM(t::MIDI.MIDIFile)
 
     # Default BPM if it is not present in the MIDI file.
     if isempty(tttttt)
+        @warn """The Set Tempo event is not present in the given MIDI file.
+        A default value of 120.0 quarter notes per minute is returned."""
         return 120.0
     end
 
@@ -246,6 +256,9 @@ function time_signature(t::MIDI.MIDIFile)
         end
     end
 
+    @warn """The Time Signature event is not present in the given MIDI file.
+    A default value of 4/4 is returned."""
+
     # Default time signature if it is not present in the file
     return "4/4"
 end
@@ -259,7 +272,9 @@ Returns [(0, 120.0)] if there are no tempo events.
 """
 function tempochanges(midi::MIDIFile)
     # Stores (position, tempo) pairs
-    tempo_changes = [(0, 120.0)]
+    # Calls qpm() to store the first tempo value
+    # If there is no tempo event, qpm will warn and return 120.0
+    tempo_changes = [(0, qpm(midi))]
     position = 0
     for event in midi.tracks[1].events
         position += event.dT
