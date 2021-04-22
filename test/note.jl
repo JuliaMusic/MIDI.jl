@@ -1,7 +1,7 @@
 cd(@__DIR__)
 
 @testset "Notes" begin
-    midi = readMIDIFile("doxy.mid")
+    midi = load("doxy.mid")
 
     notes = getnotes(midi.tracks[4])
 
@@ -32,7 +32,7 @@ end
 end
 
 @testset "copying notes" begin
-    midi = readMIDIFile("doxy.mid")
+    midi = load("doxy.mid")
     notes = getnotes(midi.tracks[4])
     n2 = copy(notes)
     notes[1].pitch = 1

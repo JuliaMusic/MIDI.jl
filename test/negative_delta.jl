@@ -1,7 +1,7 @@
 cd(@__DIR__)
 
 @testset "reading negative delta" begin
-    midi = readMIDIFile("negative_delta.mid")
+    midi = load("negative_delta.mid")
     @test midi.tracks[1].events[3].dT == -48
 end
 
