@@ -25,3 +25,12 @@ cd(@__DIR__)
     @test notes[2].channel == 0
 
 end
+
+@testset "Deprecated MIDI IO" begin
+    midi = load("doxy.mid")
+    @test_deprecated readMIDIFile("doxy.mid")
+    @test_deprecated writeMIDIFile("test.mid", midi)
+    @test_deprecated writeMIDIFile("test.midi", getnotes(midi))
+    rm("test.mid")
+    rm("test.midi")
+end
