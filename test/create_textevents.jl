@@ -30,9 +30,9 @@ addevents!(track, [0, 4tpq], markers)
 
 midi = MIDIFile(0, tpq, [track])
 cd(@__DIR__)
-writeMIDIFile("texts.mid", midi)
+save("texts.mid", midi)
 
-midi = readMIDIFile("texts.mid")
+midi = load("texts.mid")
 t = midi.tracks[1]
 
 @test findtextevents(:marker, t)[1] == ["A", "B"]

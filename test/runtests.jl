@@ -1,5 +1,6 @@
 using MIDI
 using Test
+using FileIO
 
 include("variablelength.jl")
 include("sysexevent.jl")
