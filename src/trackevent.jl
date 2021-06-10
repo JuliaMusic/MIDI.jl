@@ -52,9 +52,16 @@ function writeevent(f::IO, event::MetaEvent)
     end
     writevariablelength(f, event.dT)
     write(f, META)
-    write(f, event.metatype)
-    writevariablelength(f, convert(Int, length(event.data)))
-    write(f, event.data)
+    """
+-    write(f, event.metatype)
+-    writevariablelength(f, convert(Int, length(event.data)))
+-    write(f, event.data)
+    """
+    # Write metatype byte
+    write(f, type2byte[Symbol(typeof(event))])
+    data = encode(event)
+    writevariablelength(f, convert(Int, length(data)))
+    write(f, data)
 end
 
 
