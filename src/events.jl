@@ -1,4 +1,4 @@
-export encode
+export encode, decode
 
 # Define the spec which maps from type byte to the type definitions
 const spec = Dict(
