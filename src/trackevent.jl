@@ -26,11 +26,7 @@ abstract type TrackEvent end
     MetaEvent <: TrackEvent
 See [`TrackEvent`](@ref).
 """
-mutable struct MetaEvent <: TrackEvent
-    dT::Int
-    metatype::UInt8
-    data::Array{UInt8,1}
-end
+abstract type MetaEvent <: TrackEvent end
 
 @inline ismetaevent(b::UInt8) = b == 0xFF
 
@@ -38,10 +34,16 @@ function readmetaevent(dT::Int, f::IO)
     # Meta events are 0xFF - type (1 byte) - variable length data length - data bytes
     skip(f, 1) # Skip the 0xff that starts the event
     metatype = read(f, UInt8)
+    if 0x01 <= metatype <= 0x07
+        # text-only event
+        field = spec[metatype]
+    else
+        field = spec[metatype].type
+    end
+    type = getfield(@__MODULE__, field)
     datalength = readvariablelength(f)
     data = read!(f, Array{UInt8}(undef, datalength))
-
-    MetaEvent(dT, metatype, data)
+    type(dT, data)
 end
 
 function writeevent(f::IO, event::MetaEvent)

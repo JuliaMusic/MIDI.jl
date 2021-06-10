@@ -15,22 +15,12 @@ by finding the "track name" `MetaEvent`.
 If no such event exists, `"No track name found"` is returned.
 """
 function trackname(track::MIDI.MIDITrack)
-
-    pos = findtrackname(track)
-    if pos == 0
-        return NOTRACKNAME
-    # check if there really is a name
-    elseif length(track.events[pos].data) == 0
-        return NOTRACKNAME
-    else
-        event = track.events[pos]
-        # extract the name (string(Char()) takes care of ASCII encoding)
-        trackname = string(Char(event.data[1]))
-        for c in event.data[2:end]
-            trackname *= string(Char(c))
+    for event in track.events
+        if event isa TrackName
+            return event.text
         end
-        return trackname
     end
+    return NOTRACKNAME
 end
 
 "`tracknames(m::MIDIFile) = trackname.(m.tracks)`"
@@ -58,18 +48,6 @@ function addtrackname!(track::MIDI.MIDITrack, name::String)
 
     addevent!(track, 0, meta)
 end
-
-function findtrackname(track::MIDI.MIDITrack)
-    position = 0
-    for (i,event) in enumerate(track.events)
-        if isa(event, MIDI.MetaEvent) && event.metatype == 0x03
-            position = i
-            break
-        end
-    end
-    return position
-end
-
 
 
 """
