@@ -37,7 +37,7 @@ function addtrackname!(track::MIDI.MIDITrack, name::String)
 
     # Remove existing name
     for (i, event) in enumerate(track.events)
-        if event isa trackname
+        if event isa TrackName
             deleteat!(track.events, i)
             break
         end
