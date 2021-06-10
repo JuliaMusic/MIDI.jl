@@ -71,7 +71,7 @@ function readtrack(f::IO)
 
     # Validate that the track ends with a track end event
     lastevent = track.events[length(track.events)]
-    if !isa(lastevent, MetaEvent) || lastevent.metatype != METATRACKEND
+    if !isa(lastevent, MetaEvent) || !isa(lastevent, EndOfTrack)
         error("Invalid track - does not end with track metaevent")
     else
         # strip the track end event - we don't need to worry about manipulating it
