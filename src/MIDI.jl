@@ -6,6 +6,7 @@ module MIDI
 include("constants.jl")
 include("note.jl")
 include("trackevent.jl")
+include("events.jl")
 include("miditrack.jl")
 include("midifile.jl")
 include("io.jl")
@@ -13,6 +14,7 @@ include("variablelength.jl")
 include("convert.jl")
 include("findevents.jl")
 include("deprecations.jl")
+
 
 export testmidi, testnotes
 
