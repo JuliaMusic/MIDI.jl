@@ -39,42 +39,21 @@ Return the QPM (quarter notes per minute) where the given `MIDIFile` was exporte
 Returns 120 if not found.
 """
 function qpm(t::MIDI.MIDIFile)
-    # META-event list:
-    tttttt = Vector{UInt32}()
     # Find the one that corresponds to Set Tempo:
     # The event tttttt corresponds to the command
     # FF 51 03 tttttt Set Tempo (in microseconds per MIDI quarter-note)
     # See here (page 8):
     # http://www.cs.cmu.edu/~music/cmsip/readings/Standard-MIDI-file-format-updated.pdf
     for event in t.tracks[1].events
-        if typeof(event) == MetaEvent
-            if event.metatype == 0x51
-                tttttt = deepcopy(event.data)
-                break
-            end
+        if event isa SetTempo
+            return 6e7 / event.tempo
         end
     end
 
     # Default QPM if it is not present in the MIDI file.
-    if isempty(tttttt)
-        @warn """The Set Tempo event is not present in the given MIDI file.
-        A default value of 120.0 quarter notes per minute is returned."""
-        return 120.0
-    end
-
-    # Ensure that tttttt is with correct form (first entry should be 0x00)
-    if tttttt[1] != 0x00
-        pushfirst!(tttttt, 0x00)
-    else
-        # Handle correctly "incorrect" cases where 0x00 has entered more than once
-        tttttt = tttttt[findin(tttttt, 0x00)[end]:end]
-    end
-
-    # Get the microsecond number from tttttt
-    u = ntoh(reinterpret(UInt32, tttttt)[1])
-    μs = Int64(u)
-    # QPM:
-    qpm = 60000000/μs
+    @warn """The Set Tempo event is not present in the given MIDI file.
+    A default value of 120.0 quarter notes per minute is returned."""
+    return 120.0
 end
 
 """
@@ -83,7 +62,6 @@ Return the BPM where the given `MIDIFile` was exported at.
 Returns QPM if not found.
 """
 function bpm(t::MIDI.MIDIFile)
-    QPM = qpm(t)
     cc = -1
 
     # Find the one that corresponds to Time Signature:
@@ -91,11 +69,9 @@ function bpm(t::MIDI.MIDIFile)
     # See here (page 8):
     # http://www.cs.cmu.edu/~music/cmsip/readings/Standard-MIDI-file-format-updated.pdf
     for event in t.tracks[1].events
-        if typeof(event) == MetaEvent
-            if event.metatype == 0x58
-                cc = event.data[3]
-                break
-            end
+        if event isa TimeSignature
+            cc = event.clockticks
+            break
         end
     end
 
@@ -106,7 +82,7 @@ function bpm(t::MIDI.MIDIFile)
         cc = 24
     end
 
-    bpm = QPM * 24 / cc
+    bpm = qpm(t) * 24 / cc
 end
 
 # Deprecated
@@ -120,42 +96,21 @@ function BPM(t::MIDI.MIDIFile)
     It returns quarter notes per minute instead of beats per minute.
     Please use `bpm` for beats per minute and `qpm` for quarter notes per minute."""
 
-    # META-event list:
-    tttttt = Vector{UInt32}()
     # Find the one that corresponds to Set-Time:
     # The event tttttt corresponds to the command
     # FF 51 03 tttttt Set Tempo (in microseconds per MIDI quarter-note)
     # See here (page 8):
     # http://www.cs.cmu.edu/~music/cmsip/readings/Standard-MIDI-file-format-updated.pdf
     for event in t.tracks[1].events
-        if typeof(event) == MetaEvent
-            if event.metatype == 0x51
-                tttttt = deepcopy(event.data)
-                break
-            end
+        if event isa SetTempo
+            return 6e7 / event.tempo
         end
     end
 
     # Default BPM if it is not present in the MIDI file.
-    if isempty(tttttt)
-        @warn """The Set Tempo event is not present in the given MIDI file.
-        A default value of 120.0 quarter notes per minute is returned."""
-        return 120.0
-    end
-
-    # Ensure that tttttt is with correct form (first entry should be 0x00)
-    if tttttt[1] != 0x00
-        pushfirst!(tttttt, 0x00)
-    else
-        # Handle correctly "incorrect" cases where 0x00 has entered more than once
-        tttttt = tttttt[findin(tttttt, 0x00)[end]:end]
-    end
-
-    # Get the microsecond number from tttttt
-    u = ntoh(reinterpret(UInt32, tttttt)[1])
-    μs = Int64(u)
-    # BPM:
-    bpm = 60000000/μs
+    @warn """The Set Tempo event is not present in the given MIDI file.
+    A default value of 120.0 quarter notes per minute is returned."""
+    return 120.0
 end
 
 """
@@ -169,12 +124,9 @@ function time_signature(t::MIDI.MIDIFile)
     # See here (page 8):
     # http://www.cs.cmu.edu/~music/cmsip/readings/Standard-MIDI-file-format-updated.pdf
     for event in t.tracks[1].events
-        if typeof(event) == MetaEvent
-            if event.metatype == 0x58
-                nn, dd = event.data
-                ts = string(nn) * "/" * string(2^dd)
-                return ts
-            end
+        if event isa TimeSignature
+            ts = string(event.numerator) * "/" * string(event.denominator)
+            return ts
         end
     end
 
@@ -200,18 +152,8 @@ function tempochanges(midi::MIDIFile)
     position = 0
     for event in midi.tracks[1].events
         position += event.dT
-        if event.metatype == 0x51
-            tttttt = deepcopy(event.data)
-
-            # Ensure 0x00 is at the start
-            if tttttt[1] != 0x00
-                pushfirst!(tttttt, 0x00)
-            else
-                # Handle incorrect cases
-                tttttt = tttttt[findin(tttttt, 0x00)[end]:end]
-            end
-
-            qpm = 6e7 / Int64(ntoh(reinterpret(UInt32, tttttt)[1]))
+        if event isa SetTempo
+            qpm = 6e7 / event.tempo
 
             # Allow only one tempo change at the beginning
             if position == 0
