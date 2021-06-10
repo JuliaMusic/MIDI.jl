@@ -3,8 +3,8 @@
         # Structure: dT (variable length), begin byte (0xFF), type byte, length (variable length type), data
         # dT is a variable length value which is handled by readvariablelength and not readsysexevent. We don't need to test it here, which
         # is why it's set to 0 in each case.
-        ([0x00, 0xFF, 0x0F, 0x04, 0x11, 0x21, 0x53, 0x1F], MIDI.MetaEvent(0, 0x0F, [0x11, 0x21, 0x53, 0x1F])),
-        ([0x00, 0xFF, 0x0F, 0x06, 0x25, 0x61, 0x23, 0x5B, 0x00, 0x02], MIDI.MetaEvent(0, 0x0F, [0x25, 0x61, 0x23, 0x5B, 0x00, 0x02]))
+        ([0x00, 0xFF, 0x03, 0x04, 0x11, 0x21, 0x53, 0x1F], MIDI.TrackName(0, [0x11, 0x21, 0x53, 0x1F])),
+        ([0x00, 0xFF, 0x05, 0x06, 0x25, 0x61, 0x23, 0x5B, 0x00, 0x02], MIDI.Lyric(0, [0x25, 0x61, 0x23, 0x5B, 0x00, 0x02]))
     ]
 
     invalidtestvalues = [
@@ -14,7 +14,7 @@
     @testset "it should correctly generate a metaevent from raw data" begin
         for (input, output) in validtestvalues
             result = MIDI.readmetaevent(Int(input[1]), IOBuffer(input[2:length(input)]))
-            @test result.dT == output.dT && result.data == output.data
+            @test result.dT == output.dT && encode(result) == encode(output)
         end
     end
 
