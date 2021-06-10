@@ -102,7 +102,7 @@ function writetrack(f::IO, track::MIDITrack)
     end
 
     # Write the track end event
-    writeevent(event_buffer, MetaEvent(0, METATRACKEND, UInt8[]))
+    writeevent(event_buffer, EndOfTrack(0, UInt8[]))
 
     bytes = take!(event_buffer)
 
