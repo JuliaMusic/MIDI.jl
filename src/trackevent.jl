@@ -52,11 +52,6 @@ function writeevent(f::IO, event::MetaEvent)
     end
     writevariablelength(f, event.dT)
     write(f, META)
-    """
--    write(f, event.metatype)
--    writevariablelength(f, convert(Int, length(event.data)))
--    write(f, event.data)
-    """
     # Write metatype byte
     write(f, type2byte[Symbol(typeof(event))])
     data = encode(event)
@@ -72,11 +67,7 @@ end
     MIDIEvent <: TrackEvent
 See [`TrackEvent`](@ref).
 """
-mutable struct MIDIEvent <: TrackEvent
-    dT::Int
-    status::UInt8
-    data::Array{UInt8,1}
-end
+abstract type MIDIEvent <: TrackEvent end
 
 function isstatusbyte(b::UInt8)
     (b & 0b10000000) == 0b10000000
@@ -92,6 +83,11 @@ end
 
 function channelnumber(m::MIDIEvent)
     0x0F & m.status
+end
+
+function status(event::MIDIEvent)
+    status = type2byte[Symbol(typeof(event))]
+    UInt8(status | event.channel)
 end
 
 function readMIDIevent(dT::Int, f::IO, laststatus::UInt8)
@@ -110,7 +106,9 @@ function readMIDIevent(dT::Int, f::IO, laststatus::UInt8)
 
     data = read!(f, Array{UInt8}(undef, toread))
 
-    MIDIEvent(dT, statusbyte, data)
+    type = getfield(@__MODULE__, spec[statusbyte & 0xF0].type)
+    pushfirst!(data, statusbyte & 0x0F) # Add channel to the beginning of data
+    type(dT, data)
 end
 
 function writeevent(f::IO, event::MIDIEvent, writestatus::Bool)
@@ -120,10 +118,10 @@ function writeevent(f::IO, event::MIDIEvent, writestatus::Bool)
     writevariablelength(f, event.dT)
 
     if writestatus
-        write(f, event.status)
+        write(f, status(event))
     end
 
-    write(f, event.data)
+    write(f, encode(event))
 end
 
 function writeevent(f::IO, event::MIDIEvent)
