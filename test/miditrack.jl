@@ -5,7 +5,7 @@ validtestvalues = [ # Raw data and the miditrack it should be read into
     # Perhaps longer than it needs to be, but covers meta events, MIDI events, and running statuses.
     (
         [0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x52, 0x60, 0x90, 0x3c, 0x7f, 0x30, 0x43, 0x7f, 0x30, 0x80, 0x3c, 0x7f, 0x00, 0x90, 0x40, 0x7f, 0x30, 0x80, 0x43, 0x7f, 0x30, 0xc0, 0x3f, 0x00, 0x80, 0x40, 0x7f, 0x00, 0x90, 0x3c, 0x7f, 0x30, 0x43, 0x7f, 0x30, 0x80, 0x3c, 0x7f, 0x00, 0x90, 0x40, 0x7f, 0x30, 0x80, 0x43, 0x7f, 0x30, 0xc0, 0x22, 0x00, 0x80, 0x40, 0x7f, 0x00, 0x90, 0x3c, 0x7f, 0x30, 0x43, 0x7f, 0x30, 0x80, 0x3c, 0x7f, 0x00, 0x90, 0x40, 0x7f, 0x30, 0x80, 0x43, 0x7f, 0x30, 0xc0, 0x52, 0x00, 0x80, 0x40, 0x7f, 0x00, 0xff, 0x2f, 0x00],
-        MIDI.MIDITrack(MIDI.TrackEvent[MIDI.MIDIEvent(96,0x90,UInt8[60,127]),MIDI.MIDIEvent(48,0x90,UInt8[67,127]),MIDI.MIDIEvent(48,0x80,UInt8[60,127]),MIDI.MIDIEvent(0,0x90,UInt8[64,127]),MIDI.MIDIEvent(48,0x80,UInt8[67,127]),MIDI.MIDIEvent(48,0xc0,UInt8[63]),MIDI.MIDIEvent(0,0x80,UInt8[64,127]),MIDI.MIDIEvent(0,0x90,UInt8[60,127]),MIDI.MIDIEvent(48,0x90,UInt8[67,127]),MIDI.MIDIEvent(48,0x80,UInt8[60,127]),MIDI.MIDIEvent(0,0x90,UInt8[64,127]),MIDI.MIDIEvent(48,0x80,UInt8[67,127]),MIDI.MIDIEvent(48,0xc0,UInt8[34]),MIDI.MIDIEvent(0,0x80,UInt8[64,127]),MIDI.MIDIEvent(0,0x90,UInt8[60,127]),MIDI.MIDIEvent(48,0x90,UInt8[67,127]),MIDI.MIDIEvent(48,0x80,UInt8[60,127]),MIDI.MIDIEvent(0,0x90,UInt8[64,127]),MIDI.MIDIEvent(48,0x80,UInt8[67,127]),MIDI.MIDIEvent(48,0xc0,UInt8[82]),MIDI.MIDIEvent(0,0x80,UInt8[64,127])])
+        MIDI.MIDITrack(MIDI.TrackEvent[MIDI.NoteOn(96,UInt8[0, 60,127]),MIDI.NoteOn(48,UInt8[0,67,127]),MIDI.NoteOff(48,UInt8[0,60,127]),MIDI.NoteOn(0,UInt8[0,64,127]),MIDI.NoteOff(48,UInt8[0,67,127]),MIDI.ProgramChange(48,UInt8[0,63]),MIDI.NoteOff(0,UInt8[0,64,127]),MIDI.NoteOn(0,UInt8[0,60,127]),MIDI.NoteOn(48,UInt8[0,67,127]),MIDI.NoteOff(48,UInt8[0,60,127]),MIDI.NoteOn(0,UInt8[0,64,127]),MIDI.NoteOff(48,UInt8[0,67,127]),MIDI.ProgramChange(48,UInt8[0,34]),MIDI.NoteOff(0,UInt8[0,64,127]),MIDI.NoteOn(0,UInt8[0,60,127]),MIDI.NoteOn(48,UInt8[0,67,127]),MIDI.NoteOff(48,UInt8[0,60,127]),MIDI.NoteOn(0,UInt8[0,64,127]),MIDI.NoteOff(48,UInt8[0,67,127]),MIDI.ProgramChange(48,UInt8[0,82]),MIDI.NoteOff(0,UInt8[0,64,127])])
     ),
 ]
 
@@ -120,11 +120,11 @@ invalidtestvalues = [
         # add events to the track, encode the order in which the events are
         # added in the status.
         for (i,pos) in enumerate(positions)
-            addevent!(track, pos, MIDIEvent(0, UInt8(i) , UInt8[0x00 , 0x00]))
+            addevent!(track, pos, NoteOn(0, i, 0, 0))
         end
 
         # obain positions and adding order from track
-        stat = [e.status for e in track.events]
+        stat = [e.channel for e in track.events]
         posi = Vector{UInt}()
         ttime = 0
         for event in track.events
@@ -145,7 +145,7 @@ invalidtestvalues = [
     # add some random events using addevent  status = 0 to distinguish from
     # the ones added with the function to be tested
     for i = 1:50
-        addevent!(track, round(Int, 100 * rand()), MIDIEvent(0, 0 , UInt8[0x00 , 0x00]))
+        addevent!(track, round(Int, 100 * rand()), NoteOn(0, 0, 0, 0))
     end
 
     # generate random but ascending positions
@@ -156,16 +156,16 @@ invalidtestvalues = [
     eventindex = 0
     eventtime = 0
     for (i,pos) in enumerate(posis)
-        eventindex, eventtime = MIDI.addevent_hint!(track, pos, MIDIEvent(0, UInt8(i) , UInt8[0x00 , 0x00]), eventindex, eventtime)
+        eventindex, eventtime = MIDI.addevent_hint!(track, pos, NoteOff(0, i, 0, 0), eventindex, eventtime)
     end
 
     # obtain order and positions of the events added with addevent_hint
-    stat = [e.status for e in track.events if e.status != 0]
+    stat = [e.channel for e in track.events if e.channel != 0]
     posi = Vector{Int}()
     ttime = 0
     for event in track.events
         ttime += event.dT
-        if event.status != 0
+        if event.channel != 0
             push!(posi, ttime)
         end
     end
@@ -187,7 +187,7 @@ invalidtestvalues = [
         notes = getnotes(test_track)
         deletes = Vector{Int}()
         for (i,event) in enumerate(test_track.events)
-            if isa(event, MIDIEvent) && (event.status & 0xF0) in [NOTEON, NOTEOFF]
+            if event isa NoteOn || event isa NoteOff
                 push!(deletes, i)
             end
         end
