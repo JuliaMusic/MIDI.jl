@@ -34,7 +34,7 @@ function type0totype1!(data::MIDIFile)
 	push!(data.tracks, MIDITrack(Array{TrackEvent, 1}()))
 	nofchannels = 0
 	for event in data.tracks[1].events
-		if typeof(event) != MIDIEvent
+		if !isa(event, MIDIEvent)
 			push!(data.tracks[2].events, event)
 		else
 			channelnum = channelnumber(event)
@@ -108,8 +108,7 @@ function getprogramchangeevents(data::MIDIFile)
 		i = 0
 		for event in track.events
 			i += 1
-			if typeof(event) == MIDIEvent && 
-					(0xF0 & event.status) $ PROGRAMCHANGE == 0
+			if event isa ProgramChange
 				push!(pgevents, [t, i, event])
 			end
 		end
@@ -133,4 +132,3 @@ function dochannelsconflict(pgevents)
 	end
 	false
 end
-
