@@ -1,7 +1,7 @@
 export encode, decode
 
-# Define the spec which maps from type byte to the type definitions
-const spec = Dict(
+# Define the MIDI_EVENTS_SPEC which maps from type byte to the type definitions
+const MIDI_EVENTS_SPEC = Dict(
     # MetaEvents
     0x00 => (
         type = :SequenceNumber,
@@ -101,7 +101,7 @@ text_defs = (
 )
 
 # Create a map from EventType to type byte
-const type2byte = Dict((value isa Symbol ? value : value.type) => key for (key, value) in spec)
+const TYPE2BYTE = Dict((value isa Symbol ? value : value.type) => key for (key, value) in MIDI_EVENTS_SPEC)
 
 # Define a struct, constructor and encode function for a given type
 function define_type(type, fields, decode, encode_, supertype)
@@ -123,8 +123,8 @@ function define_type(type, fields, decode, encode_, supertype)
     end
 end
 
-# Call define_type for all events in the spec and create the types
-for defs in values(spec)
+# Call define_type for all events in the MIDI_EVENTS_SPEC and create the types
+for defs in values(MIDI_EVENTS_SPEC)
     if defs isa Symbol
         # It is a text-only event
         # fields and encode/decode expressions for text-only events are stored separately
@@ -134,7 +134,7 @@ for defs in values(spec)
         type, fields, decode, encode = defs
     end
 
-    typebyte = type2byte[type]
+    typebyte = TYPE2BYTE[type]
     if 0x80 <= typebyte <= 0xEF
         supertype = MIDIEvent
         pushfirst!(fields, "channel::Int")

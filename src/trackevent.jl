@@ -30,15 +30,19 @@ abstract type MetaEvent <: TrackEvent end
 
 @inline ismetaevent(b::UInt8) = b == 0xFF
 
+function metatype(event::MetaEvent)
+    TYPE2BYTE[Symbol(typeof(event))]
+end
+
 function readmetaevent(dT::Int, f::IO)
     # Meta events are 0xFF - type (1 byte) - variable length data length - data bytes
     skip(f, 1) # Skip the 0xff that starts the event
     metatype = read(f, UInt8)
     if 0x01 <= metatype <= 0x07
         # text-only event
-        field = spec[metatype]
+        field = MIDI_EVENTS_SPEC[metatype]
     else
-        field = spec[metatype].type
+        field = MIDI_EVENTS_SPEC[metatype].type
     end
     type = getfield(@__MODULE__, field)
     datalength = readvariablelength(f)
@@ -53,7 +57,7 @@ function writeevent(f::IO, event::MetaEvent)
     writevariablelength(f, event.dT)
     write(f, META)
     # Write metatype byte
-    write(f, type2byte[Symbol(typeof(event))])
+    write(f, metatype(event))
     data = encode(event)
     writevariablelength(f, convert(Int, length(data)))
     write(f, data)
@@ -86,7 +90,7 @@ function channelnumber(m::MIDIEvent)
 end
 
 function status(event::MIDIEvent)
-    status = type2byte[Symbol(typeof(event))]
+    status = TYPE2BYTE[Symbol(typeof(event))]
     UInt8(status | event.channel)
 end
 
@@ -106,7 +110,7 @@ function readMIDIevent(dT::Int, f::IO, laststatus::UInt8)
 
     data = read!(f, Array{UInt8}(undef, toread))
 
-    type = getfield(@__MODULE__, spec[statusbyte & 0xF0].type)
+    type = getfield(@__MODULE__, MIDI_EVENTS_SPEC[statusbyte & 0xF0].type)
     pushfirst!(data, statusbyte & 0x0F) # Add channel to the beginning of data
     type(dT, data)
 end
