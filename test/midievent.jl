@@ -10,7 +10,7 @@
             # is why it's set to 0 in each case.
             input = vcat([0x00, status_], zeros(UInt8, MIDI.EVENTTYPETOLENGTH[status_]))
             input_no_status = vcat([0x00], zeros(UInt8, MIDI.EVENTTYPETOLENGTH[status_]))
-            type = getfield(MIDI, MIDI.spec[status_].type)
+            type = getfield(MIDI, MIDI.MIDI_EVENTS_SPEC[status_].type)
             output = type(0, 0, zeros(Int, MIDI.EVENTTYPETOLENGTH[status_])...)
 
             result = MIDI.readMIDIevent(Int(input[1]), IOBuffer(input[2:length(input)]), UInt8(0))
