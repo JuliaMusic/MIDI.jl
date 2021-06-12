@@ -102,7 +102,7 @@ function writetrack(f::IO, track::MIDITrack)
     end
 
     # Write the track end event
-    writeevent(event_buffer, EndOfTrack(0, UInt8[]))
+    writeevent(event_buffer, EndOfTrack(0, 0x2F, UInt8[]))
 
     bytes = take!(event_buffer)
 
@@ -291,7 +291,7 @@ function getnotes(track::MIDITrack, tpq = 960)
                 # If we have a MIDI event & it's a noteoff (or a note on with 0 velocity), and it's for the same note as the first event we found, make a note
                 # Many MIDI files will encode note offs as note ons with velocity zero
                 if (event2 isa NoteOff || (event2 isa NoteOn && event2.velocity == 0)) && event.note == event2.note
-                    push!(notes, Note(event.note, event.velocity, tracktime, duration, event.channel))
+                    push!(notes, Note(event.note, event.velocity, tracktime, duration, channelnumber(event)))
                     break
                 end
             end

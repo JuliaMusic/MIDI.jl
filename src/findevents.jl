@@ -33,7 +33,7 @@ Add a name to the given `track` by attaching the
 `TrackName` meta event to the start of the `track`.
 """
 function addtrackname!(track::MIDI.MIDITrack, name::String)
-    trackname = TrackName(0, name)
+    trackname = TrackName(0, 0x03, name)
 
     # Remove existing name
     for (i, event) in enumerate(track.events)

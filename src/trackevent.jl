@@ -96,7 +96,6 @@ function readMIDIevent(dT::Int, f::IO, laststatus::UInt8)
     data = read!(f, Array{UInt8}(undef, toread))
 
     type = MIDI_EVENTS_SPEC[statusbyte & 0xF0]
-    pushfirst!(data, statusbyte & 0x0F) # Add channel to the beginning of data
     type(dT, statusbyte, data)
 end
 
