@@ -30,24 +30,14 @@ abstract type MetaEvent <: TrackEvent end
 
 @inline ismetaevent(b::UInt8) = b == 0xFF
 
-function metatype(event::MetaEvent)
-    TYPE2BYTE[Symbol(typeof(event))]
-end
-
 function readmetaevent(dT::Int, f::IO)
     # Meta events are 0xFF - type (1 byte) - variable length data length - data bytes
     skip(f, 1) # Skip the 0xff that starts the event
     metatype = read(f, UInt8)
-    if 0x01 <= metatype <= 0x07
-        # text-only event
-        field = MIDI_EVENTS_SPEC[metatype]
-    else
-        field = MIDI_EVENTS_SPEC[metatype].type
-    end
-    type = getfield(@__MODULE__, field)
+    type = MIDI_EVENTS_SPEC[metatype]
     datalength = readvariablelength(f)
     data = read!(f, Array{UInt8}(undef, datalength))
-    type(dT, data)
+    type(dT, metatype, data)
 end
 
 function writeevent(f::IO, event::MetaEvent)
@@ -57,7 +47,7 @@ function writeevent(f::IO, event::MetaEvent)
     writevariablelength(f, event.dT)
     write(f, META)
     # Write metatype byte
-    write(f, metatype(event))
+    write(f, event.metatype)
     data = encode(event)
     writevariablelength(f, convert(Int, length(data)))
     write(f, data)
@@ -89,11 +79,6 @@ function channelnumber(m::MIDIEvent)
     0x0F & m.status
 end
 
-function status(event::MIDIEvent)
-    status = TYPE2BYTE[Symbol(typeof(event))]
-    UInt8(status | event.channel)
-end
-
 function readMIDIevent(dT::Int, f::IO, laststatus::UInt8)
     statusbyte = read(f, UInt8)
     highnybble = statusbyte & 0b11110000
@@ -110,9 +95,9 @@ function readMIDIevent(dT::Int, f::IO, laststatus::UInt8)
 
     data = read!(f, Array{UInt8}(undef, toread))
 
-    type = getfield(@__MODULE__, MIDI_EVENTS_SPEC[statusbyte & 0xF0].type)
+    type = MIDI_EVENTS_SPEC[statusbyte & 0xF0]
     pushfirst!(data, statusbyte & 0x0F) # Add channel to the beginning of data
-    type(dT, data)
+    type(dT, statusbyte, data)
 end
 
 function writeevent(f::IO, event::MIDIEvent, writestatus::Bool)
@@ -122,7 +107,7 @@ function writeevent(f::IO, event::MIDIEvent, writestatus::Bool)
     writevariablelength(f, event.dT)
 
     if writestatus
-        write(f, status(event))
+        write(f, event.status)
     end
 
     write(f, encode(event))

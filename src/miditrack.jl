@@ -54,7 +54,7 @@ function readtrack(f::IO)
         local event
         if isMIDIevent(event_start)
             event = readMIDIevent(dT, f, laststatus)
-            laststatus = status(event)
+            laststatus = event.status
         elseif issysexevent(event_start)
             event = readsysexevent(dT, f)
             laststatus = UInt8(0)
@@ -90,11 +90,11 @@ function writetrack(f::IO, track::MIDITrack)
     event_buffer = IOBuffer()
 
     for event in track.events
-        if isa(event, MIDIEvent) && previous_status != 0 && previous_status == status(event)
+        if isa(event, MIDIEvent) && previous_status != 0 && previous_status == event.status
             writeevent(event_buffer, event, false)
         elseif isa(event, MIDIEvent)
             writeevent(event_buffer, event)
-            previous_status = status(event)
+            previous_status = event.status
         else
             writeevent(event_buffer, event)
             previous_status = UInt8(0)

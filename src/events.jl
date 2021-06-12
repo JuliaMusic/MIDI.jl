@@ -1,7 +1,7 @@
 export encode, decode
 
-# Define the MIDI_EVENTS_SPEC which maps from type byte to the type definitions
-const MIDI_EVENTS_SPEC = Dict(
+# Create a map from typebyte to the type definitions
+const MIDI_EVENTS_DEFS = Dict(
     # MetaEvents
     0x00 => (
         type = :SequenceNumber,
@@ -45,7 +45,7 @@ const MIDI_EVENTS_SPEC = Dict(
         type = :KeySignature,
         fields = ["semitones::Int", "scale::Int"],
         decode = :(Int.(data)),
-        encode = :(UInt8.([event.sf, event.mi]))
+        encode = :(UInt8.([event.semitones, event.scale]))
     ),
 
     # MidiEvents
@@ -95,13 +95,13 @@ const MIDI_EVENTS_SPEC = Dict(
 
 # Store the defs for text-only events separately to avoid repetition
 text_defs = (
-    fields = ["text::String"],
+    fields = ["metatype::UInt8", "text::String"],
     decode = :([join(Char.(data))]),
     encode = :(UInt8.(collect(event.text)))
 )
 
 # Create a map from EventType to type byte
-const TYPE2BYTE = Dict((value isa Symbol ? value : value.type) => key for (key, value) in MIDI_EVENTS_SPEC)
+const TYPE2BYTE = Dict((value isa Symbol ? value : value.type) => key for (key, value) in MIDI_EVENTS_DEFS)
 
 # Define a struct, constructor and encode function for a given type
 function define_type(type, fields, decode, encode_, supertype)
@@ -114,8 +114,8 @@ function define_type(type, fields, decode, encode_, supertype)
         """    $($type)(dT::Int, data::Vector{UInt8})
         Returns a `$($type)` event from it's byte representation.
         """
-        function $type(dT::Int, data::Vector{UInt8})
-            $type(dT, $decode...)
+        function $type(dT::Int, typebyte::UInt8, data::Vector{UInt8})
+            $type(dT, typebyte, $decode...)
         end
         
         """    encode(event::$($type))
@@ -130,7 +130,7 @@ function define_type(type, fields, decode, encode_, supertype)
 end
 
 # Call define_type for all events in the MIDI_EVENTS_SPEC and create the types
-for defs in values(MIDI_EVENTS_SPEC)
+for defs in values(MIDI_EVENTS_DEFS)
     if defs isa Symbol
         # It is a text-only event
         # fields and encode/decode expressions for text-only events are stored separately
@@ -143,15 +143,23 @@ for defs in values(MIDI_EVENTS_SPEC)
     typebyte = TYPE2BYTE[type]
     if 0x80 <= typebyte <= 0xEF
         supertype = MIDIEvent
-        pushfirst!(fields, "channel::Int")
+        # Adding common fields for all MIDI events
+        prepend!(fields, ["status::UInt8", "channel::Int"])
     else
         supertype = MetaEvent
+        if !(0x01 <= typebyte <= 0x07)
+            # text-only events already have the metatype field
+            pushfirst!(fields, "metatype::UInt8")
+        end
     end
 
     # Parse the fields into a Fieldname::Type expression
     fields = Meta.parse.(fields)
     define_type(type, fields, decode, encode, supertype)
 end
+
+# Create a map from typebyte to type
+const MIDI_EVENTS_SPEC = Dict(key => eval(value isa Symbol ? value : value.type) for (key, value) in MIDI_EVENTS_DEFS)
 
 """    SequenceNumber <: MetaEvent
 The `SequenceNumber` event contains the number of a sequence
