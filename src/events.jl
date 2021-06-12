@@ -1,6 +1,6 @@
 export encode, decode
 
-# Create a map from typebyte to the type definitions
+# Create a map from typebyte to the type definitions (not the actual types)
 const MIDI_EVENTS_DEFS = Dict(
     # MetaEvents
     0x00 => (
@@ -9,6 +9,8 @@ const MIDI_EVENTS_DEFS = Dict(
         decode = :(ntoh.(reinterpret(UInt16, data))),
         encode = :(UInt8.([event.number >> 8 & 0xFF, event.number & 0xFF]))
     ),
+
+    # The definitions for text-only events are stored separately below to avoid repetition
     0x01 => :TextEvent,
     0x02 => :CopyrightNotice,
     0x03 => :TrackName,
@@ -144,7 +146,7 @@ for defs in values(MIDI_EVENTS_DEFS)
     if 0x80 <= typebyte <= 0xEF
         supertype = MIDIEvent
         # Adding common fields for all MIDI events
-        prepend!(fields, ["status::UInt8", "channel::Int"])
+        pushfirst!(fields, "status::UInt8")
     else
         supertype = MetaEvent
         if !(0x01 <= typebyte <= 0x07)
@@ -158,7 +160,7 @@ for defs in values(MIDI_EVENTS_DEFS)
     define_type(type, fields, decode, encode, supertype)
 end
 
-# Create a map from typebyte to type
+# Create a map from typebyte to the actual types
 const MIDI_EVENTS_SPEC = Dict(key => eval(value isa Symbol ? value : value.type) for (key, value) in MIDI_EVENTS_DEFS)
 
 """    SequenceNumber <: MetaEvent
