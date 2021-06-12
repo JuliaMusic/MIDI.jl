@@ -5,7 +5,7 @@ validtestvalues = [ # Raw data and the miditrack it should be read into
     # Perhaps longer than it needs to be, but covers meta events, MIDI events, and running statuses.
     (
         [0x4d, 0x54, 0x72, 0x6b, 0x00, 0x00, 0x00, 0x52, 0x60, 0x90, 0x3c, 0x7f, 0x30, 0x43, 0x7f, 0x30, 0x80, 0x3c, 0x7f, 0x00, 0x90, 0x40, 0x7f, 0x30, 0x80, 0x43, 0x7f, 0x30, 0xc0, 0x3f, 0x00, 0x80, 0x40, 0x7f, 0x00, 0x90, 0x3c, 0x7f, 0x30, 0x43, 0x7f, 0x30, 0x80, 0x3c, 0x7f, 0x00, 0x90, 0x40, 0x7f, 0x30, 0x80, 0x43, 0x7f, 0x30, 0xc0, 0x22, 0x00, 0x80, 0x40, 0x7f, 0x00, 0x90, 0x3c, 0x7f, 0x30, 0x43, 0x7f, 0x30, 0x80, 0x3c, 0x7f, 0x00, 0x90, 0x40, 0x7f, 0x30, 0x80, 0x43, 0x7f, 0x30, 0xc0, 0x52, 0x00, 0x80, 0x40, 0x7f, 0x00, 0xff, 0x2f, 0x00],
-        MIDI.MIDITrack(MIDI.TrackEvent[MIDI.NoteOn(96,UInt8[0, 60,127]),MIDI.NoteOn(48,UInt8[0,67,127]),MIDI.NoteOff(48,UInt8[0,60,127]),MIDI.NoteOn(0,UInt8[0,64,127]),MIDI.NoteOff(48,UInt8[0,67,127]),MIDI.ProgramChange(48,UInt8[0,63]),MIDI.NoteOff(0,UInt8[0,64,127]),MIDI.NoteOn(0,UInt8[0,60,127]),MIDI.NoteOn(48,UInt8[0,67,127]),MIDI.NoteOff(48,UInt8[0,60,127]),MIDI.NoteOn(0,UInt8[0,64,127]),MIDI.NoteOff(48,UInt8[0,67,127]),MIDI.ProgramChange(48,UInt8[0,34]),MIDI.NoteOff(0,UInt8[0,64,127]),MIDI.NoteOn(0,UInt8[0,60,127]),MIDI.NoteOn(48,UInt8[0,67,127]),MIDI.NoteOff(48,UInt8[0,60,127]),MIDI.NoteOn(0,UInt8[0,64,127]),MIDI.NoteOff(48,UInt8[0,67,127]),MIDI.ProgramChange(48,UInt8[0,82]),MIDI.NoteOff(0,UInt8[0,64,127])])
+        MIDI.MIDITrack(MIDI.TrackEvent[MIDI.NoteOn(96,0x90,UInt8[60,127]),MIDI.NoteOn(48,0x90,UInt8[67,127]),MIDI.NoteOff(48,0x80,UInt8[60,127]),MIDI.NoteOn(0,0x90,UInt8[64,127]),MIDI.NoteOff(48,0x80,UInt8[67,127]),MIDI.ProgramChange(48,0xc0,UInt8[63]),MIDI.NoteOff(0,0x80,UInt8[64,127]),MIDI.NoteOff(0,0x90,UInt8[60,127]),MIDI.NoteOff(48,0x90,UInt8[67,127]),MIDI.NoteOff(48,0x80,UInt8[60,127]),MIDI.NoteOff(0,0x90,UInt8[64,127]),MIDI.NoteOff(48,0x80,UInt8[67,127]),MIDI.ProgramChange(48,0xc0,UInt8[34]),MIDI.NoteOff(0,0x80,UInt8[64,127]),MIDI.NoteOn(0,0x90,UInt8[60,127]),MIDI.NoteOn(48,0x90,UInt8[67,127]),MIDI.NoteOff(48,0x80,UInt8[60,127]),MIDI.NoteOn(0,0x90,UInt8[64,127]),MIDI.NoteOff(48,0x80,UInt8[67,127]),MIDI.ProgramChange(48,0xc0,UInt8[82]),MIDI.NoteOff(0,0x80,UInt8[64,127])])
     ),
 ]
 
@@ -124,7 +124,7 @@ invalidtestvalues = [
         end
 
         # obain positions and adding order from track
-        stat = [e.channel for e in track.events]
+        stat = [e.status for e in track.events]
         posi = Vector{UInt}()
         ttime = 0
         for event in track.events
@@ -160,12 +160,12 @@ invalidtestvalues = [
     end
 
     # obtain order and positions of the events added with addevent_hint
-    stat = [e.channel for e in track.events if e.channel != 0]
+    stat = [e.status for e in track.events if e.status != 0]
     posi = Vector{Int}()
     ttime = 0
     for event in track.events
         ttime += event.dT
-        if event.channel != 0
+        if event.status != 0
             push!(posi, ttime)
         end
     end

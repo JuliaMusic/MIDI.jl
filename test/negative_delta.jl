@@ -7,8 +7,8 @@ end
 
 @testset "writing negative delta" begin
     stream = IOBuffer()
-    @test_throws ErrorException MIDI.writeevent(stream, NoteOn(-1, [0x00, 0x01, 0x01]))
-    @test_throws ErrorException MIDI.writeevent(stream, SetTempo(-1, [0x00, 0x00, 0x01]))
+    @test_throws ErrorException MIDI.writeevent(stream, NoteOn(-1, 0x90, [0x01, 0x01]))
+    @test_throws ErrorException MIDI.writeevent(stream, SetTempo(-1, 0x51, [0x00, 0x00, 0x01]))
     @test_throws ErrorException MIDI.writeevent(stream, SysexEvent(-1, [0x01]))
     @test_throws ErrorException MIDI.writevariablelength(stream, -1)
     @test_throws ErrorException MIDI.writevariablelength(stream, Int(0x1FFFFFFF))
