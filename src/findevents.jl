@@ -10,7 +10,7 @@ const NOTRACKNAME = "No track name found"
     trackname(track::MIDI.MIDITrack)
 
 Return the name of the given `track` as a string,
-by finding the "track name" `MetaEvent`.
+by finding the `TrackName` meta event.
 
 If no such event exists, `"No track name found"` is returned.
 """
@@ -30,7 +30,7 @@ tracknames(m::MIDIFile) = trackname.(m.tracks)
     addtrackname!(track::MIDI.MIDITrack, name::String)
 
 Add a name to the given `track` by attaching the
-"track name" `MetaEvent` to the start of the `track`.
+`TrackName` meta event to the start of the `track`.
 """
 function addtrackname!(track::MIDI.MIDITrack, name::String)
     trackname = TrackName(0, name)
@@ -49,9 +49,9 @@ end
 
 """
     findtextevents(eventtype, track)
-Find all "text" events specifield by `eventtype` in the `track`.
-The `eventtype` can be `:text, :lyric, :marker`, which will find the
-appropriate `MetaEvent`s.
+Find all text events specifield by `eventtype` in the `track`.
+The `eventtype` can be `TextEvent, Lyric, Marker, which will find the
+appropriate meta events.
 
 For convenience, this function does not return the events themselves.
 Instead, it returns three vectors: the first is the strings of the events,

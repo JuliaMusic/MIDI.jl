@@ -262,11 +262,11 @@ end
 """
     getnotes(midi::MIDIFile [, trackno])
 
-Find all NOTEON and NOTEOFF midi events in the `trackno` track of a `midi`
+Find all NoteOn and NoteOff midi events in the `trackno` track of a `midi`
 (default 1 or 2),
 that correspond to the same note value (pitch) and convert them into
-the `Note` datatype. There are special cases where NOTEOFF is actually
-encoded as NOTEON with 0 velocity, but `getnotes` takes care of this.
+the `Note` datatype. There are special cases where NoteOff is actually
+encoded as NoteOn with 0 velocity, but `getnotes` takes care of this.
 
 Notice that the first track of a `midi` typically doesn't have any notes,
 which is why the function defaults to track 2.
