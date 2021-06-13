@@ -33,7 +33,7 @@ const MIDI_EVENTS_DEFS = Dict(
     0x51 => (
         type = :SetTempo,
         fields = ["tempo::Int"],
-        decode = :(ntoh.(reinterpret(UInt32, pushfirst!(data, 0x00)))),
+        decode = :(Int.(ntoh.(reinterpret(UInt32, pushfirst!(data, 0x00))))),
         encode = :(UInt8.([event.tempo >> 16, event.tempo >> 8 & 0xFF, event.tempo & 0xFF]))
     ),
     # TODO: Add SMPTEOffset
@@ -106,7 +106,7 @@ text_defs = (
 const TYPE2BYTE = Dict((value isa Symbol ? value : value.type) => key for (key, value) in MIDI_EVENTS_DEFS)
 
 # Define a struct, constructor and encode function for a given type
-function define_type(type, fields, decode, encode_, supertype)
+function define_type(type, fields, decode, encode_, supertype, typebyte)
     @eval begin
         mutable struct $type <: $supertype
             dT::Int
@@ -119,6 +119,25 @@ function define_type(type, fields, decode, encode_, supertype)
         """
         function $type(dT::Int, typebyte::UInt8, data::Vector{UInt8})
             $type(dT, typebyte, $decode...)
+        end
+
+        if $type <: MetaEvent
+            @doc """    $($type)(dT::Int, args...)
+            Construct a `$($type)` event without specifying the metatype byte.
+            """
+            function $type(dT::Int, args...)
+                length(args) != length(fieldnames($type)) - 2 && throw(MethodError($type, (dT, args...)))
+                $type(dT, $typebyte, args...)
+            end
+        elseif $type <: MIDIEvent
+            @doc """    $($type)(dT::Int, args...; channel = 0)
+            Construct a `$($type)` event without specifying the status byte.
+            The keyword argument `channel` sets the channel for this event.
+            """
+            function $type(dT::Int, args...; channel = 0)
+                length(args) != length(fieldnames($type)) - 2 && throw(MethodError($type, (dT, args...)))
+                $type(dT, UInt8($typebyte | channel), args...)
+            end
         end
 
         """    encode(event::$($type))
@@ -158,7 +177,7 @@ for defs in values(MIDI_EVENTS_DEFS)
 
     # Parse the fields into a Fieldname::Type expression
     fields = Meta.parse.(fields)
-    define_type(type, fields, decode, encode, supertype)
+    define_type(type, fields, decode, encode, supertype, typebyte)
 end
 
 # Create a map from typebyte to the actual types
