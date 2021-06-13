@@ -4,7 +4,7 @@ export encode, decode
 const MIDI_EVENTS_DEFS = Dict(
     # MetaEvents
     0x00 => (
-        type = :SequenceNumber,
+        type = :SequenceNumberEvent,
         fields = ["number::Int"],
         decode = :(ntoh.(reinterpret(UInt16, data))),
         encode = :(UInt8.([event.number >> 8 & 0xFF, event.number & 0xFF]))
@@ -12,39 +12,39 @@ const MIDI_EVENTS_DEFS = Dict(
 
     # The definitions for text-only events are stored separately below to avoid repetition
     0x01 => :TextEvent,
-    0x02 => :CopyrightNotice,
-    0x03 => :TrackName,
-    0x04 => :InstrumentName,
-    0x05 => :Lyric,
-    0x06 => :Marker,
-    0x07 => :CuePoint,
+    0x02 => :CopyrightNoticeEvent,
+    0x03 => :TrackNameEvent,
+    0x04 => :InstrumentNameEvent,
+    0x05 => :LyricEvent,
+    0x06 => :MarkerEvent,
+    0x07 => :CuePointEvent,
     0x20 => (
-        type = :MIDIChannelPrefix,
+        type = :MIDIChannelPrefixEvent,
         fields = ["channel::Int"],
         decode = :(Int.(data)),
         encode = :(UInt8(event.channel))
     ),
     0x2F => (
-        type = :EndOfTrack,
+        type = :EndOfTrackEvent,
         fields = [],
         decode = :([]),
         encode = :(UInt8[])
     ),
     0x51 => (
-        type = :SetTempo,
+        type = :SetTempoEvent,
         fields = ["tempo::Int"],
         decode = :(Int.(ntoh.(reinterpret(UInt32, pushfirst!(data, 0x00))))),
         encode = :(UInt8.([event.tempo >> 16, event.tempo >> 8 & 0xFF, event.tempo & 0xFF]))
     ),
     # TODO: Add SMPTEOffset
     0x58 => (
-        type = :TimeSignature,
+        type = :TimeSignatureEvent,
         fields = ["numerator::Int", "denominator::Int", "clockticks::Int", "notated32nd_notes::Int"],
         decode = :(Int.([data[1], 2^data[2], data[3:4]...])),
         encode = :(UInt8.([event.numerator, log2(event.denominator), event.clockticks, event.notated32nd_notes]))
     ),
     0x59 => (
-        type = :KeySignature,
+        type = :KeySignatureEvent,
         fields = ["semitones::Int", "scale::Int"],
         decode = :(Int.(data)),
         encode = :(UInt8.([event.semitones, event.scale]))
@@ -52,43 +52,43 @@ const MIDI_EVENTS_DEFS = Dict(
 
     # MidiEvents
     0x80 => (
-        type = :NoteOff,
+        type = :NoteOffEvent,
         fields = ["note::Int", "velocity::Int"],
         decode = :(Int.(data)),
         encode = :(UInt8.([event.note, event.velocity]))
     ),
     0x90 => (
-        type = :NoteOn,
+        type = :NoteOnEvent,
         fields = ["note::Int", "velocity::Int"],
         decode = :(Int.(data)),
         encode = :(UInt8.([event.note, event.velocity]))
     ),
     0xA0 => (
-        type = :Aftertouch,
+        type = :AftertouchEvent,
         fields = ["note::Int", "pressure::Int"],
         decode = :(Int.(data)),
         encode = :(UInt8.([event.note, event.pressure]))
     ),
     0xB0 => (
-        type = :ControlChange,
+        type = :ControlChangeEvent,
         fields = ["controller::Int", "value::Int"],
         decode = :(Int.(data)),
         encode = :(UInt8.([event.controller, event.value]))
     ),
     0xC0 => (
-        type = :ProgramChange,
+        type = :ProgramChangeEvent,
         fields = ["program::Int"],
         decode = :(Int.(data)),
         encode = :(UInt8.([event.program]))
     ),
     0xD0 => (
-        type = :ChannelPressure,
+        type = :ChannelPressureEvent,
         fields = ["pressure::Int"],
         decode = :(Int.(data)),
         encode = :(UInt8.([event.pressure]))
     ),
     0xE0 => (
-        type = :PitchBend,
+        type = :PitchBendEvent,
         fields = ["pitch::Int"],
         decode = :(Int.((ntoh(reinterpret(UInt16, [0x00, data[2]])[1]) << 8 | data[1] << 1) >> 1)),
         encode = :(UInt8.([event.pitch & 0b01111111, event.pitch >> 7]))
@@ -146,8 +146,6 @@ function define_type(type, fields, decode, encode_, supertype, typebyte)
         function encode(event::$type)
             $encode_
         end
-
-        export $type
     end
 end
 
@@ -183,8 +181,8 @@ end
 # Create a map from typebyte to the actual types
 const MIDI_EVENTS_SPEC = Dict(key => eval(value isa Symbol ? value : value.type) for (key, value) in MIDI_EVENTS_DEFS)
 
-"""    SequenceNumber <: MetaEvent
-The `SequenceNumber` event contains the number of a sequence
+"""    SequenceNumberEvent <: MetaEvent
+The `SequenceNumberEvent` contains the number of a sequence
 in type 0 and 1 MIDI files, or the pattern number in type 2 MIDI files.
 
 ## Fields:
@@ -192,7 +190,7 @@ in type 0 and 1 MIDI files, or the pattern number in type 2 MIDI files.
 * `metatype::UInt8` : Meta type byte of the event.
 * `number::Int` : Sequence number.
 """
-SequenceNumber
+SequenceNumberEvent
 
 """    TextEvent <: MetaEvent
 The `TextEvent` contains a text within the MIDI file.
@@ -204,8 +202,8 @@ The `TextEvent` contains a text within the MIDI file.
 """
 TextEvent
 
-"""    CopyrightNotice <: MetaEvent
-The `CopyrightNotice` event contains a copyright notice
+"""    CopyrightNoticeEvent <: MetaEvent
+The `CopyrightNoticeEvent` contains a copyright notice
 in a MIDI file.
 
 ## Fields:
@@ -213,10 +211,10 @@ in a MIDI file.
 * `metatype::UInt8` : Meta type byte of the event.
 * `text::String` : The copyright notice in text.
 """
-CopyrightNotice
+CopyrightNoticeEvent
 
-"""    TrackName <: MetaEvent
-The `TrackName` event contains either the name of a MIDI sequence
+"""    TrackNameEvent <: MetaEvent
+The `TrackNameEvent` contains either the name of a MIDI sequence
 (when in MIDI type 0 or MIDI type 2 files, or when in the first track of a MIDI type 1 file),
 or the name of a MIDI track (when in other tracks of a MIDI type 1 file).
 
@@ -225,50 +223,50 @@ or the name of a MIDI track (when in other tracks of a MIDI type 1 file).
 * `metatype::UInt8` : Meta type byte of the event.
 * `text::String` : The track name in text.
 """
-TrackName
+TrackNameEvent
 
-"""    InstrumentName <: MetaEvent
-The `InstrumentName` event contains the name of the instrument to be used in a track.
+"""    InstrumentNameEvent <: MetaEvent
+The `InstrumentNameEvent` contains the name of the instrument to be used in a track.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
 * `metatype::UInt8` : Meta type byte of the event.
 * `text::String` : The instrument name in text.
 """
-InstrumentName
+InstrumentNameEvent
 
-"""    Lyric <: MetaEvent
-The `Lyric` event contains the lyrics (usually syllables) in a MIDI file.
+"""    LyricEvent <: MetaEvent
+The `LyricEvent` contains the lyrics (usually syllables) in a MIDI file.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
 * `metatype::UInt8` : Meta type byte of the event.
 * `text::String` : The lyric in text.
 """
-Lyric
+LyricEvent
 
-"""    Marker <: MetaEvent
-The `Marker` event contains the text of a marker.
+"""    MarkerEvent <: MetaEvent
+The `MarkerEvent` contains the text of a marker.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
 * `metatype::UInt8` : Meta type byte of the event.
 * `text::String` : The marker text.
 """
-Marker
+MarkerEvent
 
-"""    CuePoint <: MetaEvent
-The `CuePoint` event contains a cue in a MIDI file.
+"""    CuePointEvent <: MetaEvent
+The `CuePointEvent` contains a cue in a MIDI file.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
 * `metatype::UInt8` : Meta type byte of the event.
 * `text::String` : The cue in text.
 """
-CuePoint
+CuePointEvent
 
-"""    MIDIChannelPrefix <: MetaEvent
-The `MIDIChannelPrefix` event contains a channel number to which
+"""    MIDIChannelPrefixEvent <: MetaEvent
+The `MIDIChannelPrefixEvent` contains a channel number to which
 the following meta messages are sent to.
 
 ## Fields:
@@ -276,19 +274,19 @@ the following meta messages are sent to.
 * `metatype::UInt8` : Meta type byte of the event.
 * `channel::Int` : The channel number.
 """
-MIDIChannelPrefix
+MIDIChannelPrefixEvent
 
-"""    EndOfTrack <: MetaEvent
-The `EndOfTrack` event denotes the end of a track.
+"""    EndOfTrackEvent <: MetaEvent
+The `EndOfTrackEvent` denotes the end of a track.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
 * `metatype::UInt8` : Meta type byte of the event.
 """
-EndOfTrack
+EndOfTrackEvent
 
-"""    SetTempo <: MetaEvent
-The `SetTempo` event sets the tempo of a MIDI sequence in terms of
+"""    SetTempoEvent <: MetaEvent
+The `SetTempoEvent` sets the tempo of a MIDI sequence in terms of
 microseconds per quarter note.
 
 ## Fields:
@@ -296,10 +294,10 @@ microseconds per quarter note.
 * `metatype::UInt8` : Meta type byte of the event.
 * `tempo::Int` : The tempo in microseconds per quarter note.
 """
-SetTempo
+SetTempoEvent
 
-"""    TimeSignature <: MetaEvent
-The `TimeSignature` event contains the time signature of a MIDI sequence.
+"""    TimeSignatureEvent <: MetaEvent
+The `TimeSignatureEvent` contains the time signature of a MIDI sequence.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
@@ -309,10 +307,10 @@ The `TimeSignature` event contains the time signature of a MIDI sequence.
 * `clockticks::Int` : MIDI clock ticks per click.
 * `notated32nd_notes::Int` : Number of 32nd notes per beat.
 """
-TimeSignature
+TimeSignatureEvent
 
-"""    KeySignature <: MetaEvent
-The `KeySignature` event contains the key signature and scale of a MIDI file.
+"""    KeySignatureEvent <: MetaEvent
+The `KeySignatureEvent` contains the key signature and scale of a MIDI file.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
@@ -321,10 +319,10 @@ The `KeySignature` event contains the key signature and scale of a MIDI file.
 * `scale::Int` : Scale of the MIDI file - 0 if the scale is major
    and 1 if the scale is minor.
 """
-KeySignature
+KeySignatureEvent
 
-"""    NoteOff <: MIDIEvent
-The `NoteOff` event informs a MIDI device to release a note.
+"""    NoteOffEvent <: MIDIEvent
+The `NoteOffEvent` informs a MIDI device to release a note.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
@@ -332,11 +330,11 @@ The `NoteOff` event informs a MIDI device to release a note.
 * `note::Int` : Note to turn off.
 * `velocity::Int` : Velocity of the note.
 """
-NoteOff
+NoteOffEvent
 
-"""    NoteOn <: MIDIEvent
-The `NoteOn` event informs a MIDI device to play a note.
-A `NoteOn` event with 0 velocity acts as a `NoteOff` event.
+"""    NoteOnEvent <: MIDIEvent
+The `NoteOnEvent` informs a MIDI device to play a note.
+A `NoteOnEvent` with 0 velocity acts as a `NoteOffEvent`.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
@@ -344,10 +342,10 @@ A `NoteOn` event with 0 velocity acts as a `NoteOff` event.
 * `note::Int` : Note to turn on.
 * `velocity::Int` : Velocity of the note.
 """
-NoteOn
+NoteOnEvent
 
-"""    Aftertouch <: MIDIEvent
-The `Aftertouch` event informs a MIDI device to apply pressure to a note.
+"""    AftertouchEvent <: MIDIEvent
+The `AftertouchEvent` informs a MIDI device to apply pressure to a note.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
@@ -355,10 +353,10 @@ The `Aftertouch` event informs a MIDI device to apply pressure to a note.
 * `note::Int` : Note to apply the pressure to.
 * `pressure::Int` : Amount of pressure to be applied.
 """
-Aftertouch
+AftertouchEvent
 
-"""    ControlChange <: MIDIEvent
-The `ControlChange` event informs a MIDI device to change the value of a controller.
+"""    ControlChangeEvent <: MIDIEvent
+The `ControlChangeEvent` informs a MIDI device to change the value of a controller.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
@@ -366,10 +364,10 @@ The `ControlChange` event informs a MIDI device to change the value of a control
 * `controller::Int` : Controller number.
 * `value::Int` : Value received by the controller.
 """
-ControlChange
+ControlChangeEvent
 
-"""    ProgramChange <: MIDIEvent
-The `ProgramChange` event informs a MIDI device to select a program number
+"""    ProgramChangeEvent <: MIDIEvent
+The `ProgramChangeEvent` informs a MIDI device to select a program number
 in a specific channel.
 
 ## Fields:
@@ -377,24 +375,24 @@ in a specific channel.
 * `status::UInt8` : The status byte of the event.
 * `program::Int` : The new program number.
 """
-ProgramChange
+ProgramChangeEvent
 
-"""    ChannelPressure <: MIDIEvent
-The `ChannelPressure` event informs a MIDI device to apply pressure to a specific channel.
+"""    ChannelPressureEvent <: MIDIEvent
+The `ChannelPressureEvent` informs a MIDI device to apply pressure to a specific channel.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
 * `status::UInt8` : The status byte of the event.
 * `pressure::Int` : Amount of the pressure to be applied.
 """
-ChannelPressure
+ChannelPressureEvent
 
-"""    PitchBend <: MIDIEvent
-The `PitchBend` event informs a MIDI device to modify the pitch in a specific channel.
+"""    PitchBendEvent <: MIDIEvent
+The `PitchBendEvent` informs a MIDI device to modify the pitch in a specific channel.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
 * `status::UInt8` : The status byte of the event.
 * `pitch::Int` : Value of the pitch bend.
 """
-PitchBend
+PitchBendEvent
