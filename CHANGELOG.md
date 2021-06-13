@@ -4,6 +4,38 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+
+# v2.0.0
+## Breaking
+* `MIDIEvent` and `MetaEvent` are abstract types and they cannot be used directly.
+
+## Additions
+* New event types for each midi and meta events.
+
+* The list of new meta event types:
+    * SequenceNumber
+    * TextEvent
+    * CopyrightNotice
+    * TrackName
+    * InstrumentName
+    * Lyric
+    * Marker
+    * CuePoint
+    * MIDIChannelPrefix
+    * EndOfTrack
+    * SetTempo
+    * TimeSignature
+    * KeySignature
+
+* The list of new midi event types:
+    * NoteOff
+    * NoteOn
+    * Aftertouch
+    * ControlChange
+    * ProgramChange
+    * ChannelPressure
+    * PitchBend
+
 # v1.12.0
 * New function `tempochanges `
 # v1.11.0
