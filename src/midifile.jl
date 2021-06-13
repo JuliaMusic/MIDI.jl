@@ -45,7 +45,7 @@ function qpm(t::MIDI.MIDIFile)
     # See here (page 8):
     # http://www.cs.cmu.edu/~music/cmsip/readings/Standard-MIDI-file-format-updated.pdf
     for event in t.tracks[1].events
-        if event isa SetTempo
+        if event isa SetTempoEvent
             return 6e7 / event.tempo
         end
     end
@@ -69,7 +69,7 @@ function bpm(t::MIDI.MIDIFile)
     # See here (page 8):
     # http://www.cs.cmu.edu/~music/cmsip/readings/Standard-MIDI-file-format-updated.pdf
     for event in t.tracks[1].events
-        if event isa TimeSignature
+        if event isa TimeSignatureEvent
             cc = event.clockticks
             break
         end
@@ -102,7 +102,7 @@ function BPM(t::MIDI.MIDIFile)
     # See here (page 8):
     # http://www.cs.cmu.edu/~music/cmsip/readings/Standard-MIDI-file-format-updated.pdf
     for event in t.tracks[1].events
-        if event isa SetTempo
+        if event isa SetTempoEvent
             return 6e7 / event.tempo
         end
     end
@@ -124,7 +124,7 @@ function time_signature(t::MIDI.MIDIFile)
     # See here (page 8):
     # http://www.cs.cmu.edu/~music/cmsip/readings/Standard-MIDI-file-format-updated.pdf
     for event in t.tracks[1].events
-        if event isa TimeSignature
+        if event isa TimeSignatureEvent
             ts = string(event.numerator) * "/" * string(event.denominator)
             return ts
         end
@@ -152,7 +152,7 @@ function tempochanges(midi::MIDIFile)
     position = 0
     for event in midi.tracks[1].events
         position += event.dT
-        if event isa SetTempo
+        if event isa SetTempoEvent
             qpm = 6e7 / event.tempo
 
             # Allow only one tempo change at the beginning

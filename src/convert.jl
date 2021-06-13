@@ -108,7 +108,7 @@ function getprogramchangeevents(data::MIDIFile)
 		i = 0
 		for event in track.events
 			i += 1
-			if event isa ProgramChange
+			if event isa ProgramChangeEvent
 				push!(pgevents, [t, i, event])
 			end
 		end
