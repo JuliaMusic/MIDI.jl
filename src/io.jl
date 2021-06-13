@@ -3,6 +3,9 @@ using FileIO
 """
     load(filename::File{format"MIDI"})
 Read a file into a `MIDIFile` data type.
+
+!!! note
+    This function must not be called explicitly. [`FileIO.load`](https://juliaio.github.io/FileIO.jl/stable/) must be called instead.
 """
 function load(f::File{format"MIDI"})
     open(f) do s
@@ -35,6 +38,9 @@ Write a `MIDIFile` as a ".mid" file to the given filename.
 
     save(filename::File{format"MIDI"}, notes::Notes)
 Create a `MIDIFile` directly from `notes`, using format 1.
+
+!!! note
+    This function must not be called explicitly. [`FileIO.save`](https://juliaio.github.io/FileIO.jl/stable/) must be called instead.
 """
 function save(f::File{format"MIDI"}, data::MIDIFile)
     open(f, "w") do s
