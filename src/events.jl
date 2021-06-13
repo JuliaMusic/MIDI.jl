@@ -113,13 +113,14 @@ function define_type(type, fields, decode, encode_, supertype)
             $(fields...)
         end
 
-        """    $($type)(dT::Int, data::Vector{UInt8})
+        """    $($type)(dT::Int, typebyte::UInt8, data::Vector{UInt8})
         Returns a `$($type)` event from it's byte representation.
+        The parameter `typebyte::UInt8` is its's $(($type <: MetaEvent) ? "metatype" : "status") byte.
         """
         function $type(dT::Int, typebyte::UInt8, data::Vector{UInt8})
             $type(dT, typebyte, $decode...)
         end
-        
+
         """    encode(event::$($type))
         Returns the byte representation of a `$($(type))` event.
         """
@@ -150,7 +151,7 @@ for defs in values(MIDI_EVENTS_DEFS)
     else
         supertype = MetaEvent
         if !(0x01 <= typebyte <= 0x07)
-            # text-only events already have the metatype field
+            # text-only events already have the metatype field, we don't have to add them
             pushfirst!(fields, "metatype::UInt8")
         end
     end
@@ -169,6 +170,7 @@ in type 0 and 1 MIDI files, or the pattern number in type 2 MIDI files.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
+* `metatype::UInt8` : Meta type byte of the event.
 * `number::Int` : Sequence number.
 """
 SequenceNumber
@@ -178,6 +180,7 @@ The `TextEvent` contains a text within the MIDI file.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
+* `metatype::UInt8` : Meta type byte of the event.
 * `text::String` : The text in the event.
 """
 TextEvent
@@ -188,6 +191,7 @@ in a MIDI file.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
+* `metatype::UInt8` : Meta type byte of the event.
 * `text::String` : The copyright notice in text.
 """
 CopyrightNotice
@@ -199,6 +203,7 @@ or the name of a MIDI track (when in other tracks of a MIDI type 1 file).
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
+* `metatype::UInt8` : Meta type byte of the event.
 * `text::String` : The track name in text.
 """
 TrackName
@@ -208,6 +213,7 @@ The `InstrumentName` event contains the name of the instrument to be used in a t
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
+* `metatype::UInt8` : Meta type byte of the event.
 * `text::String` : The instrument name in text.
 """
 InstrumentName
@@ -217,6 +223,7 @@ The `Lyric` event contains the lyrics (usually syllables) in a MIDI file.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
+* `metatype::UInt8` : Meta type byte of the event.
 * `text::String` : The lyric in text.
 """
 Lyric
@@ -226,6 +233,7 @@ The `Marker` event contains the text of a marker.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
+* `metatype::UInt8` : Meta type byte of the event.
 * `text::String` : The marker text.
 """
 Marker
@@ -235,6 +243,7 @@ The `CuePoint` event contains a cue in a MIDI file.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
+* `metatype::UInt8` : Meta type byte of the event.
 * `text::String` : The cue in text.
 """
 CuePoint
@@ -245,6 +254,7 @@ the following meta messages are sent to.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
+* `metatype::UInt8` : Meta type byte of the event.
 * `channel::Int` : The channel number.
 """
 MIDIChannelPrefix
@@ -254,6 +264,7 @@ The `EndOfTrack` event denotes the end of a track.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
+* `metatype::UInt8` : Meta type byte of the event.
 """
 EndOfTrack
 
@@ -263,6 +274,7 @@ microseconds per quarter note.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
+* `metatype::UInt8` : Meta type byte of the event.
 * `tempo::Int` : The tempo in microseconds per quarter note.
 """
 SetTempo
@@ -272,6 +284,7 @@ The `TimeSignature` event contains the time signature of a MIDI sequence.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
+* `metatype::UInt8` : Meta type byte of the event.
 * `numerator::Int` : Numerator of the time signature.
 * `denominator::Int` : Denominator of the time signature.
 * `clockticks::Int` : MIDI clock ticks per click.
@@ -284,6 +297,7 @@ The `KeySignature` event contains the key signature and scale of a MIDI file.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
+* `metatype::UInt8` : Meta type byte of the event.
 * `semitones::Int` : Number of flats or sharps.
 * `scale::Int` : Scale of the MIDI file - 0 if the scale is major
    and 1 if the scale is minor.
@@ -295,7 +309,7 @@ The `NoteOff` event informs a MIDI device to release a note.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
-* `channel::Int` : The channel targeted by the event.
+* `status::UInt8` : The status byte of the event.
 * `note::Int` : Note to turn off.
 * `velocity::Int` : Velocity of the note.
 """
@@ -307,7 +321,7 @@ A `NoteOn` event with 0 velocity acts as a `NoteOff` event.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
-* `channel::Int` : The channel targeted by the event.
+* `status::UInt8` : The status byte of the event.
 * `note::Int` : Note to turn on.
 * `velocity::Int` : Velocity of the note.
 """
@@ -318,7 +332,7 @@ The `Aftertouch` event informs a MIDI device to apply pressure to a note.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
-* `channel::Int` : The channel targeted by the event.
+* `status::UInt8` : The status byte of the event.
 * `note::Int` : Note to apply the pressure to.
 * `pressure::Int` : Amount of pressure to be applied.
 """
@@ -329,7 +343,7 @@ The `ControlChange` event informs a MIDI device to change the value of a control
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
-* `channel::Int` : The channel targeted by the event.
+* `status::UInt8` : The status byte of the event.
 * `controller::Int` : Controller number.
 * `value::Int` : Value received by the controller.
 """
@@ -341,7 +355,7 @@ in a specific channel.
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
-* `channel::Int` : The channel targeted by the event.
+* `status::UInt8` : The status byte of the event.
 * `program::Int` : The new program number.
 """
 ProgramChange
@@ -351,7 +365,7 @@ The `ChannelPressure` event informs a MIDI device to apply pressure to a specifi
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
-* `channel::Int` : The channel targeted by the event.
+* `status::UInt8` : The status byte of the event.
 * `pressure::Int` : Amount of the pressure to be applied.
 """
 ChannelPressure
@@ -361,7 +375,7 @@ The `PitchBend` event informs a MIDI device to modify the pitch in a specific ch
 
 ## Fields:
 * `dT::Int` : Delta time in ticks.
-* `channel::Int` : The channel targeted by the event.
+* `status::UInt8` : The status byte of the event.
 * `pitch::Int` : Value of the pitch bend.
 """
 PitchBend
