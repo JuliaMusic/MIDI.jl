@@ -120,7 +120,7 @@ invalidtestvalues = [
         # add events to the track, encode the order in which the events are
         # added in the status.
         for (i,pos) in enumerate(positions)
-            addevent!(track, pos, NoteOn(0, i, 0, 0))
+            addevent!(track, pos, NoteOn(0, UInt8(i), 0, 0))
         end
 
         # obain positions and adding order from track
@@ -145,7 +145,7 @@ invalidtestvalues = [
     # add some random events using addevent  status = 0 to distinguish from
     # the ones added with the function to be tested
     for i = 1:50
-        addevent!(track, round(Int, 100 * rand()), NoteOn(0, 0, 0, 0))
+        addevent!(track, round(Int, 100 * rand()), NoteOn(0, 0x00, 0, 0))
     end
 
     # generate random but ascending positions
@@ -156,7 +156,7 @@ invalidtestvalues = [
     eventindex = 0
     eventtime = 0
     for (i,pos) in enumerate(posis)
-        eventindex, eventtime = MIDI.addevent_hint!(track, pos, NoteOff(0, i, 0, 0), eventindex, eventtime)
+        eventindex, eventtime = MIDI.addevent_hint!(track, pos, NoteOff(0, UInt8(i), 0, 0), eventindex, eventtime)
     end
 
     # obtain order and positions of the events added with addevent_hint

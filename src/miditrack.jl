@@ -237,7 +237,7 @@ function addnotes!(track::MIDITrack, notes)
     for anote in notes
         note = Note(anote)
         for (event, position) in [(NoteOn, note.position), (NoteOff, note.position + note.duration)]
-            push!(events, event(0, TYPE2BYTE[Symbol(event)] | note.channel, note.pitch, note.velocity))
+            push!(events, event(0, Int(note.pitch), Int(note.velocity), channel = note.channel))
             push!(posis, position)
         end
     end
@@ -254,7 +254,7 @@ function addnote!(track::MIDITrack, anote::AbstractNote)
     # Convert to `Note
     note = Note(anote)
     for (event, position) in [(NoteOn, note.position), (NoteOff, note.position + note.duration)]
-        addevent!(track, position, event(0, note.channel, note.pitch, note.velocity))
+        addevent!(track, position, event(0, Int(note.pitch), Int(note.velocity), channel = note.channel))
     end
 end
 
@@ -314,7 +314,7 @@ function programchange(track::MIDITrack, time::Int, channel::Int, program::Int)
         throw(ArgumentError("The `program` must be specified in the range 1-128"))
     end
     program -= 1
-    addevent!(track, time, ProgramChange(0, PROGRAMCHANGE | channel, program))
+    addevent!(track, time, ProgramChange(0, program, channel = channel))
 end
 
 
