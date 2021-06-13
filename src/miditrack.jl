@@ -102,7 +102,7 @@ function writetrack(f::IO, track::MIDITrack)
     end
 
     # Write the track end event
-    writeevent(event_buffer, EndOfTrack(0, 0x2F, UInt8[]))
+    writeevent(event_buffer, EndOfTrack(0, METATRACKEND, UInt8[]))
 
     bytes = take!(event_buffer)
 
@@ -237,7 +237,7 @@ function addnotes!(track::MIDITrack, notes)
     for anote in notes
         note = Note(anote)
         for (event, position) in [(NoteOn, note.position), (NoteOff, note.position + note.duration)]
-            push!(events, event(0, note.channel, note.pitch, note.velocity))
+            push!(events, event(0, TYPE2BYTE[Symbol(event)] | note.channel, note.pitch, note.velocity))
             push!(posis, position)
         end
     end
@@ -309,11 +309,12 @@ Time is absolute, not relative to the last event.
 
 The `program` must be specified in the range 1-128, **not** in 0-127!
 """
-function programchange(track::MIDITrack, time::Integer, channel::UInt8, program::UInt8)
-    @warn "This function has not been tested. Please test it before using "*
-    "and be kind enough to report whether it worked!"
+function programchange(track::MIDITrack, time::Int, channel::Int, program::Int)
+    if !(1 <= program <= 128)
+        throw(ArgumentError("The `program` must be specified in the range 1-128"))
+    end
     program -= 1
-    addevent!(track, time, ProgramChange(0, channel, program))
+    addevent!(track, time, ProgramChange(0, PROGRAMCHANGE | channel, program))
 end
 
 
