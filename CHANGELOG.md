@@ -13,28 +13,28 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 * New event types for each midi and meta events.
 
 * The list of new meta event types:
-    * SequenceNumber
+    * SequenceNumberEvent
     * TextEvent
-    * CopyrightNotice
-    * TrackName
-    * InstrumentName
-    * Lyric
-    * Marker
-    * CuePoint
-    * MIDIChannelPrefix
-    * EndOfTrack
-    * SetTempo
-    * TimeSignature
-    * KeySignature
+    * CopyrightNoticeEvent
+    * TrackNameEvent
+    * InstrumentNameEvent
+    * LyricEvent
+    * MarkerEvent
+    * CuePointEvent
+    * MIDIChannelPrefixEvent
+    * EndOfTrackEvent
+    * SetTempoEvent
+    * TimeSignatureEvent
+    * KeySignatureEvent
 
 * The list of new midi event types:
-    * NoteOff
-    * NoteOn
-    * Aftertouch
-    * ControlChange
-    * ProgramChange
-    * ChannelPressure
-    * PitchBend
+    * NoteOffEvent
+    * NoteOnEvent
+    * AftertouchEvent
+    * ControlChangeEvent
+    * ProgramChangeEvent
+    * ChannelPressureEvent
+    * PitchBendEvent
 
 # v1.12.0
 * New function `tempochanges `
