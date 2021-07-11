@@ -170,16 +170,18 @@ function name_to_pitch(name)
     if length(pe) >= 2
         if pe[2] == "#" || pe[2] == "♯"
             x = 1
+            deleteat!(pe,2)
         elseif pe[2] == "b" || pe[2] == "♭"
             x = -1
+            deleteat!(pe,2)
         end
     end
-    if isdigit(first(last(pe)))
-        octave = parse(Int, join(filter(isdigit ∘ first, pe)))
-    else
-        octave = 4
+    if length(pe) == 1
+        push!(pe, string(4))
     end
-
+    
+    octave = parse(Int, join(pe[2:end]))
+    
     return pitch + x + 12(octave+1) # lowest possible octave is -1 but pitch starts from 0
 end
 

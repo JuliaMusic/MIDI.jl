@@ -29,6 +29,8 @@ end
 
     n = Note(0, 1, 1, 1)
     @test pitch_to_name(n.pitch) == "C-1"
+
+    @test all([name_to_pitch(pitch_to_name(i)) == i for i in 0:255])
 end
 
 @testset "copying notes" begin
