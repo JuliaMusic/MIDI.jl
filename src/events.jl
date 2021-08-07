@@ -24,6 +24,12 @@ const MIDI_EVENTS_DEFS = Dict(
         decode = :(Int.(data)),
         encode = :(UInt8(event.channel))
     ),
+    0x21 => (
+        type = :MIDIPort,
+        fields = ["channel::Int"],
+        decode = :(Int.(data)),
+        encode = :(UInt8(event.channel))
+    ),
     0x2F => (
         type = :EndOfTrackEvent,
         fields = [],
