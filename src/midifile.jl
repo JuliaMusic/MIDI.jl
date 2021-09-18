@@ -1,6 +1,3 @@
-export MIDIFile, readMIDIFile, writeMIDIFile
-export BPM, bpm, qpm, time_signature, tempochanges, ms_per_tick
-
 """
     MIDIFile <: Any
 Type representing a file of MIDI data.
@@ -16,7 +13,7 @@ mutable struct MIDIFile
     tracks::Vector{MIDITrack}
 end
 # Pretty print
-function Base.show(io::IO, midi::MIDIFile) where {N}
+function Base.show(io::IO, midi::MIDIFile)
 	tnames = tracknames(midi)
 	s = "MIDIFile (format=$(Int(midi.format)), tpq=$(midi.tpq)) "
 	if any(!isequal(NOTRACKNAME), tnames) # we have tracknames

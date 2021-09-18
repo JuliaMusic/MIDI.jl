@@ -201,5 +201,3 @@ const DRUMKEY = begin
 	"Crash Cymbal 2" => "A3"
 	)
 end
-
-export DRUMKEY

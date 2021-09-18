@@ -1,9 +1,6 @@
 # Functions that find special events, like e.g. lyrics, or tracknames
 # are contained here
 
-export trackname, addtrackname!, textevent, findtextevents
-export tracknames
-
 const NOTRACKNAME = "No track name found"
 
 """
