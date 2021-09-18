@@ -1,6 +1,3 @@
-export getnotes, addnote!, addnotes!, addevent!, addevents!
-export MIDITrack
-
 """
     MIDITrack <: Any
 
@@ -16,7 +13,7 @@ mutable struct MIDITrack
 end
 MIDITrack() = MIDITrack(TrackEvent[])
 # Pretty print
-function Base.show(io::IO, t::MIDITrack) where {N}
+function Base.show(io::IO, t::MIDITrack)
     L = length(t.events)
     M = count(x -> x isa MIDIEvent, t.events)
     T = count(x -> x isa MetaEvent, t.events)

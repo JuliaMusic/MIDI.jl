@@ -1,5 +1,3 @@
-export TrackEvent, MetaEvent, MIDIEvent, SysexEvent
-
 """
     TrackEvent <: Any
 Abstract supertype for all MIDI events.

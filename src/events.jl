@@ -1,5 +1,3 @@
-export encode, decode
-
 # Create a map from typebyte to the type definitions (not the actual types)
 const MIDI_EVENTS_DEFS = Dict(
     # MetaEvents

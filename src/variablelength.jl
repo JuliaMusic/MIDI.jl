@@ -1,4 +1,3 @@
-export readvariablelength, writevariablelength
 """
     readvariablelength(f::IO)
 Variable length numbers in MIDI files are represented as a sequence of bytes.

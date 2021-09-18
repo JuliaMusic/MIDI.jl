@@ -1,5 +1,3 @@
-using FileIO
-
 """
     load(filename::File{format"MIDI"})
 Read a file into a `MIDIFile` data type.

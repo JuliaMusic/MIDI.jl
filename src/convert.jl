@@ -24,8 +24,6 @@ function type1totype0(data::MIDIFile)
 	type1totype0!(newdata)
 end
 
-export type1totype0, type1totype0!
-
 function type0totype1!(data::MIDIFile)
 	if data.format != UInt8(0)
 		error("Got type $(data.format); expecting type 0")
@@ -64,7 +62,6 @@ function type0totype1(data::MIDIFile)
 	type0totype1!(newdata)
 end
 
-export type0totype1, type0totype1!
 
 function insertsorted!(events1::Array{TrackEvent, 1}, 
 					   events2::Array{TrackEvent, 1})
@@ -115,7 +112,6 @@ function getprogramchangeevents(data::MIDIFile)
 	end
 	pgevents
 end
-export getprogramchangeevents
 
 function dochannelsconflict(pgevents)
 	channels = Dict()
