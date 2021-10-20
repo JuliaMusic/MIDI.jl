@@ -3,7 +3,6 @@ A Julia library for reading and writing MIDI files.
 """
 module MIDI
 
-using FileIO
 using Base.Unicode
 
 include("constants.jl")
