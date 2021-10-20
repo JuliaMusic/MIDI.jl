@@ -1,10 +1,9 @@
+# This file extends the FileIO.jl interface for filenames ending with ".mid".
+# See https://juliaio.github.io/FileIO.jl/stable/implementing/#Implementing-loaders/savers
+
 using FileIO
 export load, save
 
-"""
-    load(filename_ending_with_.mid)
-Load a file into a [`MIDIFile`](@ref) data type.
-"""
 function fileio_load(f::File{format"MIDI"})
     open(f) do s
         skipmagic(s)
@@ -30,13 +29,6 @@ function fileio_load(s::Stream{format"MIDI"})
     return midifile
 end
 
-"""
-    save(filename, data::MIDIFile)
-Write a `MIDIFile` as a ".mid" file to the given `filename`.
-
-    save(filename, notes::Notes)
-Create a `MIDIFile` directly from `notes`, using format 1, and then save it.
-"""
 function fileio_save(f::File{format"MIDI"}, data::MIDIFile)
     open(f, "w") do s
         fileio_save(s, data)
