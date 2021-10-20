@@ -1,18 +1,19 @@
-"""
-    load(filename::File{format"MIDI"})
-Read a file into a `MIDIFile` data type.
+import FileIO
+export FileIO.load, FileIO.save
 
-!!! note
-    This function must not be called explicitly. [`FileIO.load`](https://juliaio.github.io/FileIO.jl/stable/) must be called instead.
 """
-function load(f::File{format"MIDI"})
+    load(filename_ending_with_.mid)
+Load a file into a [`MIDIFile`](@ref) data type.
+This function simply overloads [`FileIO.load`](https://juliaio.github.io/FileIO.jl/stable/).
+"""
+function FileIO.load(f::File{format"MIDI"})
     open(f) do s
         skipmagic(s)
         midifile = load(s)
     end
 end
 
-function load(s::Stream{format"MIDI"})
+function FileIO.load(s::Stream{format"MIDI"})
     midifile = MIDIFile()
 
     # Skip the next four bytes - this is the header size, and it's always equal to 6.
@@ -31,22 +32,21 @@ function load(s::Stream{format"MIDI"})
 end
 
 """
-    save(filename::File{format"MIDI"}, data::MIDIFile)
-Write a `MIDIFile` as a ".mid" file to the given filename.
+    save(filename, data::MIDIFile)
+Write a `MIDIFile` as a ".mid" file to the given `filename`.
 
-    save(filename::File{format"MIDI"}, notes::Notes)
-Create a `MIDIFile` directly from `notes`, using format 1.
+    save(filename, notes::Notes)
+Create a `MIDIFile` directly from `notes`, using format 1, and then save it.
 
-!!! note
-    This function must not be called explicitly. [`FileIO.save`](https://juliaio.github.io/FileIO.jl/stable/) must be called instead.
+This function simply overloads [`FileIO.load`](https://juliaio.github.io/FileIO.jl/stable/).
 """
-function save(f::File{format"MIDI"}, data::MIDIFile)
+function FileIO.save(f::File{format"MIDI"}, data::MIDIFile)
     open(f, "w") do s
         save(s, data)
     end
 end
 
-function save(s::Stream{format"MIDI"}, data::MIDIFile)
+function FileIO.save(s::Stream{format"MIDI"}, data::MIDIFile)
     write(s, magic(format"MIDI"))
 
     write(s, hton(convert(UInt32, 6))) # Header length
@@ -58,7 +58,7 @@ function save(s::Stream{format"MIDI"}, data::MIDIFile)
     return data
 end
 
-function save(s::Union{File{format"MIDI"}, Stream{format"MIDI"}}, notes::Notes)
+function FileIO.save(s::Union{File{format"MIDI"}, Stream{format"MIDI"}}, notes::Notes)
     track = MIDITrack()
     addnotes!(track, notes)
     midi = MIDIFile(1, notes.tpq, [track])
