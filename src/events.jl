@@ -1,4 +1,6 @@
 # Create a map from typebyte to the type definitions (not the actual types)
+# Notice that the keys of the dictionary are MIDI status bytes
+# https://www.recordingblogs.com/wiki/status-byte-of-a-midi-message 
 const MIDI_EVENTS_DEFS = Dict(
     # MetaEvents
     0x00 => (
