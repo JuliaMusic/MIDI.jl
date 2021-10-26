@@ -42,7 +42,12 @@ const MIDI_EVENTS_DEFS = Dict(
         decode = :(Int.(ntoh.(reinterpret(UInt32, pushfirst!(data, 0x00))))),
         encode = :(UInt8.([event.tempo >> 16, event.tempo >> 8 & 0xFF, event.tempo & 0xFF]))
     ),
-    # TODO: Add SMPTEOffset
+    0x54 => (
+        type = :SMPTEOffsetEvent,
+        fields = ["hours::Int", "minutes::Int", "seconds::Int", "frames::Int", "subframes::Int"],
+        decode = :(Int.(data)),
+        encode = :(UInt8.([event.hours, event.minutes, event.seconds, event.frames, event.subframes]))
+    ),
     0x58 => (
         type = :TimeSignatureEvent,
         fields = ["numerator::Int", "denominator::Int", "clockticks::Int", "notated32nd_notes::Int"],
