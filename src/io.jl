@@ -36,6 +36,12 @@ function fileio_save(f::File{format"MIDI"}, data::MIDIFile)
 end
 
 function fileio_save(s::Stream{format"MIDI"}, data::MIDIFile)
+	if data.format == UInt8(0) && length(data.tracks) > 1
+		@warn("MIDI file-type 0 only supports a single track. Consider using "*
+        " format 1, or converting your file using type1totype0! to convert "*
+        " type 1 data to type 0 data.")
+	end
+
     write(s, magic(format"MIDI"))
 
     write(s, hton(convert(UInt32, 6))) # Header length
