@@ -28,7 +28,7 @@ function Base.show(io::IO, midi::MIDIFile)
 end
 
 
-MIDIFile() = MIDIFile(0,960,MIDITrack[])
+MIDIFile() = MIDIFile(1,960,MIDITrack[])
 
 """
     qpm(midi)
