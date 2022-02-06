@@ -32,6 +32,10 @@ end
 
     @test all([name_to_pitch(pitch_to_name(i)) == i for i in 0:255])
 end
+@testset "frequency" begin
+    tol = 10e-5
+    @test pitch_to_hz(3,5)==2
+end
 
 @testset "copying notes" begin
     midi = load("doxy.mid")
