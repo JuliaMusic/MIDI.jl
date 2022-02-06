@@ -33,8 +33,27 @@ end
     @test all([name_to_pitch(pitch_to_name(i)) == i for i in 0:255])
 end
 @testset "frequency" begin
-    tol = 10e-5
-    @test pitch_to_hz(3,5)==2
+    tol = 10e-3
+    @test pitch_to_hz(69,440)==440
+    @test pitch_to_hz(69,432)==432
+    @test abs( pitch_to_hz(44)-103.8262 ) < tol
+    @test abs(pitch_to_hz(105)-3520.000) < tol
+    @test abs(pitch_to_hz(89,432)-1371.51) < tol
+    #hz to pitch
+    @test hz_to_pitch(440) == 69
+    @test hz_to_pitch(432,432) == 69
+    @test hz_to_pitch(7040.000) == 117
+    @test hz_to_pitch(123.4708) == 47
+    
+    @test hz_to_name(440) == "A4"
+    @test hz_to_name(880) == "A5"
+    @test hz_to_name(220) == "A3"
+    @test hz_to_name(1108.731) == "C♯6"
+
+    @test abs(name_to_hz("D6")-1174.659 ) < tol
+    @test abs(name_to_hz("A7")-3520.000) < tol
+    @test abs(name_to_hz("D3",432)-144.16) < tol
+    @test abs(name_to_hz("G7",432)-3078.95) < tol
 end
 
 @testset "copying notes" begin
