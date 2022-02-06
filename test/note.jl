@@ -42,8 +42,8 @@ end
     #hz to pitch
     @test hz_to_pitch(440) == 69
     @test hz_to_pitch(432,432) == 69
-    @test hz_to_pitch(7040.000) == 117
-    @test hz_to_pitch(123.4708) == 47
+    @test round(hz_to_pitch(7040.000)) == 117
+    @test round(hz_to_pitch(123.4708)) == 47
     
     @test hz_to_name(440) == "A4"
     @test hz_to_name(880) == "A5"
