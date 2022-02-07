@@ -31,7 +31,7 @@ export getnotes, addnote!, addnotes!, addevent!, addevents!
 export MIDITrack
 export Note, Notes, AbstractNote, DrumNote
 export pitch_to_name, name_to_pitch
-export pitch_to_hz, hz_to_pitch, hz_to_name, name_to_hz
+export pitch_to_hz, hz_to_pitch
 export TrackEvent, MetaEvent, MIDIEvent, SysexEvent
 export readvariablelength, writevariablelength
 

@@ -133,7 +133,6 @@ e.g. `A♯3` is printed as `B♭3`.
 
 Reminder: middle C has pitch `60` and is displayed as `C4`.
 """
-
 function pitch_to_name(pitch; flat::Bool=false)
     i = Int(pitch)
     notename = PITCH_TO_NAME[mod(i, 12)]
@@ -181,45 +180,25 @@ function name_to_pitch(name)
     
     return pitch + x + 12(octave+1) # lowest possible octave is -1 but pitch starts from 0
 end
-"""
-    pitch_to_hz(name::String, a4::Real) -> Float
-Return the frequency value of the given midi note , which can be of the form
-`Real` where:
 
-We define E.g. `midi_to_hz(69) === 440(with the default middle a)` 
+"""
+    pitch_to_hz(name::String, A4::Real = 440) -> Real
+Return the frequency value of the given midi note
 See https://en.wikipedia.org/wiki/Piano_key_frequencies
 and https://librosa.org/doc/main/_modules/librosa/core/convert.html#midi_to_hz.
 """
 function pitch_to_hz(pitch, A4 = 440)
     return A4 * (2^ ((pitch-69) / 12))
 end
+
 """
-    hz_to_pitch(name::String,A4::Real) -> Real
-Return the midi value of the given  frequency
-default middle a is 440hz
+    hz_to_pitch(name::String, A4::Real = 440) -> Real
+Return the midi value of the given frequency
 """
 function hz_to_pitch(freq, A4 = 440)
     return 12 * (log2(freq) - log2(A4)) + 69
 end
-"""
-hz_to_name(freq::Real,A4::Real) -> String
-Return the note name of the given note frequency
-ie `hz_to_name(440) === "A4"`
-"""
 
-function hz_to_name(freq, A4 = 440)
-   return pitch_to_name(round(hz_to_pitch(freq,A4))) 
-end
-
-"""
-name_to_hz(name::String,A4::Real) -> Real
-Return the frequency of the given note name
-ie `name_to_hz("A4") === 440`
-`name_to_hz("A4",444) === 444`
-"""
-function name_to_hz(name,A4=440)
-    return pitch_to_hz(name_to_pitch(name),A4)
-end
 #######################################################
 # pretty printing
 #######################################################
