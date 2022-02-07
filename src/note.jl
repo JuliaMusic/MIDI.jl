@@ -193,7 +193,7 @@ end
 
 """
     hz_to_pitch(name::String, A4::Real = 440) -> Real
-Return the midi value of the given frequency
+Inverse of [`pitch_to_hz`](@ref).
 """
 function hz_to_pitch(freq, A4 = 440)
     return 12 * (log2(freq) - log2(A4)) + 69
