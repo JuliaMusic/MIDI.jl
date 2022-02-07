@@ -192,7 +192,7 @@ function pitch_to_hz(pitch, A4 = 440)
 end
 
 """
-    hz_to_pitch(name::String, A4::Real = 440) -> Real
+    hz_to_pitch(hz::Real, A4::Real = 440) -> pitch::Int
 Inverse of [`pitch_to_hz`](@ref).
 """
 function hz_to_pitch(freq, A4 = 440)
