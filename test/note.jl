@@ -45,15 +45,7 @@ end
     @test round(hz_to_pitch(7040.000)) == 117
     @test round(hz_to_pitch(123.4708)) == 47
     
-    @test hz_to_name(440) == "A4"
-    @test hz_to_name(880) == "A5"
-    @test hz_to_name(220) == "A3"
-    @test hz_to_name(1108.731) == "C♯6"
 
-    @test abs(name_to_hz("D6")-1174.659 ) < tol
-    @test abs(name_to_hz("A7")-3520.000) < tol
-    @test abs(name_to_hz("D3",432)-144.16) < tol
-    @test abs(name_to_hz("G7",432)-3078.95) < tol
 end
 
 @testset "copying notes" begin
