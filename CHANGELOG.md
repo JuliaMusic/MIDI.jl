@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
-# v2.1.1
+# v2.2.0
 * New functions `pitch_to_hz ` and `hz_to_pitch `
 # v2.1.0
 * Default value of `MIDIFile.format` changed from 0 to 1
