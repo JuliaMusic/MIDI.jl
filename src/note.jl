@@ -182,7 +182,7 @@ function name_to_pitch(name)
 end
 
 """
-    pitch_to_hz(name::String, A4::Real = 440) -> Real
+    pitch_to_hz(pitch::Integer, A4::Real = 440) -> hz::Real
 Return the frequency value of the given midi note
 See https://en.wikipedia.org/wiki/Piano_key_frequencies
 and https://librosa.org/doc/main/_modules/librosa/core/convert.html#midi_to_hz.
