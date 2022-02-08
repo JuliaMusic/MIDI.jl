@@ -32,6 +32,21 @@ end
 
     @test all([name_to_pitch(pitch_to_name(i)) == i for i in 0:255])
 end
+@testset "frequency" begin
+    tol = 10e-3
+    @test pitch_to_hz(69,440)==440
+    @test pitch_to_hz(69,432)==432
+    @test abs( pitch_to_hz(44)-103.8262 ) < tol
+    @test abs(pitch_to_hz(105)-3520.000) < tol
+    @test abs(pitch_to_hz(89,432)-1371.51) < tol
+    #hz to pitch
+    @test hz_to_pitch(440) == 69
+    @test hz_to_pitch(432,432) == 69
+    @test round(hz_to_pitch(7040.000)) == 117
+    @test round(hz_to_pitch(123.4708)) == 47
+    
+
+end
 
 @testset "copying notes" begin
     midi = load("doxy.mid")

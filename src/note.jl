@@ -181,6 +181,24 @@ function name_to_pitch(name)
     return pitch + x + 12(octave+1) # lowest possible octave is -1 but pitch starts from 0
 end
 
+"""
+    pitch_to_hz(pitch::Integer, A4::Real = 440) -> hz::Real
+Return the frequency value of the given midi note, optionally given the reference for middle A.
+See https://en.wikipedia.org/wiki/Piano_key_frequencies
+and https://librosa.org/doc/main/_modules/librosa/core/convert.html#midi_to_hz.
+"""
+function pitch_to_hz(pitch, A4 = 440)
+    return A4 * (2^ ((pitch-69) / 12))
+end
+
+"""
+    hz_to_pitch(hz::Real, A4::Real = 440) -> pitch::Int
+Inverse of [`pitch_to_hz`](@ref).
+"""
+function hz_to_pitch(freq, A4 = 440)
+    return 12 * (log2(freq) - log2(A4)) + 69
+end
+
 #######################################################
 # pretty printing
 #######################################################
