@@ -113,6 +113,7 @@ end
 
 Base.copy(notes::Notes) = Notes([copy(n) for n in notes], notes.tpq)
 
+is_octave(note1::Note,note2::Note)::Bool = abs(Int(note1.pitch)-Int(note2.pitch)) == 12
 
 #######################################################
 # string name <-> midi pitch
