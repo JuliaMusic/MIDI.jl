@@ -162,8 +162,8 @@ Return the pitch value of the given note name, which can be of the form
 We define E.g. `name_to_pitch("C4") === 60` (i.e. string
 `"C4"`, representing the middle-C, corresponds to pitch `60`).
 
-See http://newt.phys.unsw.edu.au/jw/notes.html
-and https://en.wikipedia.org/wiki/C_(musical_note) .
+See [http://newt.phys.unsw.edu.au/jw/notes.html](http://newt.phys.unsw.edu.au/jw/notes.html)
+and [https://en.wikipedia.org/wiki/C_(musical_note)](https://en.wikipedia.org/wiki/C_(musical_note)) .
 """
 function name_to_pitch(name)
     pe = collect(Unicode.graphemes(name))
@@ -190,8 +190,8 @@ end
 """
     pitch_to_hz(pitch::Integer, A4::Real = 440) -> hz::Real
 Return the frequency value of the given midi note, optionally given the reference for middle A.
-See https://en.wikipedia.org/wiki/Piano_key_frequencies
-and https://librosa.org/doc/main/_modules/librosa/core/convert.html#midi_to_hz.
+See [https://en.wikipedia.org/wiki/Piano_key_frequencies](https://en.wikipedia.org/wiki/Piano_key_frequencies)
+and [https://librosa.org/doc/main/_modules/librosa/core/convert.html#midi_to_hz](https://librosa.org/doc/main/_modules/librosa/core/convert.html#midi_to_hz).
 """
 function pitch_to_hz(pitch, A4 = 440)
     return A4 * (2^ ((pitch-69) / 12))
