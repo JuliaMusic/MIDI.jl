@@ -55,3 +55,11 @@ end
     notes[1].pitch = 1
     @test n2[1].pitch ≠ 1
 end
+
+@testset "is octave" begin
+    n1 = Note(name_to_pitch("C4"),0)
+    n2 = Note(name_to_pitch("C5"),1)
+    n3 = Note(name_to_pitch("D5"),2)
+    @test is_octave(n1,n2)
+    @test !is_octave(n1,n3)
+end
