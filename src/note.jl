@@ -101,7 +101,8 @@ Base.firstindex(n::Notes) = firstindex(n.notes)
 Base.getindex(n::Notes, i::Int) = n.notes[i]
 Base.getindex(n::Notes, r) = Notes(n.notes[r], n.tpq)
 Base.view(n::Notes, r) = view(n.notes, r)
-Base.keys(n::Notes) = 1:length(n)
+Base.eachindex(n::Notes) = eachindex(n.notes)
+Base.keys(n::Notes) = eachindex(n)
 
 # Pushing
 Base.push!(no::Notes{N}, n::N) where {N <: AbstractNote} = push!(no.notes, n)
@@ -114,7 +115,7 @@ end
 Base.copy(notes::Notes) = Notes([copy(n) for n in notes], notes.tpq)
 
 """
-    is_octave(note1::Note,note2::Note) -> Bool
+    is_octave(note1::Note, note2::Note)
 Return true if two notes form an octave.
 """
 is_octave(note1::Note,note2::Note)::Bool = abs(Int(note1.pitch)-Int(note2.pitch)) == 12
