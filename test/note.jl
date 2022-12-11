@@ -62,6 +62,9 @@ end
     n3 = Note(name_to_pitch("D5"),2)
     @test is_octave(n1,n2)
     @test !is_octave(n1,n3)
+    
+    @test is_octave(n1.pitch, name_to_pitch("C5"))
+    @test !is_octave(n1.pitch, name_to_pitch("D5"))
 end
 
 @testset "find max" begin

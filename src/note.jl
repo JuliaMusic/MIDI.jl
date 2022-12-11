@@ -119,6 +119,7 @@ Base.copy(notes::Notes) = Notes([copy(n) for n in notes], notes.tpq)
 Return true if two notes form an octave.
 """
 is_octave(note1::Note,note2::Note)::Bool = abs(Int(note1.pitch)-Int(note2.pitch)) == 12
+is_octave(pitch1::Integer, pitch2::Integer)::Bool = abs(Int(pitch1)-Int(pitch2)) == 12
 
 #######################################################
 # string name <-> midi pitch
