@@ -55,3 +55,25 @@ end
     notes[1].pitch = 1
     @test n2[1].pitch ≠ 1
 end
+
+@testset "is octave" begin
+    n1 = Note(name_to_pitch("C4"),0)
+    n2 = Note(name_to_pitch("C5"),1)
+    n3 = Note(name_to_pitch("D5"),2)
+    @test is_octave(n1,n2)
+    @test !is_octave(n1,n3)
+    
+    @test is_octave(n1.pitch, name_to_pitch("C5"))
+    @test !is_octave(n1.pitch, name_to_pitch("D5"))
+end
+
+@testset "find max and min" begin
+    n1 = Note(name_to_pitch("C4"),0)
+    n2 = Note(name_to_pitch("C5"),1)
+    n3 = Note(name_to_pitch("D5"),2)
+    notes = Notes([n1,n2,n3])
+    max_pitch, index_max = findmax(n -> n.pitch, notes)
+    @test notes[index_max].pitch == name_to_pitch("D5")
+    min_pitch, index_min = findmin(n -> n.pitch, notes)
+    @test notes[index_min].pitch == name_to_pitch("C4")
+end

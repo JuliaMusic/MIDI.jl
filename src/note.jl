@@ -73,6 +73,12 @@ A data structure describing a collection of music notes, bundled with the ticks
 per quarter note (so that the notes can be attributed rhythmic value).
 
 `Notes` can be iterated and accessed as the given `note_vector`.
+This eliminates the need for custom iteration or search functions.
+For example, to get the note of maximum pitch you can do:
+```julia
+max_pitch, index_max = findmax(n -> n.pitch, notes)
+max_pitch_note = notes[index_max]
+```
 """
 struct Notes{N <: AbstractNote}
     notes::Vector{N}
@@ -101,6 +107,8 @@ Base.firstindex(n::Notes) = firstindex(n.notes)
 Base.getindex(n::Notes, i::Int) = n.notes[i]
 Base.getindex(n::Notes, r) = Notes(n.notes[r], n.tpq)
 Base.view(n::Notes, r) = view(n.notes, r)
+Base.eachindex(n::Notes) = eachindex(n.notes)
+Base.keys(n::Notes) = eachindex(n)
 
 # Pushing
 Base.push!(no::Notes{N}, n::N) where {N <: AbstractNote} = push!(no.notes, n)
@@ -112,6 +120,12 @@ end
 
 Base.copy(notes::Notes) = Notes([copy(n) for n in notes], notes.tpq)
 
+"""
+    is_octave(note1::Note, note2::Note)
+Return true if two notes form an octave.
+"""
+is_octave(note1::Note,note2::Note)::Bool = abs(Int(note1.pitch)-Int(note2.pitch)) == 12
+is_octave(pitch1::Integer, pitch2::Integer)::Bool = abs(Int(pitch1)-Int(pitch2)) == 12
 
 #######################################################
 # string name <-> midi pitch
@@ -156,8 +170,8 @@ Return the pitch value of the given note name, which can be of the form
 We define E.g. `name_to_pitch("C4") === 60` (i.e. string
 `"C4"`, representing the middle-C, corresponds to pitch `60`).
 
-See http://newt.phys.unsw.edu.au/jw/notes.html
-and https://en.wikipedia.org/wiki/C_(musical_note) .
+See [http://newt.phys.unsw.edu.au/jw/notes.html](http://newt.phys.unsw.edu.au/jw/notes.html)
+and [https://en.wikipedia.org/wiki/C_(musical_note)](https://en.wikipedia.org/wiki/C_(musical_note)) .
 """
 function name_to_pitch(name)
     pe = collect(Unicode.graphemes(name))
@@ -184,8 +198,8 @@ end
 """
     pitch_to_hz(pitch::Integer, A4::Real = 440) -> hz::Real
 Return the frequency value of the given midi note, optionally given the reference for middle A.
-See https://en.wikipedia.org/wiki/Piano_key_frequencies
-and https://librosa.org/doc/main/_modules/librosa/core/convert.html#midi_to_hz.
+See [https://en.wikipedia.org/wiki/Piano_key_frequencies](https://en.wikipedia.org/wiki/Piano_key_frequencies)
+and [https://librosa.org/doc/main/_modules/librosa/core/convert.html#midi_to_hz](https://librosa.org/doc/main/_modules/librosa/core/convert.html#midi_to_hz).
 """
 function pitch_to_hz(pitch, A4 = 440)
     return A4 * (2^ ((pitch-69) / 12))
