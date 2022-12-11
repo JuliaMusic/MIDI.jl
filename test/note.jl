@@ -67,13 +67,13 @@ end
     @test !is_octave(n1.pitch, name_to_pitch("D5"))
 end
 
-@testset "find max" begin
+@testset "find max and min" begin
     n1 = Note(name_to_pitch("C4"),0)
     n2 = Note(name_to_pitch("C5"),1)
     n3 = Note(name_to_pitch("D5"),2)
     notes = Notes([n1,n2,n3])
-    max_pitch_note, index_max = findmax(n -> n.pitch, notes)
-    #UInt8 here, note Note
-    @show typeof(max_pitch_note)
-    @show typeof(name_to_pitch("D5"))
+    max_pitch, index_max = findmax(n -> n.pitch, notes)
+    @test notes[index_max].pitch == name_to_pitch("D5")
+    min_pitch, index_min = findmin(n -> n.pitch, notes)
+    @test notes[index_min].pitch == name_to_pitch("C4")
 end

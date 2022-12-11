@@ -73,6 +73,12 @@ A data structure describing a collection of music notes, bundled with the ticks
 per quarter note (so that the notes can be attributed rhythmic value).
 
 `Notes` can be iterated and accessed as the given `note_vector`.
+
+For example,get maximum or minimum pitch `Note` from `Notes`:
+```julia
+max_pitch, index_max = findmax(n -> n.pitch, notes)
+max_pitch_note = notes[index_max]
+```
 """
 struct Notes{N <: AbstractNote}
     notes::Vector{N}
