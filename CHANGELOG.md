@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 # v2.3.0
 * New functions `is_octave`.
 * Implement `Base.keys(::Notes)` and `Base.eachindex(::Notes)`.
+* Implement `Base.empty!(::Notes)` and `Base.isempty(::Notes)`.
 # v2.2.0
 * New functions `pitch_to_hz ` and `hz_to_pitch `
 # v2.1.0
