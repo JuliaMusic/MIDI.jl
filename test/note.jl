@@ -77,3 +77,11 @@ end
     min_pitch, index_min = findmin(n -> n.pitch, notes)
     @test notes[index_min].pitch == name_to_pitch("C4")
 end
+
+@testset "check empty" begin
+    n1 = Note(name_to_pitch("C4"),0)
+    notes = Notes([n1])
+    @test !isempty(notes)
+    empty!(notes)
+    @test isempty(notes)
+end

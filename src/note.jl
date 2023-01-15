@@ -109,6 +109,8 @@ Base.getindex(n::Notes, r) = Notes(n.notes[r], n.tpq)
 Base.view(n::Notes, r) = view(n.notes, r)
 Base.eachindex(n::Notes) = eachindex(n.notes)
 Base.keys(n::Notes) = eachindex(n)
+Base.empty!(n::Notes) = empty!(n.notes)
+Base.isempty(n::Notes)::Bool = isempty(n.notes)
 
 # Pushing
 Base.push!(no::Notes{N}, n::N) where {N <: AbstractNote} = push!(no.notes, n)
