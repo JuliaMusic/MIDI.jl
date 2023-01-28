@@ -11,6 +11,7 @@ If the `channel` of the note is `0` (default), it is not shown.
 You can also create a `Note` with the following keyword constructor:
 ```julia
 Note(pitch, position; velocity = 100, duration = 960, channel = 0)
+Note(pitch_name::String; position = 0, velocity = 100, duration = 960, channel = 0)
 ```
 
 ## Fields:
@@ -41,6 +42,8 @@ mutable struct Note <: AbstractNote
 end
 Note(pitch, position; velocity = 100, duration = 960, channel = 0) =
 Note(pitch, velocity, position, duration, channel)
+Note(pitch_name::String; position = 0, velocity = 100, duration = 960, channel = 0) = 
+    Note(name_to_pitch(pitch_name), velocity, position, duration, channel)
 
 @inline Note(n::Note) = n
 

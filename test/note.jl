@@ -12,6 +12,11 @@ cd(@__DIR__)
     @test notes[1:3].notes == notes.notes[1:3]
 end
 
+@testset "Note" begin
+    c4 = Note("C4")
+    @test c4.pitch == name_to_pitch("C4")
+end
+
 @testset "pitch names" begin
     a = ["C5", "D12", "D#3", "G#52","A23"]
     for n in a
