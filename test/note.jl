@@ -10,6 +10,16 @@ cd(@__DIR__)
     @test typeof(notes[1:3]) == Notes{Note}
     @test typeof(notes[1:3]) <: Notes
     @test notes[1:3].notes == notes.notes[1:3]
+
+    notes2 = Notes("C2 F3 D#6")
+    @test notes2[1].pitch == name_to_pitch("C2")
+    @test notes2[2].pitch == name_to_pitch("F3")
+    @test notes2[3].pitch == name_to_pitch("D#6")
+end
+
+@testset "Note" begin
+    c4 = Note("C4")
+    @test c4.pitch == name_to_pitch("C4")
 end
 
 @testset "pitch names" begin

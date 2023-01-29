@@ -11,6 +11,7 @@ If the `channel` of the note is `0` (default), it is not shown.
 You can also create a `Note` with the following keyword constructor:
 ```julia
 Note(pitch, position; velocity = 100, duration = 960, channel = 0)
+Note(pitch_name::String; position = 0, velocity = 100, duration = 960, channel = 0)
 ```
 
 ## Fields:
@@ -41,6 +42,8 @@ mutable struct Note <: AbstractNote
 end
 Note(pitch, position; velocity = 100, duration = 960, channel = 0) =
 Note(pitch, velocity, position, duration, channel)
+Note(pitch_name::String; position = 0, velocity = 100, duration = 960, channel = 0) = 
+    Note(name_to_pitch(pitch_name), velocity, position, duration, channel)
 
 @inline Note(n::Note) = n
 
@@ -69,8 +72,15 @@ N(n.pitch, n.velocity, n.position, n.duration, n.channel)
 
 """
     Notes(note_vector, tpq = 960) -> Notes
+    Notes(notes_string::String, tpq::Int = 960) -> Notes
 A data structure describing a collection of music notes, bundled with the ticks
 per quarter note (so that the notes can be attributed rhythmic value).
+
+Notes can be initialized by string, the name of notes are separated by spaces.
+
+```julia
+Notes("C2 F3 D#6")
+```
 
 `Notes` can be iterated and accessed as the given `note_vector`.
 This eliminates the need for custom iteration or search functions.
@@ -94,6 +104,7 @@ function Notes(notes::Vector{N}, tpq::Int = 960) where {N <: AbstractNote}
 end
 
 Notes(; tpq = 960) = Notes{Note}(Vector{Note}[], tpq)
+Notes(notes_string::String, tpq::Int = 960) = Notes([Note(String(s)) for s in split(notes_string," ")], tpq)
 
 # Iterator Interface for notes:
 Base.iterate(n::Notes, i = 1) = iterate(n.notes, i)
