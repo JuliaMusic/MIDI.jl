@@ -178,7 +178,7 @@ getnotes(midi.tracks[trackno], midi.tpq)
 
 """
     metric_time(midi::MIDIFile,note::AbstractNote)::Float64
-Return how many milliseconds elapsed at `note` position, 
+Return how many milliseconds elapsed at `note` position.
 """
 function metric_time(midi::MIDIFile,note::AbstractNote)::Float64
     # get all tempo change event before note
