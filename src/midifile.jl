@@ -179,6 +179,8 @@ getnotes(midi.tracks[trackno], midi.tpq)
 """
     metric_time(midi::MIDIFile,note::AbstractNote)::Float64
 Return how many milliseconds elapsed at `note` position.
+Matric time calculations need `tpq` field of `MIDIFile`.
+Apparently it only make sense if the `note` coming from `MIDIFile`, otherwise you can't get the correct result. 
 """
 function metric_time(midi::MIDIFile,note::AbstractNote)::Float64
     # get all tempo change event before note
@@ -192,6 +194,8 @@ end
 """
     duration_metric_time(midi::MIDIFile,note::AbstractNote)::Float64
 Return `note` duration time in milliseconds.
+Matric time calculations need `tpq` field of `MIDIFile`.
+Apparently it only make sense if the `note` coming from `MIDIFile`, otherwise you can't get the correct result. 
 """
 function duration_metric_time(midi::MIDIFile,note::AbstractNote)::Float64
     tc_tuple = (0,0.0)
