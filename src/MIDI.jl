@@ -4,6 +4,7 @@ A Julia library for reading and writing MIDI files.
 module MIDI
 
 using Base.Unicode
+using IterTools
 
 include("constants.jl")
 include("note.jl")
@@ -34,6 +35,7 @@ export pitch_to_name, name_to_pitch, is_octave
 export pitch_to_hz, hz_to_pitch
 export TrackEvent, MetaEvent, MIDIEvent, SysexEvent
 export readvariablelength, writevariablelength
+export metric_time,duration_metric_time
 
 """
     testmidi()

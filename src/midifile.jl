@@ -167,7 +167,7 @@ end
 """
     ms_per_tick(tpq, qpm)
     ms_per_tick(midi::MIDIFile)
-Return how many miliseconds is one tick, based
+Return how many milliseconds is one tick, based
 on the quarter notes per minute `qpm` and ticks per quarter note `tpq`.
 """
 ms_per_tick(midi::MIDI.MIDIFile, qpm = qpm(midi)) = ms_per_tick(midi.tpq, qpm)
@@ -175,3 +175,32 @@ ms_per_tick(tpq, qpm) = (1000*60)/(qpm*tpq)
 
 getnotes(midi::MIDIFile, trackno = midi.format == 0 ? 1 : 2) =
 getnotes(midi.tracks[trackno], midi.tpq)
+
+"""
+    metric_time(midi::MIDIFile,note::AbstractNote)::Float64
+Return how many milliseconds elapsed at `note` position.
+Matric time calculations need `tpq` field of `MIDIFile`.
+Apparently it only make sense if the `note` coming from `MIDIFile`, otherwise you can't get the correct result. 
+"""
+function metric_time(midi::MIDIFile,note::AbstractNote)::Float64
+    # get all tempo change event before note
+    tc_tuples = filter(x->x[1]<=note.position,tempochanges(midi))
+    # how many ticks between two tempo changes event
+    tempo_ticks = map(x->x[2][1]-x[1][1],partition(tc_tuples,2,1))
+    push!(tempo_ticks,note.position-last(tc_tuples)[1])
+    return mapreduce(x -> ms_per_tick(midi.tpq, x[1][2]) * x[2], +, zip(tc_tuples,tempo_ticks))
+end
+
+"""
+    duration_metric_time(midi::MIDIFile,note::AbstractNote)::Float64
+Return `note` duration time in milliseconds.
+Matric time calculations need `tpq` field of `MIDIFile`.
+Apparently it only make sense if the `note` coming from `MIDIFile`, otherwise you can't get the correct result. 
+"""
+function duration_metric_time(midi::MIDIFile,note::AbstractNote)::Float64
+    tc_tuple = (0,0.0)
+    for tc in tempochanges(midi)
+        tc[1] <= note.position ? tc_tuple = tc : break
+    end
+    return ms_per_tick(midi.tpq,tc_tuple[2])*note.duration
+end

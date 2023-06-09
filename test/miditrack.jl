@@ -200,7 +200,7 @@ invalidtestvalues = [
         onotes = getnotes(original_track)
         tnotes = getnotes(test_track)
         identical = true
-        for i = 1:length(onotes)
+        for i = eachindex(onotes)
             if onotes[i] != tnotes[i]
                 identical = false
             end
@@ -208,5 +208,18 @@ invalidtestvalues = [
 
         @test identical
 
+    end
+
+    @testset "metric_time" begin
+        midifile = load("./tempo_change.mid")
+        notes = getnotes(midifile.tracks[1])
+
+        @test metric_time(midifile,last(notes)) == 8500.0
+        @test metric_time(midifile,first(notes)) == 0.0
+        @test metric_time(midifile,notes[5]) == 2500.0
+        
+        @test round(duration_metric_time(midifile,notes[2])) == 474
+        @test round(duration_metric_time(midifile,last(notes))) == 948
+        @test round(duration_metric_time(midifile,first(notes))) == 474
     end
 end
