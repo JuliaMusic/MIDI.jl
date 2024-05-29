@@ -35,6 +35,7 @@ MIDIFile() = MIDIFile(1,960,MIDITrack[])
 Return the **initial** QPM (quarter notes per minute) where the given `MIDIFile` was exported at.
 This value is constant, and will not change even if the tempo change event is triggered.
 Returns 120 if not found.
+To get a list of QPM over time, use [`tempochanges`](@ref).
 """
 function qpm(t::MIDI.MIDIFile)
     # Find the one that corresponds to Set Tempo:
