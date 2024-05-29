@@ -32,7 +32,8 @@ MIDIFile() = MIDIFile(1,960,MIDITrack[])
 
 """
     qpm(midi)
-Return the QPM (quarter notes per minute) where the given `MIDIFile` was exported at.
+Return the **initial** QPM (quarter notes per minute) where the given `MIDIFile` was exported at.
+This value is constant, and will not change even if the tempo change event is triggered.
 Returns 120 if not found.
 """
 function qpm(t::MIDI.MIDIFile)
