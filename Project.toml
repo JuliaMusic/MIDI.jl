@@ -9,7 +9,7 @@ IterTools = "c8e1da08-722c-5040-9ed9-7db0dc04731e"
 
 [compat]
 FileIO = "1"
-IterTools = "1.8.0"
+IterTools = "1.10.0"
 julia = "1"
 
 [extras]

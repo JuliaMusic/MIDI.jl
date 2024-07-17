@@ -60,7 +60,12 @@ const MIDI_EVENTS_DEFS = Dict(
         decode = :(Int.(data)),
         encode = :(UInt8.([event.semitones, event.scale]))
     ),
-
+    0x7f => (
+        type = :SequencerSpecificEvent,
+        fields = ["ssdata::Vector{UInt8}"],
+        decode = :(data),
+        encode = :(event.ssdata)
+    ),
     # MidiEvents
     0x80 => (
         type = :NoteOffEvent,
@@ -124,12 +129,14 @@ function define_type(type, fields, decode, encode_, supertype, typebyte)
             $(fields...)
         end
 
-        """    $($type)(dT::Int, typebyte::UInt8, data::Vector{UInt8})
-        Returns a `$($type)` event from it's byte representation.
-        The parameter `typebyte::UInt8` is its's $(($type <: MetaEvent) ? "metatype" : "status") byte.
-        """
-        function $type(dT::Int, typebyte::UInt8, data::Vector{UInt8})
-            $type(dT, typebyte, $decode...)
+        if !($type.types[end] <: AbstractArray)
+            """    $($type)(dT::Int, typebyte::UInt8, data::Vector{UInt8})
+            Returns a `$($type)` event from it's byte representation.
+            The parameter `typebyte::UInt8` is its's $(($type <: MetaEvent) ? "metatype" : "status") byte.
+            """
+            function $type(dT::Int, typebyte::UInt8, data::Vector{UInt8})
+                $type(dT, typebyte, $decode...)
+            end
         end
 
         if $type <: MetaEvent
@@ -407,3 +414,13 @@ The `PitchBendEvent` informs a MIDI device to modify the pitch in a specific cha
 * `pitch::Int` : Value of the pitch bend.
 """
 PitchBendEvent
+
+"""    SequencerSpecificEvent <: MetaEvent
+The `SequencerSpecificEvent` is used to store vendor-proprietary data in a MIDI file.
+
+## Fields:
+* `dT::Int` : Delta time in ticks.
+* `metatype::UInt8` : Meta type byte of the event.
+* `ssdata::Vector{UInt8}` : Vendor-proprietary data.
+"""
+SequencerSpecificEvent

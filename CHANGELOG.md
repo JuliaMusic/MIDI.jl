@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
+# v2.7.0
+* New event type `SequencerSpecificEvent`.
 # v2.6.0
 * New functions `metric_time`.
 * New functions `duration_metric_time`.
