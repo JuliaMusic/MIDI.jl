@@ -34,7 +34,7 @@
 
     @testset "SequencerSpecificEvent" begin
         midi = load("SequencerSpecific.mid")
-        length(getnotes(midi.tracks[1], midi.tpq)) > 0
+        @test length(getnotes(midi.tracks[1], midi.tpq)) > 0
         
         sse = MIDI.SequencerSpecificEvent(0, 0x7f, [0x11, 0x21, 0x53, 0x1F])
         @test sse.ssdata == [0x11, 0x21, 0x53, 0x1F]
