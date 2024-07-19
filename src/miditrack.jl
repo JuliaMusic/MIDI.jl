@@ -7,6 +7,8 @@
 Track chunks begin with four bytes spelling out "MTrk", followed by the length
 (in bytes) of the track (see [`readvariablelength`](@ref)), followed by a sequence
 of events.
+
+`MIDITrack` implements the `isempty` and `empty!` functions.
 """
 mutable struct MIDITrack
     events::Vector{TrackEvent}
@@ -21,6 +23,8 @@ function Base.show(io::IO, t::MIDITrack)
     print(io, "$(L)-event MIDITrack: $M MIDI, $T Meta, $X Sysex")
 end
 
+Base.empty!(t::MIDITrack) = empty!(t.events)
+Base.isempty(t::MIDITrack)::Bool = isempty(t.events)
 
 function readtrack(f::IO)
 
