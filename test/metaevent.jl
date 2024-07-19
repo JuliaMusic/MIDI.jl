@@ -34,6 +34,9 @@
 
     @testset "SequencerSpecificEvent" begin
         midi = load("SequencerSpecific.mid")
+        sse = midi.tracks[1].events[1]
+        @test sse isa MIDI.SequencerSpecificEvent
+        sse.ssdata == [0x11, 0x21, 0x53, 0x1F]
 
         sse = MIDI.SequencerSpecificEvent(0, 0x7f, [0x11, 0x21, 0x53, 0x1F])
         @test sse.ssdata == [0x11, 0x21, 0x53, 0x1F]
