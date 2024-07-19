@@ -8,7 +8,7 @@ Track chunks begin with four bytes spelling out "MTrk", followed by the length
 (in bytes) of the track (see [`readvariablelength`](@ref)), followed by a sequence
 of events.
 
-`MIDITrack` implements the `isempty`` and `empty!` functions.
+`MIDITrack` implements the `isempty` and `empty!` functions.
 """
 mutable struct MIDITrack
     events::Vector{TrackEvent}
